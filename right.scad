@@ -33,14 +33,13 @@ place_thumb_keys([2], [-1:1]) key();
 place_thumb_keys([1], [1]) key();
 place_thumb_keys([0,1], [-0.5]) key(h=2);
 
-
 /// SUPPORTS
 difference() {
   union() {
     // inner column
     place_keys([0], [2]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 3);
-      translate([7 + plate_thickness / 2, 0, 0]) column_rib(0, 3);
+      translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(1, 4);
+      translate([7 + plate_thickness / 2, 0, 0]) column_rib(1, 4);
     }
 
     // main columns
@@ -52,23 +51,23 @@ difference() {
     // outer column
     place_keys([5], [2]) {
       translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 4);
-      scale([1.1, 1, 1]) translate([7 + plate_thickness / 2, 0, 0]) column_rib(4, 4);
+      scale([1.1, 1, 1]) translate([7 + plate_thickness / 2, 0, 0]) column_rib(0, 0);
       translate([(7 + plate_thickness) * 1.25, 0, 0]) column_rib(0, 4);
     }
 
     place_thumb_keys([2], [1]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(2, 0);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(2, 0);
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0,2);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0,2);
     }
 
     place_thumb_keys([1], [1]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(2, 0);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(2, 0);
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0, 2);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0, 2);
     }
 
-    place_thumb_keys([0], [0]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(1, 0);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(1, 0);
+    place_thumb_keys([0], [1]) {
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0, 1);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0, 1);
     }
   }
 
