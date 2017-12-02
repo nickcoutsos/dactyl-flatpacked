@@ -5,6 +5,7 @@ use <structures.scad>
 
 module key (w=1, h=1) {
   plate(w, h);
+
   switch();
 
   translate([0, 0, plate_thickness+3])
@@ -53,6 +54,21 @@ difference() {
       translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 4);
       scale([1.1, 1, 1]) translate([7 + plate_thickness / 2, 0, 0]) column_rib(4, 4);
       translate([(7 + plate_thickness) * 1.25, 0, 0]) column_rib(0, 4);
+    }
+
+    place_thumb_keys([2], [1]) {
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(2, 0);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(2, 0);
+    }
+
+    place_thumb_keys([1], [1]) {
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(2, 0);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(2, 0);
+    }
+
+    place_thumb_keys([0], [0]) {
+      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(1, 0);
+      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(1, 0);
     }
   }
 
