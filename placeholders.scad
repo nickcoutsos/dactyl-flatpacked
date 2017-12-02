@@ -1,0 +1,39 @@
+include <definitions.scad>
+
+module switch () {
+  rotate([0, 0, 45]) cylinder(d1=19.77, d2=14.5, $fn=4, h=5.2);
+  translate([0, 0, -2.2]) rotate([0, 0, 45]) cylinder(d=19.77, $fn=4, h=2.2);
+  translate([0, 0, -2.2 - 3.1]) rotate([0, 0, 45]) cylinder(d1=18, d2=19.77, $fn=4, h=3.1);
+  
+  for(angle=[45:90:315]) {
+    rotate([0, 0, angle])
+    translate([19.77/2-.75, 0, .4])
+    rotate([0, 0, 45])
+      cube([2, 2, .8], center=true);
+  }
+}
+
+module keycap() {
+  rotate([0, 0, 45]) cylinder(d1=25, d2=18, h=7.5, $fn=4);
+}
+
+module plate (w=1, h=1) {
+  translate([0, 0, -plate_thickness/2])
+  difference () {
+    cube([20 * w, 20 * h, plate_thickness], center=true);
+    scale([1, 1, 2]) cutout();
+  }
+}
+
+module cutout () {
+  cube([14, 14, plate_thickness], center=true);
+  translate([-6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
+  translate([ 6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
+  translate([ 6.8,  6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
+  translate([-6.8,  6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
+
+  translate([-7, -3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
+  translate([ 7, -3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
+  translate([ 7,  3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
+  translate([-7,  3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
+}
