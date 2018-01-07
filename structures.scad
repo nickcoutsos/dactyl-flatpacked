@@ -1,17 +1,18 @@
 include <definitions.scad>
 
-inner = main_row_radius + plate_thickness/2;
-outer = inner + 10;
-
 module fan(inner, outer, start, end) {
   polygon(concat(
-    [ for (i=[start:1:end]) [inner * cos(i), inner * sin(i)] ],
-    [ for (i=[start:1:end]) [outer * cos(end-i+start), outer * sin(end-i+start)] ]
+    [ for (i=[start:end]) [inner * cos(i), inner * sin(i)] ],
+    [ for (i=[start:end]) [outer * cos(end-i+start), outer * sin(end-i+start)] ]
   ));
 }
 
-module column_rib (start, end) {
-  translate([0, 0, main_row_radius])
+module column_rib (start, end, thickness=5) {
+  radius = main_row_radius;
+  inner = radius + plate_thickness/2;
+  outer = inner + thickness;
+
+  translate([0, 0, radius])
   rotate([0, 90, 0]) {
     linear_extrude(plate_thickness, center=true)
     fan(
@@ -22,15 +23,33 @@ module column_rib (start, end) {
   }
 }
 
-thumb_inner = thumb_row_radius + plate_thickness/2;
-thumb_outer = thumb_inner + 10;
+module row_rib(start, end) {
+  radius = main_column_radius;
+  inner = radius + plate_thickness/2;
+  outer = inner + 10;
 
-module thumb_column_rib (start, end) {
-  translate([0, 0, thumb_row_radius])
+  translate([0, 0, radius])
+  rotate([0, 90, 0])
+  rotate([90, 0, 0]) {
+    linear_extrude(plate_thickness, center=true)
+    fan(
+      inner, outer,
+      beta * (start - 2 - .5),
+      beta * (end - 2 + .5)
+    );
+  }
+}
+
+module thumb_column_rib (start, end, height=10) {
+  radius = thumb_row_radius;
+  inner = radius + plate_thickness/2;
+  outer = inner + height;
+
+  translate([0, 0, radius])
   rotate([0, 90, 0]) {
     linear_extrude(plate_thickness, center=true)
     fan(
-      thumb_inner, thumb_outer,
+      inner, outer,
       alpha * (start - 2 - .5),
       alpha * (end - 2 + .5)
     );
