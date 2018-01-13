@@ -39,6 +39,14 @@ module place_in_row(row) {
     children();
 }
 
+module place_column_ribs(columns, row=2) {
+  offset = 7 + plate_thickness / 2;
+  place_keys(columns, [row]) {
+    translate([-offset, 0, 0]) children();
+    translate([+offset, 0, 0]) children();
+  }
+}
+
 module thumb_place (column, row) {
   translate([-52, -45, 40])
   rotate(alpha, [1, 1, 0])
@@ -51,6 +59,14 @@ module thumb_place (column, row) {
   rotate(alpha * row, X)
   translate([0, 0, -thumb_row_radius])
     children();
+}
+
+module place_thumb_column_ribs(columns, row=1) {
+  offset = 7 + plate_thickness / 2;
+  place_thumb_keys(columns, [row]) {
+    translate([-offset, 0, 0]) children();
+    translate([+offset, 0, 0]) children();
+  }
 }
 
 module each_key () {

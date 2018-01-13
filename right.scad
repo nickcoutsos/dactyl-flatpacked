@@ -6,14 +6,14 @@ use <structures.scad>
 module key (w=1, h=1) {
   plate(w, h);
 
-  switch();
+  color("dimgray") switch();
 
+  color("slategray")
   translate([0, 0, plate_thickness+3])
   scale([w, h, 1 ]) keycap();
 }
 
 /// KEY LAYOUT
-
 // main keys
 each_key() key();
 
@@ -34,43 +34,20 @@ place_thumb_keys([1], [1]) key();
 place_thumb_keys([0,1], [-0.5]) key(h=2);
 
 /// SUPPORTS
-difference() {
-  union() {
-    // inner column
-    place_keys([0], [2]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(1, 4);
-      translate([7 + plate_thickness / 2, 0, 0]) column_rib(1, 4);
-    }
+color("burlywood") {
+  // inner column
+  place_column_ribs([0]) column_rib(1, 4);
 
-    // main columns
-    place_keys([1:4], [2]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 4);
-      translate([7 + plate_thickness / 2, 0, 0]) column_rib(0, 4);
-    }
+  // main columns
+  place_column_ribs([1:4]) column_rib(0, 4);
 
-    // outer column
-    place_keys([5], [2]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 4);
-      scale([1.1, 1, 1]) translate([7 + plate_thickness / 2, 0, 0]) column_rib(0, 0);
-      translate([(7 + plate_thickness) * 1.25, 0, 0]) column_rib(0, 4);
-    }
-
-    place_thumb_keys([2], [1]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0,2);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0,2);
-    }
-
-    place_thumb_keys([1], [1]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0, 2);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0, 2);
-    }
-
-    place_thumb_keys([0], [1]) {
-      translate([-(7 + plate_thickness / 2), 0, 0]) thumb_column_rib(0, 1);
-      translate([7 + plate_thickness / 2, 0, 0]) thumb_column_rib(0, 1);
-    }
+  // outer column
+  place_keys([5], [2]) {
+    translate([-(7 + plate_thickness / 2), 0, 0]) column_rib(0, 4);
+    scale([1.1, 1, 1]) translate([7 + plate_thickness / 2, 0, 0]) column_rib(0, 0);
+    translate([(7 + plate_thickness) * 1.25, 0, 0]) column_rib(0, 4);
   }
 
-  translate([-300, -300, -300])
-  cube([600, 600, 300]);
+  place_thumb_column_ribs([1, 2]) thumb_column_rib(0, 2);
+  place_thumb_column_ribs([0]) thumb_column_rib(0, 1);
 }
