@@ -7,18 +7,18 @@ module fan(inner, outer, start, end) {
   ));
 }
 
-module column_rib (start, end, thickness=5) {
+module column_rib (start, end, height=column_rib_height) {
   radius = main_row_radius;
   inner = radius + plate_thickness/2;
-  outer = inner + thickness;
+  outer = inner + height;
 
   translate([0, 0, radius])
   rotate([0, 90, 0]) {
     linear_extrude(plate_thickness, center=true)
     fan(
       inner, outer,
-      alpha * (start - 2 - .5),
-      alpha * (end - 2 + .5)
+      alpha * (start - 2 - .6),
+      alpha * (end - 2 + .6)
     );
   }
 }
@@ -40,7 +40,7 @@ module row_rib(start, end) {
   }
 }
 
-module thumb_column_rib (start, end, height=10) {
+module thumb_column_rib (start, end, height=column_rib_height) {
   radius = thumb_row_radius;
   inner = radius + plate_thickness/2;
   outer = inner + height;

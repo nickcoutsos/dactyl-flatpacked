@@ -40,11 +40,20 @@ module place_in_row(row) {
 }
 
 module place_column_ribs(columns, row=2) {
-  offset = 7 + plate_thickness / 2;
-  place_keys(columns, [row]) {
-    translate([-offset, 0, 0]) children();
-    translate([+offset, 0, 0]) children();
-  }
+  place_column_rib_left(columns, row) children();
+  place_column_rib_right(columns, row) children();
+}
+
+module place_column_rib_left(columns, row=2, width=keyswitch_width) {
+  place_keys(columns, [row])
+  translate([- (width/2 + plate_thickness / 2), 0, 0])
+    children();
+}
+
+module place_column_rib_right(columns, row=2, width=keyswitch_width) {
+  place_keys(columns, [row])
+  translate([width/2 + plate_thickness / 2, 0, 0])
+    children();
 }
 
 module thumb_place (column, row) {

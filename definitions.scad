@@ -32,3 +32,5 @@ main_column_radius = (mount_width + 2) / 2 / sin(beta/2) + cap_top_height;
 
 thumb_row_radius = (mount_height + 1) / 2 / sin(alpha/2) + cap_top_height;
 thumb_column_radius = (mount_width + 2) / 2 / sin(beta / 2) + cap_top_height;
+
+column_rib_height = 10;
