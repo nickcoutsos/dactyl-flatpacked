@@ -6,6 +6,10 @@ Z = [0, 0, 1];
 keyswitch_height = 14.4; // Was 14.1, then 14.25
 keyswitch_width = 14.4;
 
+keycap_length = 18.1;
+keycap_inner_length = 12.37;
+keycap_height = 9.39;
+
 keyhole_length = 14.4;
 keywall_thickness = 1.5;
 

@@ -13,8 +13,24 @@ module switch () {
   }
 }
 
-module keycap() {
-  rotate([0, 0, 45]) cylinder(d1=25, d2=18, h=7.5, $fn=4);
+module keycap(w, h) {
+  x = w / 2 * keycap_length;
+  y = h / 2 * keycap_length;
+  z = keycap_height;
+
+  x2 = x - (keycap_length - keycap_inner_length) / 2;
+  y2 = y - (keycap_length - keycap_inner_length) / 2;
+
+  lower = [ [-x, -y], [ x, -y], [ x,  y], [-x,  y] ];
+  upper = [ [-x2, -y2], [ x2, -y2], [ x2,  y2], [-x2,  y2] ];
+
+  hull() {
+    translate([0, 0, z])
+    linear_extrude(height=.1)
+      polygon(upper);
+    linear_extrude(height=.1)
+      polygon(lower);
+  }
 }
 
 module plate (w=1, h=1) {
