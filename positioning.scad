@@ -37,13 +37,13 @@ module place_column_ribs(columns, row=2) {
   place_column_rib_right(columns, row) children();
 }
 
-module place_column_rib_left(columns, row=2, width=keyswitch_width) {
+module place_column_rib_left(columns, row=2, width=plate_length) {
   place_keys(columns, [row])
   translate([- (width/2 - rib_thickness / 2), 0, 0])
     children();
 }
 
-module place_column_rib_right(columns, row=2, width=keyswitch_width) {
+module place_column_rib_right(columns, row=2, width=plate_length) {
   place_keys(columns, [row])
   translate([width/2 - rib_thickness / 2, 0, 0])
     children();
@@ -76,13 +76,13 @@ module place_thumb_column_ribs(columns, row=1) {
   place_thumb_column_rib_right(columns, row) children();
 }
 
-module place_thumb_column_rib_left(columns, row=1, width=keyswitch_width) {
+module place_thumb_column_rib_left(columns, row=1, width=plate_length) {
   place_thumb_keys(columns, [row])
   translate([- (width/2 - rib_thickness / 2), 0, 0])
     children();
 }
 
-module place_thumb_column_rib_right(columns, row=1, width=keyswitch_width) {
+module place_thumb_column_rib_right(columns, row=1, width=plate_length) {
   place_thumb_keys(columns, [row])
   translate([width/2 - rib_thickness / 2, 0, 0])
     children();

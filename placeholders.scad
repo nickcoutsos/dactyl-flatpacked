@@ -36,13 +36,13 @@ module keycap(w, h) {
 module plate (w=1, h=1) {
   translate([0, 0, -plate_thickness/2])
   difference () {
-    cube([20 * w, 20 * h, plate_thickness], center=true);
+    cube([plate_length * w, plate_length * h, plate_thickness], center=true);
     scale([1, 1, 2]) cutout();
   }
 }
 
 module cutout () {
-  cube([14, 14, plate_thickness], center=true);
+  cube([14.4, 14.4, plate_thickness], center=true);
   translate([-6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
   translate([ 6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
   translate([ 6.8,  6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
