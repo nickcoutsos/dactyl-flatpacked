@@ -9,7 +9,7 @@ module fan(inner, outer, start, end) {
 
 module column_rib (start, end, height=column_rib_height) {
   radius = main_row_radius;
-  inner = radius + plate_thickness/2;
+  inner = radius;
   outer = inner + height;
 
   translate([0, 0, radius])
@@ -42,7 +42,7 @@ module row_rib(start, end) {
 
 module thumb_column_rib (start, end, height=column_rib_height) {
   radius = thumb_row_radius;
-  inner = radius + plate_thickness/2;
+  inner = radius;
   outer = inner + height;
 
   translate([0, 0, radius])
