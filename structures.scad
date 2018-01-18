@@ -23,23 +23,6 @@ module column_rib (start, end, height=column_rib_height) {
   }
 }
 
-module row_rib(start, end) {
-  radius = main_column_radius;
-  inner = radius + plate_thickness/2;
-  outer = inner + 10;
-
-  translate([0, 0, radius])
-  rotate([0, 90, 0])
-  rotate([90, 0, 0]) {
-    linear_extrude(plate_thickness, center=true)
-    fan(
-      inner, outer,
-      beta * (start - 2 - .5),
-      beta * (end - 2 + .5)
-    );
-  }
-}
-
 module thumb_column_rib (start, end, height=column_rib_height) {
   radius = thumb_row_radius;
   inner = radius;
