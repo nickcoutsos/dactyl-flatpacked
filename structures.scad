@@ -14,7 +14,7 @@ module column_rib (start, end, height=column_rib_height) {
 
   translate([0, 0, radius])
   rotate([0, 90, 0]) {
-    linear_extrude(plate_thickness, center=true)
+    linear_extrude(rib_thickness, center=true)
     fan(
       inner, outer,
       alpha * (start - 2 - .6),
@@ -47,7 +47,7 @@ module thumb_column_rib (start, end, height=column_rib_height) {
 
   translate([0, 0, radius])
   rotate([0, 90, 0]) {
-    linear_extrude(plate_thickness, center=true)
+    linear_extrude(rib_thickness, center=true)
     fan(
       inner, outer,
       alpha * (start - 2 - .5),

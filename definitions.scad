@@ -15,7 +15,9 @@ keywall_thickness = 1.5;
 
 sa_profile_key_height = 12.7;
 
-plate_thickness = 3;
+plate_thickness = 1.5;
+rib_thickness = 3;
+
 mount_width = keyswitch_width + 3;
 mount_height = keyswitch_height + 3;
 
@@ -25,7 +27,7 @@ rows = [0:4];
 alpha = 180/12;
 beta = 180/36;
 
-cap_top_height = plate_thickness + sa_profile_key_height;
+cap_top_height = sa_profile_key_height;
 
 main_row_radius = (mount_height + .5) / 2 / sin(alpha/2) + cap_top_height;
 main_column_radius = (mount_width + 2) / 2 / sin(beta/2) + cap_top_height;
