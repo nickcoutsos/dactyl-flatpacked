@@ -34,11 +34,28 @@ module keycap(w, h) {
 }
 
 module plate (w=1, h=1) {
+  width = plate_length * w;
+  height = plate_length * h;
+  rib_offset = (rib_spacing - rib_thickness) / 2;
+
   translate([0, 0, -plate_thickness/2])
   difference () {
-    cube([plate_length * w, plate_length * h, plate_thickness], center=true);
+    cube([width, height, plate_thickness], center=true);
+    translate([rib_offset, height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
+    translate([-rib_offset, height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
+    translate([rib_offset, -height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
+    translate([-rib_offset, -height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
     scale([1, 1, 2]) cutout();
   }
+}
+
+module key_well (w=1, h=1) {
+  width = plate_length * w;
+  height = plate_length * h;
+
+  cube([16, 15, 10.5], center=true);
+  translate([0, (height - rib_thickness) / 2, 0]) cube([16, rib_thickness/2, plate_thickness*2], center=true);
+  translate([0, -(height - rib_thickness) / 2, 0]) cube([16, rib_thickness/2, plate_thickness*2], center=true);
 }
 
 module cutout () {
