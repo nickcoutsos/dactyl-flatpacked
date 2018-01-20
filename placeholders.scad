@@ -52,10 +52,10 @@ module plate (w=1, h=1) {
 module key_well (w=1, h=1) {
   width = plate_length * w;
   height = plate_length * h;
+  rib_offset = (rib_spacing - rib_thickness) / 2;
 
   cube([16, 15, 10.5], center=true);
-  translate([0, (height - rib_thickness) / 2, 0]) cube([16, rib_thickness/2, plate_thickness*2], center=true);
-  translate([0, -(height - rib_thickness) / 2, 0]) cube([16, rib_thickness/2, plate_thickness*2], center=true);
+  translate([0, 0, plate_thickness]) cube([16, height - rib_thickness/2, plate_thickness * 4], center=true);
 }
 
 module cutout () {

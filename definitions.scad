@@ -16,10 +16,11 @@ keywall_thickness = 1.5;
 sa_profile_key_height = 12.7;
 
 plate_thickness = 2;
-plate_padding = 2;
+plate_padding = 2.5;
 plate_length = keyhole_length + 2 * plate_padding;
 rib_thickness = 3.2;
 rib_spacing = 14 + rib_thickness/2;
+rib_extension = .6;
 
 mount_width = keyswitch_width + 3;
 mount_height = keyswitch_height + 3;

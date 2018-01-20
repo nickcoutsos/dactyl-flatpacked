@@ -7,8 +7,8 @@ module key (w=1, h=1) {
   color("slategrey") plate(w, h);
   switch();
 
-  // translate([0, 0, 4])
-  // color("linen") keycap(w, h);
+  translate([0, 0, 4])
+  color("linen") keycap(w, h);
 }
 
 module main_layout() {
@@ -119,7 +119,7 @@ module cap() {
 }
 
 module back_end_caps() {
-  row = -.6;
+  row = -.7;
   outer_offset = [keyswitch_width * 1.5 / 2, 0, 0];
 
   for (i=columns) {
@@ -138,7 +138,7 @@ module back_end_caps() {
 }
 
 module back_thumb_end_caps() {
-  row = 1.6;
+  row = (1 + rib_extension);
 
   for (i=[1:2]) hull() place_thumb_column_ribs([i], row) cap();
   hull() {
@@ -148,7 +148,7 @@ module back_thumb_end_caps() {
 }
 
 module front_end_caps() {
-  row = 4.6;
+  row = (4 + rib_extension);
 
   for (i=[1:4]) {
     hull() {
@@ -161,12 +161,12 @@ module front_end_caps() {
 }
 
 module front_join_left() {
-  row = 4.6;
+  row = (4 + rib_extension);
   hull() place_column_ribs([0], row - 1) cap();
 }
 
 module front_join_right() {
-  row = 4.6;
+  row = (4 + rib_extension);
   outer_offset = [keyswitch_width * 1.5 / 2, 0, 0];
 
   hull() {
@@ -176,7 +176,7 @@ module front_join_right() {
 }
 
 module front_thumb_end_caps() {
-  row = -1.6;
+  row = -(1 + rib_extension);
 
   for (i=[0:2]) hull() place_thumb_column_ribs([i], row) cap();
   for (i=[0:1]) {
@@ -198,6 +198,6 @@ color("brown") {
   back_thumb_end_caps();
   front_end_caps();
   front_join_left();
-  front_join_right();
+  // front_join_right();
   front_thumb_end_caps();
 }
