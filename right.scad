@@ -39,15 +39,20 @@ module thumb_layout() {
 
 module main_support_curve() {
   radius = main_column_radius / 4;
-  offset = radius + column_rib_height + plate_thickness/2;
+  offset = radius + column_rib_height;
   translate([0, 0, -offset])
   rotate([0, 90, 0])
     cylinder(r=radius, h=rib_spacing+1, center=true, $fn=120);
 }
 
+module support_joint() {
+  cube([rib_spacing+1, 4, 4], center=true);
+  translate([0, 0, -column_rib_height + 1]) cube([rib_spacing+1, 4, 2.5], center=true);
+}
+
 module thumb_support_curve() {
   radius = thumb_column_radius / 4;
-  offset = radius + column_rib_height + plate_thickness/2;
+  offset = radius + column_rib_height;
   translate([0, 0, -offset])
   rotate([0, 90, 0])
     cylinder(r=radius, h=4, center=true, $fn=120);
@@ -60,7 +65,9 @@ module main_supports() {
     place_keys([0], [0:3]) key_well();
 
     place_keys([0], 3.5) main_support_curve();
-    place_keys([0], -.5) main_support_curve();
+    place_keys([0], -rib_extension) main_support_curve();
+    place_keys([0], -rib_extension) support_joint();
+    place_keys([0], 3+rib_extension) support_joint();
 
     translate([0, 0, -100]) cube(200, center=true);
   }
@@ -69,6 +76,8 @@ module main_supports() {
   difference() {
     place_column_ribs([1:4]) column_rib(0, 4);
     place_keys([1:4], [0:4]) key_well();
+    place_keys([1:4], -rib_extension) support_joint();
+    place_keys([1:4], 4 + rib_extension) support_joint();
   }
 
   // outer column
@@ -79,7 +88,8 @@ module main_supports() {
     place_keys([5], [0:3]) key_well();
 
     place_keys([5], 3.5) main_support_curve();
-    place_keys([5], -.5) main_support_curve();
+    place_keys([5], -rib_extension) main_support_curve();
+    place_keys([5], -rib_extension) support_joint();
 
     translate([0, 0, -100]) cube(200, center=true);
   }
@@ -88,6 +98,7 @@ module main_supports() {
   difference() {
     place_column_ribs([5]) column_rib(0, 0);
     place_keys([5], [4]) key_well();
+    place_keys([5], 4 + rib_extension) support_joint();
   }
 }
 
@@ -95,17 +106,23 @@ module thumb_supports() {
   difference() {
     place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
     place_thumb_keys([2], [-1:1]) key_well();
+    place_thumb_keys([2], -(1 + rib_extension)) support_joint();
+    place_thumb_keys([2], (1 + rib_extension)) support_joint();
   }
 
   difference() {
     place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
     place_thumb_keys([0], [-.5]) key_well(h=2);
+    place_thumb_keys([0], -(1 + rib_extension)) support_joint();
+    place_thumb_keys([0], (1 + rib_extension)) support_joint();
   }
 
   difference() {
     place_thumb_column_ribs([1]) thumb_column_rib(0, 2, 70);
     place_thumb_keys([1], [1]) key_well();
     place_thumb_keys([1], [-.5]) key_well(h=2);
+    place_thumb_keys([1], -(1 + rib_extension)) support_joint();
+    place_thumb_keys([1], (1 + rib_extension)) support_joint();
 
     translate([-70, -40, -80]) cube(160, center=true);
 
@@ -115,11 +132,11 @@ module thumb_supports() {
 
 module cap() {
   translate([0, 0, -column_rib_height/2])
-  cube([6, 5, column_rib_height + 4], center=true);
+  cube([6, 4, column_rib_height], center=true);
 }
 
 module back_end_caps() {
-  row = -.7;
+  row = -rib_extension;
   outer_offset = [keyswitch_width * 1.5 / 2, 0, 0];
 
   for (i=columns) {
@@ -152,8 +169,8 @@ module front_end_caps() {
 
   for (i=[1:4]) {
     hull() {
-      place_column_rib_right([i], row) cap();
-      place_column_rib_left([i+1], row) cap();
+      place_column_rib_right([i], row) translate([2, 0, 0]) scale([.5, 1, 1]) cap();
+      place_column_rib_left([i+1], row) translate([-2, 0, 0]) scale([.5, 1, 1]) cap();
     }
   }
 
