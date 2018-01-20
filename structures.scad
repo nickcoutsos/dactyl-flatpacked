@@ -7,14 +7,14 @@ module fan(inner, outer, start, end) {
   ));
 }
 
-module column_rib (start, end, height=column_rib_height) {
+module column_rib (start, end, height=column_rib_height, thickness=rib_thickness) {
   radius = main_row_radius;
   inner = radius;
   outer = inner + height;
 
   translate([0, 0, radius])
   rotate([0, 90, 0]) {
-    linear_extrude(rib_thickness, center=true)
+    linear_extrude(thickness, center=true)
     fan(
       inner, outer,
       alpha * (start - 2 - .6),

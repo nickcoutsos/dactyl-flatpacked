@@ -4,11 +4,11 @@ use <placeholders.scad>
 use <structures.scad>
 
 module key (w=1, h=1) {
-  plate(w, h);
-  // switch();
+  color("slategrey") plate(w, h);
+  switch();
 
-  // translate([0, 0, plate_thickness+3])
-  // keycap(w, h);
+  // translate([0, 0, 4])
+  // color("linen") keycap(w, h);
 }
 
 module main_layout() {
@@ -42,7 +42,7 @@ module main_support_curve() {
   offset = radius + column_rib_height + plate_thickness/2;
   translate([0, 0, -offset])
   rotate([0, 90, 0])
-    cylinder(r=radius, h=4, center=true, $fn=120);
+    cylinder(r=radius, h=rib_spacing+1, center=true, $fn=120);
 }
 
 module thumb_support_curve() {
@@ -55,46 +55,57 @@ module thumb_support_curve() {
 
 module main_supports() {
   // inner column
-  place_column_ribs([0]) column_rib(1, 4);
-
-
   difference() {
-    union() {
-      // main columns
-      place_column_ribs([2:4]) column_rib(0, 4, 40);
-      place_column_rib_left([1]) column_rib(0, 4, 40);
-      place_column_rib_right([1]) column_rib(0, 4, 40);
+    place_column_ribs([0]) column_rib(1, 4, 40);
+    place_keys([0], [0:3]) key_well();
 
-      // outer column
-      place_column_rib_left([5]) column_rib(0, 4, 40);
-      place_column_rib_right([5], width=plate_length * 2) column_rib(1, 4, 40);
-      place_column_rib_right([5]) column_rib(0, 0, 40);
-    }
-
-    place_column_rib_left([1], 4.5) main_support_curve();
-    place_column_rib_right([1], 4.5) main_support_curve();
-    place_column_ribs([2:4], 4.5) main_support_curve();
-
-    place_column_ribs([1:4], -.5) main_support_curve();
-
-    place_column_rib_left([5], -.5) main_support_curve();
-    place_column_rib_right([5], -.5, width=plate_length * 2) main_support_curve();
-    place_column_rib_right([5], 3.5, width=plate_length * 2) main_support_curve();
-    place_column_ribs([5], 4.5) main_support_curve();
+    place_keys([0], 3.5) main_support_curve();
+    place_keys([0], -.5) main_support_curve();
 
     translate([0, 0, -100]) cube(200, center=true);
+  }
+
+  // main columns
+  difference() {
+    place_column_ribs([1:4]) column_rib(0, 4);
+    place_keys([1:4], [0:4]) key_well();
+  }
+
+  // outer column
+  translate([plate_length / 4, 0, 0])
+  difference() {
+    place_column_ribs([5]) column_rib(1, 4, 40);
+
+    place_keys([5], [0:3]) key_well();
+
+    place_keys([5], 3.5) main_support_curve();
+    place_keys([5], -.5) main_support_curve();
+
+    translate([0, 0, -100]) cube(200, center=true);
+  }
+
+  // corner key
+  difference() {
+    place_column_ribs([5]) column_rib(0, 0);
+    place_keys([5], [4]) key_well();
   }
 }
 
 module thumb_supports() {
-  place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
-  place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
+  difference() {
+    place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
+    place_thumb_keys([2], [-1:1]) key_well();
+  }
 
   difference() {
-    union() {
-      place_thumb_column_rib_left([1]) thumb_column_rib(0, 2, 70);
-      place_thumb_column_rib_right([1]) thumb_column_rib(0, 2, 70);
-    }
+    place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
+    place_thumb_keys([0], [-.5]) key_well(h=2);
+  }
+
+  difference() {
+    place_thumb_column_ribs([1]) thumb_column_rib(0, 2, 70);
+    place_thumb_keys([1], [1]) key_well();
+    place_thumb_keys([1], [-.5]) key_well(h=2);
 
     translate([-70, -40, -80]) cube(160, center=true);
 
@@ -130,11 +141,14 @@ module back_thumb_end_caps() {
   row = 1.6;
 
   for (i=[1:2]) hull() place_thumb_column_ribs([i], row) cap();
+  hull() {
+    place_thumb_column_rib_right([2], row) cap();
+    place_thumb_column_rib_left([1], row) cap();
+  }
 }
 
 module front_end_caps() {
   row = 4.6;
-  outer_offset = [keyswitch_width * 1.5 / 2, 0, 0];
 
   for (i=[1:4]) {
     hull() {
@@ -165,11 +179,17 @@ module front_thumb_end_caps() {
   row = -1.6;
 
   for (i=[0:2]) hull() place_thumb_column_ribs([i], row) cap();
+  for (i=[0:1]) {
+    hull() {
+      place_thumb_column_rib_right([i+1], row) cap();
+      place_thumb_column_rib_left([i], row) cap();
+    }
+  }
 }
 
 
-color("linen") main_layout();
-color("linen") thumb_layout();
+main_layout();
+thumb_layout();
 color("burlywood") main_supports();
 color("burlywood") thumb_supports();
 
