@@ -1,36 +1,37 @@
 include <definitions.scad>
 
+use <scad-utils/transformations.scad>
+use <scad-utils/linalg.scad>
+
 // key columns span a 15 degree arc around the Y axis
 // key rows span a 30 degree arc around the X axis
 // the entire keyboard is rotated 15 degrees around Y
 // this results in the 5th column pointing at +Y
-module key_place(column, row, unrotate=false) {
-  row_angle = alpha * (2 - row);
-  column_angle = beta * (2 - column);
-  column_offset = column == 2
+module key_place(column, row) {
+  transformation = key_place_transformation(column, row);
+  multmatrix(transformation)
+    children();
+}
+
+function key_place_transformation(column, row) = (
+  let(row_angle = alpha * (2 - row))
+  let(column_angle = beta * (2 - column))
+  let(column_offset = column == 2
     ? [0, 2.82, -3.0] // was moved -4.5
     : (column >= 4
       ? [0, -5.8, 5.64]
-      : [0, 0, 0]);
+      : [0, 0, 0]))
 
-  translate([0, 0, 13])
-  rotate(alpha, Y)
-
-  translate(column_offset)
-  translate([0, 0, main_column_radius])
-  rotate(column_angle, Y)
-  translate([0, 0, -main_column_radius])
-
-
-        translate([0, 0, main_row_radius])
-        rotate(row_angle, X)
-        translate([0, 0, -main_row_radius])
-
-        rotate(unrotate ? -row_angle : 0, X)
-        rotate(unrotate ? -column_angle : 0, Y)
-        rotate(unrotate ? -alpha : 0, Y)
-          children();
-}
+  translation([0, 0, 13])
+  * rotation(alpha * Y)
+  * translation(column_offset)
+  * translation([0, 0, main_column_radius])
+  * rotation(column_angle * Y)
+  * translation([0, 0, -main_column_radius])
+  * translation([0, 0, main_row_radius])
+  * rotation(row_angle * X)
+  * translation([0, 0, -main_row_radius])
+);
 
 module place_column_ribs(columns, row=2, spacing=rib_spacing) {
   place_column_rib_left(columns, row, spacing) children();
@@ -49,27 +50,26 @@ module place_column_rib_right(columns, row=2, spacing=rib_spacing) {
     children();
 }
 
-module thumb_place (column, row, unrotate=false) {
-  column_angle = beta * column;
-  row_angle = alpha * row;
-
-  translate([-52, -45, 40])
-  rotate(alpha, [1, 1, 0])
-  rotate(180 * (.25 - .1875), Z)
-  translate([mount_width, 0, 0])
-  translate([0, 0, thumb_column_radius])
-  rotate(column_angle, Y)
-  translate([0, 0, -thumb_column_radius])
-  translate([0, 0, thumb_row_radius])
-  rotate(row_angle, X)
-  translate([0, 0, -thumb_row_radius])
-
-    rotate(unrotate ? -row_angle : 0, X)
-    rotate(unrotate ? -column_angle : 0, Y)
-    rotate(unrotate ? -alpha : 0, [1, 1, 0])
-
+module thumb_place (column, row) {
+  multmatrix(thumb_place_transformation(column, row))
     children();
 }
+
+function thumb_place_transformation (column, row) = (
+  let(column_angle = beta * column)
+  let(row_angle = alpha * row)
+
+  translation([-52, -45, 40])
+  * rotation(axis=alpha * unit([1, 1, 0]))
+  * rotation([0, 0, 180 * (.25 - .1875)])
+  * translation([mount_width, 0, 0])
+  * translation([0, 0, thumb_column_radius])
+  * rotation([0, column_angle, 0])
+  * translation([0, 0, -thumb_column_radius])
+  * translation([0, 0, thumb_row_radius])
+  * rotation([row_angle, 0, 0])
+  * translation([0, 0, -thumb_row_radius])
+);
 
 module place_thumb_column_ribs(columns, row=1) {
   place_thumb_column_rib_left(columns, row) children();
