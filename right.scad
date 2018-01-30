@@ -2,6 +2,7 @@ include <definitions.scad>
 use <positioning.scad>
 use <placeholders.scad>
 use <structures.scad>
+use <util.scad>
 
 module key (w=1, h=1) {
   color("slategrey") plate(w, h);
@@ -51,23 +52,35 @@ module support_joint() {
 }
 
 module thumb_support_curve() {
-  radius = thumb_column_radius / 4;
+  radius = thumb_column_radius / 8;
   offset = radius + column_rib_height;
   translate([0, 0, -offset])
   rotate([0, 90, 0])
-    cylinder(r=radius, h=4, center=true, $fn=120);
+    cylinder(r=radius, h=rib_spacing+1, center=true, $fn=120);
 }
 
 module main_supports() {
   // inner column
   difference() {
-    place_column_ribs([0]) column_rib(1, 4, 40);
+    place_column_ribs([0]) column_rib(1, 4, 20);
     place_keys([0], [0:3]) key_well();
 
     place_keys([0], 3.5) main_support_curve();
     place_keys([0], -rib_extension) main_support_curve();
     place_keys([0], -rib_extension) support_joint();
     place_keys([0], 3+rib_extension) support_joint();
+
+    translate([0, 0, -100]) cube(200, center=true);
+  }
+
+  placement = key_place_transformation(0, 2);
+  difference() {
+    multmatrix(placement)
+    rotate_down(placement)
+    translate([0, 0, -30]) {
+      translate([0, -rib_spacing/2, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
+      translate([0, +rib_spacing/2, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
+    }
 
     translate([0, 0, -100]) cube(200, center=true);
   }
@@ -118,15 +131,29 @@ module thumb_supports() {
   }
 
   difference() {
-    place_thumb_column_ribs([1]) thumb_column_rib(0, 2, 70);
+    place_thumb_column_ribs([1]) thumb_column_rib(0, 2, 20);
     place_thumb_keys([1], [1]) key_well();
     place_thumb_keys([1], [-.5]) key_well(h=2);
     place_thumb_keys([1], -(1 + rib_extension)) support_joint();
     place_thumb_keys([1], (1 + rib_extension)) support_joint();
+    place_thumb_keys([1], (1 + rib_extension)) thumb_support_curve();
+    place_thumb_keys([1], -(1 + rib_extension)) thumb_support_curve();
 
     translate([-70, -40, -80]) cube(160, center=true);
 
     place_thumb_column_ribs([1], [1.5]) thumb_support_curve();
+  }
+
+  placement = thumb_place_transformation(1, 0);
+  difference() {
+    multmatrix(placement)
+    rotate_down(placement)
+    translate([0, 0, -30]) {
+      cube([rib_spacing + 4, rib_thickness, 30], center=true);
+      translate([0, -rib_spacing, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
+    }
+
+    translate([0, 0, -100]) cube(200, center=true);
   }
 }
 
