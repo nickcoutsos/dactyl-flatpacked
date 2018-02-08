@@ -51,6 +51,11 @@ module support_joint() {
   translate([0, 0, -column_rib_height + 1]) cube([rib_spacing+1, 4, 2.5], center=true);
 }
 
+module short_support_joint() {
+  translate([0, 0, -(plate_thickness)]) cube([rib_spacing+1, 4, 4], center=true);
+  translate([0, 0, -(column_rib_height - plate_thickness + 1)]) cube([rib_spacing+1, 4, 2.5], center=true);
+}
+
 module thumb_support_curve() {
   radius = thumb_column_radius / 8;
   offset = radius + column_rib_height;
@@ -127,7 +132,7 @@ module thumb_supports() {
     place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
     place_thumb_keys([0], [-.5]) key_well(h=2);
     place_thumb_keys([0], -(1 + rib_extension)) support_joint();
-    place_thumb_keys([0], (1 + rib_extension)) support_joint();
+    place_thumb_keys([0], (-.5 + rib_extension)) short_support_joint();
   }
 
   difference() {
@@ -160,6 +165,11 @@ module thumb_supports() {
 module cap() {
   translate([0, 0, -column_rib_height/2])
   cube([6, 4, column_rib_height], center=true);
+}
+
+module short_cap() {
+  translate([0, 0, -(column_rib_height/2 + plate_thickness)])
+  cube([6, 4, column_rib_height - plate_thickness], center=true);
 }
 
 module back_end_caps() {
@@ -240,7 +250,19 @@ color("burlywood") thumb_supports();
 color("brown") {
   back_end_caps();
   back_thumb_end_caps();
-  front_end_caps();
+
+  difference() {
+    front_end_caps();
+    place_column_rib_left(1, 4 + rib_extension)
+    translate([-rib_thickness, 0, -column_rib_height/2])
+      cube([rib_thickness, 5, column_rib_height + 1], center=true);
+  }
+
+  hull() {
+    place_thumb_column_ribs(0, 0) short_cap();
+    place_column_ribs([0], 4 + rib_extension - 1) cap();
+  }
+
   front_join_left();
   // front_join_right();
   front_thumb_end_caps();
