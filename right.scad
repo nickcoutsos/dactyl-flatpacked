@@ -78,18 +78,6 @@ module main_supports() {
     translate([0, 0, -100]) cube(200, center=true);
   }
 
-  placement = key_place_transformation(0, 2);
-  difference() {
-    multmatrix(placement)
-    rotate_down(placement)
-    translate([0, 0, -30]) {
-      translate([0, -rib_spacing/2, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
-      translate([0, +rib_spacing/2, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
-    }
-
-    translate([0, 0, -100]) cube(200, center=true);
-  }
-
   // main columns
   difference() {
     place_column_ribs([1:4]) column_rib(0, 4);
@@ -148,17 +136,51 @@ module thumb_supports() {
 
     place_thumb_column_ribs([1], [1.5]) thumb_support_curve();
   }
+}
 
+module side_supports() {
+  placement = key_place_transformation(0, 2);
+  difference() {
+    multmatrix(placement)
+    rotate_down(placement)
+    translate([0, 0, -30]) {
+      translate([0, -rib_spacing/2, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
+      translate([0, +rib_spacing/2, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
+    }
+
+    translate([0, 0, -100]) cube(200, center=true);
+
+    multmatrix(placement)
+    rotate_down(placement)
+    translate([0, 0, -(15 + rib_thickness*.75*.5)]) {
+      translate([-(rib_spacing - rib_thickness)/2, -rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([+(rib_spacing - rib_thickness)/2, -rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([-(rib_spacing - rib_thickness)/2, +rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([+(rib_spacing - rib_thickness)/2, +rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+    }
+  }
+}
+
+module thumb_side_supports() {
   placement = thumb_place_transformation(1, 0);
   difference() {
     multmatrix(placement)
     rotate_down(placement)
     translate([0, 0, -30]) {
-      cube([rib_spacing + 4, rib_thickness, 30], center=true);
-      translate([0, -rib_spacing, 0]) cube([rib_spacing + 4, rib_thickness, 30], center=true);
+      cube([rib_spacing + 6, rib_thickness, 30], center=true);
+      translate([0, -rib_spacing, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
     }
 
     translate([0, 0, -100]) cube(200, center=true);
+
+    multmatrix(placement)
+    rotate_down(placement)
+    translate([0, 0, -(15 + rib_thickness*.75*.5)]) {
+      translate([-(rib_spacing - rib_thickness)/2, -rib_spacing, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([+(rib_spacing - rib_thickness)/2, -rib_spacing, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([-(rib_spacing - rib_thickness)/2, 0, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+      translate([+(rib_spacing - rib_thickness)/2, 0, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
+    }
   }
 }
 
@@ -244,8 +266,12 @@ module front_thumb_end_caps() {
 
 main_layout();
 thumb_layout();
-color("burlywood") main_supports();
-color("burlywood") thumb_supports();
+
+main_supports();
+side_supports();
+thumb_supports();
+thumb_side_supports();
+
 
 color("brown") {
   back_end_caps();
