@@ -5,7 +5,7 @@ use <structures.scad>
 use <util.scad>
 
 module key (w=1, h=1) {
-  color("slategrey") plate(w, h);
+  plate(w, h);
   switch();
 
   translate([0, 0, 4])
@@ -23,7 +23,7 @@ module main_layout() {
   place_keys([1], [4]) key();
 
   // modifier key column
-  place_keys([5], [0:3]) translate([plate_length/4, 0, 0]) key(w=1.5);
+  place_keys([5], [0:3]) translate([plate_width/4, 0, 0]) key(w=1.5);
 
   // inner key column
   // this seems difficult to include with the thumb cluster.
@@ -94,7 +94,7 @@ module main_supports() {
   }
 
   // outer column
-  translate([plate_length / 4, 0, 0])
+  translate([plate_width / 4, 0, 0])
   difference() {
     place_column_ribs([5]) column_rib(1, 4, 40);
 

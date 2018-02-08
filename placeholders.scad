@@ -34,24 +34,28 @@ module keycap(w, h) {
 }
 
 module plate (w=1, h=1) {
-  width = plate_length * w;
-  height = plate_length * h;
+  width = plate_width * w;
+  height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
 
   translate([0, 0, -plate_thickness/2])
   difference () {
     cube([width, height, plate_thickness], center=true);
-    translate([rib_offset, height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
-    translate([-rib_offset, height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
-    translate([rib_offset, -height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
-    translate([-rib_offset, -height / 2, 0]) scale(1.15) cube([rib_thickness, rib_thickness/2, plate_thickness], center=true);
     scale([1, 1, 2]) cutout();
+    mirror_quadrants()
+      translate([rib_offset, height / 2, 0])
+      scale(1.15)
+      cube([
+        rib_thickness,
+        rib_thickness/2,
+        plate_thickness
+      ], center=true);
   }
 }
 
 module key_well (w=1, h=1) {
-  width = plate_length * w;
-  height = plate_length * h;
+  width = plate_width * w;
+  height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
 
   cube([16, 15, 10.5], center=true);
