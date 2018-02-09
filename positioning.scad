@@ -71,6 +71,22 @@ function thumb_place_transformation (column, row) = (
   * translation([0, 0, -thumb_row_radius])
 );
 
+function inverted_thumb_place_transformation (column, row) = (
+  let(column_angle = beta * column)
+  let(row_angle = alpha * row)
+
+  translation(-[0, 0, -thumb_row_radius])
+  * rotation(-[row_angle, 0, 0])
+  * translation(-[0, 0, thumb_row_radius])
+  * translation(-[0, 0, -thumb_column_radius])
+  * rotation(-[0, column_angle, 0])
+  * translation(-[0, 0, thumb_column_radius])
+  * translation(-[mount_width, 0, 0])
+  * rotation([0, 0, -180 * (.25 - .1875)])
+  * rotation(axis=-alpha * unit([1, 1, 0]))
+  * translation(-[-52, -45, 40])
+);
+
 module place_thumb_column_ribs(columns, row=1) {
   place_thumb_column_rib_left(columns, row) children();
   place_thumb_column_rib_right(columns, row) children();
