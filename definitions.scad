@@ -3,6 +3,19 @@ X = [1, 0, 0];
 Y = [0, 1, 0];
 Z = [0, 0, 1];
 
+column_offset_index = [0, 0, 0];
+column_offset_middle = [0, 2.82, -3.0]; // was moved -4.5
+column_offset_ring = [0, 0, 0];
+column_offset_pinky = [0, -5.8, 5.64];
+column_offsets = [
+  column_offset_index,
+  column_offset_index,
+  column_offset_middle,
+  column_offset_ring,
+  column_offset_pinky,
+  column_offset_pinky
+];
+
 keyswitch_height = 14.4; // Was 14.1, then 14.25
 keyswitch_width = 14.4;
 
@@ -15,14 +28,14 @@ keywall_thickness = 1.5;
 
 sa_profile_key_height = 12.7;
 
-plate_thickness = 2;
-plate_vertical_padding = 2.5;
+plate_thickness = 3;
+plate_vertical_padding = 3;
 plate_horizontal_padding = 2.5;
 
 plate_width = keyhole_length + 2 * plate_horizontal_padding;
 plate_height = keyhole_length + 2 * plate_vertical_padding;
 
-rib_thickness = 3.2;
+rib_thickness = 3;
 rib_spacing = 14 + rib_thickness/2;
 rib_extension = .6;
 

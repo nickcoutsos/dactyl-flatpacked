@@ -16,11 +16,7 @@ module key_place(column, row) {
 function key_place_transformation(column, row) = (
   let(row_angle = alpha * (2 - row))
   let(column_angle = beta * (2 - column))
-  let(column_offset = column == 2
-    ? [0, 2.82, -3.0] // was moved -4.5
-    : (column >= 4
-      ? [0, -5.8, 5.64]
-      : [0, 0, 0]))
+  let(column_offset = column_offsets[column])
 
   translation([0, 0, 13])
   * rotation(alpha * Y)

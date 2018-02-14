@@ -1,9 +1,10 @@
 include <definitions.scad>
 
-module fan(inner, outer, start, end) {
+module fan(inner, outer, start, end, steps=10) {
+  segments = (end - start) / steps;
   polygon(concat(
-    [ for (i=[start:end]) [inner * cos(i), inner * sin(i)] ],
-    [ for (i=[start:end]) [outer * cos(end-i+start), outer * sin(end-i+start)] ]
+    [ for (i=[0:steps]) [inner * cos(start + i * segments), inner * sin(start + i * segments)] ],
+    [ for (i=[0:steps]) [outer * cos(start + (steps - i) * segments), outer * sin(start + (steps - i) * segments)] ]
   ));
 }
 
