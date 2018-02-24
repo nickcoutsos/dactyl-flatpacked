@@ -35,15 +35,8 @@ module thumb_support_curve() {
 module main_support_inner_column() {
   // inner column
   difference() {
-    place_column_ribs([0]) column_rib(1, 4, 20);
+    place_column_ribs([0]) column_rib(1, 4);
     place_keys([0], [0:3]) key_well();
-
-    place_keys([0], 3.5) main_support_curve();
-    place_keys([0], -rib_extension) main_support_curve();
-    place_keys([0], -rib_extension) support_joint();
-    place_keys([0], 3+rib_extension) support_joint();
-
-    translate([0, 0, -100]) cube(200, center=true);
   }
 }
 
@@ -52,8 +45,6 @@ module main_support_columns(columns=[1:4]) {
   difference() {
     place_column_ribs(columns) column_rib(0, 4);
     place_keys(columns, [0:4]) key_well();
-    place_keys(columns, -rib_extension) support_joint();
-    place_keys(columns, 4 + rib_extension) support_joint();
   }
 }
 
@@ -61,22 +52,14 @@ module main_support_outer_column() {
   // outer column
   translate([plate_width / 4, 0, 0])
   difference() {
-    place_column_ribs([5]) column_rib(1, 4, 40);
-
+    place_column_ribs([5]) column_rib(1, 4);
     place_keys([5], [0:3]) key_well();
-
-    place_keys([5], 3.5) main_support_curve();
-    place_keys([5], -rib_extension) main_support_curve();
-    place_keys([5], -rib_extension) support_joint();
-
-    translate([0, 0, -100]) cube(200, center=true);
   }
 
   // corner key
   difference() {
     place_column_ribs([5]) column_rib(0, 0);
     place_keys([5], [4]) key_well();
-    place_keys([5], 4 + rib_extension) support_joint();
   }
 }
 
@@ -84,16 +67,8 @@ module main_support_outer_column_single() {
   // outer column
   // translate([plate_width / 4, 0, 0])
   difference() {
-    place_column_ribs([5]) column_rib(0, 4, 40);
-
+    place_column_ribs([5]) column_rib(0, 4);
     place_keys([5], [0:4]) key_well();
-
-    place_keys([5], 4.5) main_support_curve();
-    place_keys([5], -rib_extension) main_support_curve();
-    place_keys([5], -rib_extension) support_joint();
-    place_keys([5], 4 + rib_extension) support_joint();
-
-    translate([0, 0, -100]) cube(200, center=true);
   }
 
   // todo: fix this stuff
@@ -109,8 +84,6 @@ module thumb_supports_col1() {
   difference() {
     place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
     place_thumb_keys([2], [-1:1]) key_well();
-    place_thumb_keys([2], -(1 + rib_extension)) support_joint();
-    place_thumb_keys([2], (1 + rib_extension)) support_joint();
   }
 }
 
@@ -118,24 +91,16 @@ module thumb_supports_col2() {
   difference() {
     place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
     place_thumb_keys([0], [-.5]) key_well(h=2);
-    place_thumb_keys([0], -(1 + rib_extension)) support_joint();
-    place_thumb_keys([0], (-.5 + rib_extension)) short_support_joint();
   }
 }
 
 module thumb_supports_col3() {
   difference() {
-    place_thumb_column_ribs([1]) thumb_column_rib(0, 2, 20);
+    place_thumb_column_ribs([1]) thumb_column_rib(0, 2);
     place_thumb_keys([1], [1]) key_well();
     place_thumb_keys([1], [-.5]) key_well(h=2);
-    place_thumb_keys([1], -(1 + rib_extension)) support_joint();
-    place_thumb_keys([1], (1 + rib_extension)) support_joint();
-    place_thumb_keys([1], (1 + rib_extension)) thumb_support_curve();
-    place_thumb_keys([1], -(1 + rib_extension)) thumb_support_curve();
 
     translate([-70, -40, -80]) cube(160, center=true);
-
-    place_thumb_column_ribs([1], [1.5]) thumb_support_curve();
   }
 }
 
