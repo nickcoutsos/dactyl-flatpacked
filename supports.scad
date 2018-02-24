@@ -4,6 +4,8 @@ use <placeholders.scad>
 use <structures.scad>
 use <util.scad>
 
+use <scad-utils/transformations.scad>
+
 module main_support_curve() {
   radius = main_column_radius / 4;
   offset = radius + column_rib_height;
@@ -193,4 +195,63 @@ module thumb_side_supports() {
       translate([+(rib_spacing - rib_thickness)/2, 0, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
     }
   }
+}
+
+module cross_support(matrix, radius, start, end, corner_radius=2) {
+  steps = $fn ? $fn : 60;
+  segments = (end - start) / steps;
+  downward = rotation_down(matrix);
+
+  transform = matrix
+    * translation([0, 0, -column_rib_height - 2])
+    * downward
+    * translation([0, 0, radius])
+    * rotation([90, 0, 0])
+    ;
+
+  points = [for (i=[0:steps]) (radius - 4) * [
+    cos(start + i * segments),
+    sin(start + i * segments),
+    0
+  ]];
+
+  transformed=[ for (p=points) apply_matrix(p, transform) ];
+  first = transformed[0];
+  last = transformed[len(transformed)-1];
+
+  extruded_polygon(concat(
+    transformed,
+    [
+      for (a=[0:steps])
+      [last.x, last.y, last.z] -
+      [cos(90-a/steps*90), 0, 1-sin(90-a/steps*90)] * corner_radius
+    ],
+    [
+      [last.x - corner_radius, last.y, 0],
+      [first.x + corner_radius, first.y, 0]
+    ],
+    [
+      for (a=[0:steps])
+      [first.x, first.y, first.z] +
+      [cos(a/steps*90), 0, sin(a/steps*90) - 1] * corner_radius
+    ]
+  ), rib_thickness);
+}
+
+module main_cross_support(row, start, end) {
+  cross_support(
+    key_place_transformation(2, row),
+    main_column_radius,
+    -90 + beta * start,
+    -90 + beta * end
+  );
+}
+
+module thumb_cross_support(row, start, end) {
+  cross_support(
+    thumb_place_transformation(1, row),
+    thumb_column_radius,
+    -90 + beta * start,
+    -90 + beta * end
+  );
 }
