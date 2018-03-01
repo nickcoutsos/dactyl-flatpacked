@@ -452,3 +452,20 @@ module thumb_cross_support(row, start, end) {
     -90 + beta * end
   );
 }
+
+
+module main_front_cross_support() {
+  difference() { main_cross_support(4.5, 3.9, -1.3); main_supports(); }
+}
+
+module main_back_cross_support() {
+  difference() { main_cross_support(-0.5, 3.9, -2.5); main_supports(); }
+}
+
+module thumb_front_cross_support() {
+  difference() { thumb_cross_support(-1.5, 1.5, -1.5); thumb_supports(); }
+}
+
+module thumb_back_cross_support() {
+  difference() { thumb_cross_support(1.4, .5, -1.6); thumb_supports(); }
+}
