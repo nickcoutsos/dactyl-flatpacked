@@ -42,8 +42,9 @@ module plate (w=1, h=1) {
   difference () {
     cube([width, height, plate_thickness], center=true);
     scale([1, 1, 2]) cutout();
+
     mirror_quadrants()
-      translate([rib_offset, height / 2, 0])
+      translate([rib_offset * w, height / 2, 0])
       scale(1.15)
       cube([
         rib_thickness,
@@ -63,14 +64,5 @@ module key_well (w=1, h=1) {
 }
 
 module cutout () {
-  cube([14.4, 14.4, plate_thickness], center=true);
-  translate([-6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
-  translate([ 6.8, -6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
-  translate([ 6.8,  6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
-  translate([-6.8,  6.8, 0]) cylinder(r=0.4, h=plate_thickness, $fn=12, center=true);
-
-  translate([-7, -3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
-  translate([ 7, -3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
-  translate([ 7,  3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
-  translate([-7,  3.75, 0]) cube([1.6, 3.5, plate_thickness], center=true);
+  cube([keyhole_length, keyhole_length, plate_thickness], center=true);
 }
