@@ -23,14 +23,14 @@ keycap_length = 18.1;
 keycap_inner_length = 12.37;
 keycap_height = 9.39;
 
-keyhole_length = 14.4;
+keyhole_length = 14;
 keywall_thickness = 1.5;
 
 sa_profile_key_height = 12.7;
 
 plate_thickness = 3;
 plate_vertical_padding = 3;
-plate_horizontal_padding = 2.5;
+plate_horizontal_padding = 2.4;
 
 plate_width = keyhole_length + 2 * plate_horizontal_padding;
 plate_height = keyhole_length + 2 * plate_vertical_padding;
