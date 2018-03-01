@@ -33,18 +33,40 @@ module thumb_support_curve() {
 }
 
 module main_support_inner_column() {
-  // inner column
+  offset = rib_spacing/2 - rib_thickness/2;
+
   difference() {
-    place_column_ribs([0]) column_rib(1, 4);
+    union() {
+      place_column_ribs([0]) column_rib(1, 4);
+      for (side=[-offset, offset]) {
+        main_support_back(0, side);
+      }
+    }
+
     place_keys([0], [0:3]) key_well();
+    for (side=[-offset, offset]) {
+      main_support_back_slot(0, side);
+    }
   }
 }
 
 module main_support_columns(columns=[1:4]) {
-  // main columns
+  offset = rib_spacing/2 - rib_thickness/2;
+
   difference() {
-    place_column_ribs(columns) column_rib(0, 4);
+    union() {
+      place_column_ribs(columns) column_rib(0, 4);
+      for (col=columns, side=[-offset, offset]) {
+        main_support_front(col, side);
+        main_support_back(col, side);
+      }
+    }
+
     place_keys(columns, [0:4]) key_well();
+    for (col=columns, side=[-offset, offset]) {
+      main_support_front_slot(col, side);
+      main_support_back_slot(col, side);
+    }
   }
 }
 
@@ -64,11 +86,27 @@ module main_support_outer_column() {
 }
 
 module main_support_outer_column_single() {
+  offset = rib_spacing*1.5/2 - rib_thickness*1.5/2;
+
   // outer column
-  // translate([plate_width / 4, 0, 0])
+  translate([plate_width / 4, 0, 0])
   difference() {
-    place_column_ribs([5]) column_rib(0, 4);
-    place_keys([5], [0:4]) key_well();
+    union() {
+      for (side=[-offset, offset]) {
+        translate([side, 0, 0]) place_keys([5], 2) column_rib(0, 4);
+        main_support_front(5, side);
+        main_support_back(5, side);
+      }
+    }
+
+    for (side=[-offset, offset]) {
+      place_keys([5], [0:4])
+      translate([side, 0, 0])
+        key_well();
+
+      main_support_front_slot(5, side);
+      main_support_back_slot(5, side);
+    }
   }
 
   // todo: fix this stuff
@@ -80,28 +118,222 @@ module main_support_outer_column_single() {
   // }
 }
 
+module main_support_front(col, offset) {
+  hull_pairs() {
+    place_keys(col, 4 + rib_extension)
+    translate([offset, 0, -1])
+    rotate([0, 90, 0])
+    cylinder(r=1, h=rib_thickness, center=true);
+
+    place_keys(col, 4 + rib_extension)
+    translate([offset, 0, -column_rib_height])
+    rotate([0, 90, 0])
+    cylinder(r=2, h=rib_thickness, center=true);
+
+    place_keys(col, 4.5)
+    translate([offset, 0, -column_rib_height])
+    rotate([-alpha*(2-4.5), 0, 0])
+    translate(column_offset_middle)
+    translate(-column_offsets[col])
+      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+
+    place_keys(col, 2)
+    translate([offset, 0, main_row_radius])
+    rotate([0, 90, 0])
+      linear_extrude(rib_thickness, center=true)
+      fan(
+        (main_row_radius+column_rib_height-.01),
+        main_row_radius+column_rib_height,
+        -alpha*(1 +  rib_extension),
+        -alpha
+      );
+  }
+}
+
+module main_support_back(col, offset) {
+  hull_pairs() {
+    place_keys(col, - rib_extension)
+    translate([offset, 0, -1])
+    rotate([0, 90, 0])
+    cylinder(r=1, h=rib_thickness, center=true);
+
+    place_keys(col, - rib_extension)
+    translate([offset, 0, -column_rib_height])
+    rotate([0, 90, 0])
+    cylinder(r=4, h=rib_thickness, center=true);
+
+    place_keys(col, -.5)
+    translate([offset, 0, -column_rib_height])
+    rotate([-alpha*(2.5), 0, 0])
+    translate(column_offset_middle)
+    translate(-column_offsets[col])
+      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+
+    place_keys(col, 2)
+    translate([offset, 0, main_row_radius])
+    rotate([0, 90, 0])
+      linear_extrude(rib_thickness, center=true)
+      fan(
+        (main_row_radius+column_rib_height-.01),
+        main_row_radius+column_rib_height,
+        -alpha*(-2 - rib_extension),
+        -alpha*-1.5
+      );
+  }
+}
+
+module main_support_front_slot(col, offset) {
+  place_keys(col, 4.5)
+  translate([offset, 0, -column_rib_height])
+  rotate([-alpha*(2-4.5), 0, 0])
+  translate(column_offset_middle)
+  translate(-column_offsets[col])
+  translate([0, 0, -5])
+    cube([rib_thickness+1, rib_thickness, 10], center=true);
+}
+
+module main_support_back_slot(col, offset) {
+  place_keys(col, -.5)
+  translate([offset, 0, -column_rib_height])
+  rotate([-alpha*(2.5), 0, 0])
+  translate(column_offset_middle)
+  translate(-column_offsets[col])
+  translate([0, 0, -5])
+    cube([rib_thickness+1, rib_thickness, 10], center=true);
+}
+
 module thumb_supports_col1() {
+  offset = rib_spacing/2 - rib_thickness/2;
+
   difference() {
-    place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
+    union() {
+      place_thumb_column_ribs([2]) thumb_column_rib(0, 2);
+      for (side=[-offset, offset]) {
+        thumb_support_front(2, side);
+        thumb_support_back(2, side);
+      }
+    }
+
     place_thumb_keys([2], [-1:1]) key_well();
+    for (side=[-offset, offset]) {
+      thumb_support_front_slot(2, side);
+      thumb_support_back_slot(2, side);
+    }
   }
 }
 
 module thumb_supports_col2() {
+  offset = rib_spacing/2 - rib_thickness/2;
+
   difference() {
-    place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
+    union() {
+      place_thumb_column_ribs([0]) thumb_column_rib(0, .5);
+      for (side=[-offset, offset]) {
+        thumb_support_front(0, side);
+      }
+    }
+
     place_thumb_keys([0], [-.5]) key_well(h=2);
+    for (side=[-offset, offset]) {
+      thumb_support_front_slot(0, side);
+      thumb_support_back_slot(0, side);
+    }
   }
 }
 
 module thumb_supports_col3() {
+  offset = rib_spacing/2 - rib_thickness/2;
+
   difference() {
-    place_thumb_column_ribs([1]) thumb_column_rib(0, 2);
+    // place_thumb_column_ribs([1]) thumb_column_rib(0, 2);
+    union() {
+      place_thumb_column_ribs([1]) thumb_column_rib(0, 2);
+      for (side=[-offset, offset]) {
+        thumb_support_front(1, side);
+        thumb_support_back(1, side);
+      }
+    }
     place_thumb_keys([1], [1]) key_well();
     place_thumb_keys([1], [-.5]) key_well(h=2);
-
-    translate([-70, -40, -80]) cube(160, center=true);
+    for (side=[-offset, offset]) {
+      thumb_support_front_slot(1, side);
+      thumb_support_back_slot(1, side);
+    }
   }
+}
+
+module thumb_support_front(col, offset) {
+  hull_pairs() {
+    thumb_place(col, -1 - rib_extension)
+    translate([offset, 0, -1])
+    rotate([0, 90, 0])
+    cylinder(r=1, h=rib_thickness, center=true);
+
+    thumb_place(col, -1.5)
+    translate([0, 0, -column_rib_height])
+    translate([offset, 0, 0])
+      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+
+    thumb_place(col, -1)
+    translate([offset, 0, thumb_row_radius])
+    rotate([0, 90, 0])
+      linear_extrude(rib_thickness, center=true)
+      fan(
+        (thumb_row_radius+column_rib_height-.01),
+        thumb_row_radius+column_rib_height,
+        alpha*-0.5,
+        alpha*0.5
+      );
+  }
+}
+
+module thumb_support_back(col, offset) {
+  hull_pairs() {
+    thumb_place(col, 1 + rib_extension)
+    translate([offset, 0, -1])
+    rotate([0, 90, 0])
+    cylinder(r=1, h=rib_thickness, center=true);
+
+    thumb_place(col, 1.5)
+    translate([offset, 0, -column_rib_height])
+      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+
+    thumb_place(col, 1)
+    translate([offset, 0, thumb_row_radius])
+    rotate([0, 90, 0])
+      linear_extrude(rib_thickness, center=true)
+      fan(
+        (thumb_row_radius+column_rib_height-.01),
+        thumb_row_radius+column_rib_height,
+        alpha*-0.5,
+        alpha*0.5
+      );
+  }
+}
+
+
+module thumb_support_front_slot(col, offset) {
+  thumb_place(1, -1.5)
+  translate([offset, 0, 0])
+  translate([0, 0, -column_rib_height])
+  rotate_down(thumb_place_transformation(1, -1.5))
+  translate([0, 0, thumb_column_radius])
+  rotate([0, beta * (col - 1), 0])
+  translate([0, 0, -thumb_column_radius])
+  translate([0, 0, -4])
+    cube([rib_thickness+1, rib_thickness, 10], center=true);
+}
+
+module thumb_support_back_slot(col, offset) {
+  thumb_place(1, 1.4)
+  translate([offset, 0, 0])
+  translate([0, 0, -column_rib_height])
+  rotate_down(thumb_place_transformation(1, 1.4))
+  translate([0, 0, thumb_column_radius])
+  rotate([0, beta * (col - 1), 0])
+  translate([0, 0, -thumb_column_radius])
+  translate([0, 0, -4])
+    cube([rib_thickness+1, rib_thickness, 10], center=true);
 }
 
 module side_supports() {
@@ -168,7 +400,7 @@ module cross_support(matrix, radius, start, end, corner_radius=2) {
   downward = rotation_down(matrix);
 
   transform = matrix
-    * translation([0, 0, -column_rib_height - 2])
+    * translation([0, 0, -column_rib_height])
     * downward
     * translation([0, 0, radius])
     * rotation([90, 0, 0])
