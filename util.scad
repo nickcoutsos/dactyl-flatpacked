@@ -10,6 +10,11 @@ Z = [0, 0, 1, 1];
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];
 
+function angleTo (a, b) = acos(
+  ( take3(unit(a)) * take3(unit(b)) ) /
+  ( norm(take3(unit(a))) * norm(take3(unit(b))) )
+);
+
 function rotation_down(matrix, invert=false) = (
   let(localOrigin = matrix * ORIGIN)
   let(localX = (matrix * X) - localOrigin)
@@ -23,7 +28,7 @@ function rotation_down(matrix, invert=false) = (
     ( norm(take3(projectedZ)) * norm(take3(localY)) )
   ))
 
-  rotation([invert ? -1 : 1 * angle, 0, 0])
+  rotation([(invert ? -1 : 1) * angle, 0, 0])
 );
 
 // Given a known matrix transformation "from", rotate about the local X-axis

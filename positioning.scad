@@ -29,6 +29,22 @@ function key_place_transformation(column, row) = (
   * translation([0, 0, -main_row_radius])
 );
 
+function un_key_place_transformation(column, row) = (
+  let(row_angle = alpha * (2 - row))
+  let(column_angle = beta * (2 - column))
+  let(column_offset = column_offsets[column])
+
+  translation(-[0, 0, -main_row_radius])
+  * rotation(-row_angle * X)
+  * translation(-[0, 0, main_row_radius])
+  * translation(-[0, 0, -main_column_radius])
+  * rotation(-column_angle * Y)
+  * translation(-[0, 0, main_column_radius])
+  * translation(-column_offset)
+  * rotation(-alpha * Y)
+  * translation(-[0, 0, 13])
+);
+
 module place_column_ribs(columns, row=2, spacing=rib_spacing) {
   place_column_rib_left(columns, row, spacing) children();
   place_column_rib_right(columns, row, spacing) children();

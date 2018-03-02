@@ -50,19 +50,12 @@ module thumb_layout() {
 //   thumb_layout();
 // }
 
-
-place_keys([0,1], 2.5)
-translate([0, 0, -column_rib_height])
-cube([rib_spacing*1.39, rib_thickness, column_rib_height/2], center=true);
-
-place_thumb_keys(0, -.1) translate([-rib_spacing/8, 0, -column_rib_height]) cube([rib_spacing*1.25, rib_thickness, column_rib_height/2], center=true);
-place_thumb_keys(1, -.1) translate([+rib_spacing/8, 0, -column_rib_height]) cube([rib_spacing*1.25, rib_thickness, column_rib_height/2], center=true);
-
-
 main_supports();
-thumb_supports();
-
+main_inner_column_cross_support();
 main_front_cross_support();
 main_back_cross_support();
+
+thumb_supports();
+thumb_inner_column_cross_support();
 thumb_front_cross_support();
 thumb_back_cross_support();
