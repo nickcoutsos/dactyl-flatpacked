@@ -33,7 +33,7 @@ module keycap(w, h) {
   }
 }
 
-module plate (w=1, h=1) {
+module plate (w=1, h=1, w_offset=0, h_offset=0) {
   width = plate_width * w;
   height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
@@ -41,6 +41,7 @@ module plate (w=1, h=1) {
   translate([0, 0, -plate_thickness/2])
   difference () {
     cube([width, height, plate_thickness], center=true);
+    translate([-plate_width * w_offset, 0, 0])
     scale([1, 1, 2]) cutout();
 
     mirror_quadrants()

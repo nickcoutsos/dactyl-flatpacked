@@ -74,5 +74,11 @@ projection()
   multmatrix(thumb_column_undown)
   multmatrix(thumb_column_invert)
   thumb_inner_column_cross_support();
+
+  for (x=[0:14], y=[0,1]) translate([x * (plate_width+1) - 150, y * (plate_height+1)-165, 0]) plate(1, 1);
+  for (x=[0:4]) translate([x * (plate_width*1.5+1) - 115, -190, 0]) plate(1.5, 1);
+  translate([-145, -190, 0]) plate(1.5, 1, w_offset=.25);
+
+  for (x=[0,1]) translate([x * (plate_height*2+1) + 40, -190, 0]) rotate([0, 0, 90]) plate(1, 2);
 }
 
