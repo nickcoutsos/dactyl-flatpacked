@@ -50,7 +50,7 @@ module main_support_inner_column() {
 
     place_column_ribs(0, 2.5)
     translate([0, 0, -column_rib_height])
-    cube([rib_thickness, rib_thickness, column_rib_height/2], center=true);
+    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
 }
 
@@ -74,7 +74,7 @@ module main_support_columns(columns=[1:4]) {
 
     place_column_ribs(1, 2.5)
     translate([0, 0, -column_rib_height])
-    cube([rib_thickness, rib_thickness, column_rib_height/2], center=true);
+    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
 }
 
@@ -152,7 +152,7 @@ module main_support_front(col, offset) {
       rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
 
     place_keys(col, 2)
-    translate([offset, 0, main_row_radius+.01])
+    translate([offset, 0, main_row_radius+.2])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
@@ -184,7 +184,7 @@ module main_support_back(col, offset) {
       rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
 
     place_keys(col, 2)
-    translate([offset, 0, main_row_radius])
+    translate([offset, 0, main_row_radius+.2])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
@@ -255,7 +255,7 @@ module thumb_supports_col2() {
 
     place_thumb_column_ribs(0, -.05)
     translate([0, 0, -column_rib_height])
-    cube([rib_thickness, rib_thickness, column_rib_height/2], center=true);
+    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
 }
 
@@ -280,7 +280,7 @@ module thumb_supports_col3() {
 
     place_thumb_column_ribs(1, -.05)
     translate([0, 0, -column_rib_height])
-    cube([rib_thickness, rib_thickness, column_rib_height/2], center=true);
+    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
 }
 

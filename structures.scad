@@ -1,7 +1,9 @@
 include <definitions.scad>
 use <placeholders.scad>
 
-module fan(inner, outer, start, end, steps=10) {
+module fan(inner, outer, start, end) {
+  steps = $fn ? $fn : 60;
+
   segments = (end - start) / steps;
   polygon(concat(
     [ for (i=[0:steps]) [inner * cos(start + i * segments), inner * sin(start + i * segments)] ],
