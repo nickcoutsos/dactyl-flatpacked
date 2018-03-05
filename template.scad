@@ -4,12 +4,12 @@ use <util.scad>
 use <placeholders.scad>
 include <definitions.scad>
 
-$fn = 120;
+$fn = 12;
 
-projection()
+// projection()
 {
   for (col=[0:5], i=[0,1]) {
-    translate([col*50 + i * 25 - 150, 0, 0])
+    translate([col*55 + i * 27 - 150, 0, 0])
     rotate([0, 90, 0])
     multmatrix(un_key_place_transformation(col, 2))
     main_support_column(col);
@@ -60,18 +60,16 @@ projection()
   translate([120, -120, 0]) rotate([90, 0, 180]) main_front_cross_support();
   translate([60, -70, 0]) rotate([90, 0, 0]) main_back_cross_support();
 
-  translate([30, -70, 0])
+  translate([30, -75, 0])
   rotate([90, 0, 0])
   multmatrix(un_key_place_transformation(0, 2.5))
   main_inner_column_cross_support();
 
-  thumb_column_matrix = thumb_place_transformation(0, -.05);
-  thumb_column_invert = inverted_thumb_place_transformation(0, -.05);
-  thumb_column_undown = rotation_down(thumb_column_matrix, invert=true);
+  thumb_column_matrix = thumb_place_transformation(0, -.15);
+  thumb_column_invert = inverted_thumb_place_transformation(0, -.15);
 
-  translate([100, -58, 0])
+  translate([100, -55, 0])
   rotate([-90, 0, 0])
-  multmatrix(thumb_column_undown)
   multmatrix(thumb_column_invert)
   thumb_inner_column_cross_support();
 

@@ -134,19 +134,19 @@ module main_support_outer_column_single() {
 
 module main_support_front(col, offset) {
   hull_pairs() {
-    place_keys(col, 4 + rib_extension)
-    translate([offset, 0, -1])
-    rotate([0, 90, 0])
-    cylinder(r=1, h=rib_thickness, center=true);
+    // place_keys(col, 4 + rib_extension)
+    // translate([offset, 0, -1])
+    // rotate([0, 90, 0])
+    // cylinder(r=1, h=rib_thickness, center=true);
 
-    place_keys(col, 4 + rib_extension)
-    translate([offset, 0, -column_rib_height])
-    rotate([0, 90, 0])
-    cylinder(r=2, h=rib_thickness, center=true);
+    // place_keys(col, 4 + rib_extension)
+    // translate([offset, 0, -column_rib_height])
+    // rotate([0, 90, 0])
+    // cylinder(r=2, h=rib_thickness, center=true);
 
-    place_keys(col, 4.5)
+    place_keys(col, 4)
     translate([offset, 0, -column_rib_height])
-    rotate([-alpha*(2-4.5), 0, 0])
+    rotate([-alpha*(2-4), 0, 0])
     translate(column_offset_middle)
     translate(-column_offsets[col])
       rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
@@ -158,8 +158,8 @@ module main_support_front(col, offset) {
       fan(
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
-        -alpha*(1 +  rib_extension),
-        -alpha
+        -alpha*(2.3),
+        -alpha*-1
       );
   }
 }
@@ -191,15 +191,15 @@ module main_support_back(col, offset) {
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
         -alpha*(-2 - rib_extension),
-        -alpha*-1.5
+        -alpha*-1
       );
   }
 }
 
 module main_support_front_slot(col, offset) {
-  place_keys(col, 4.5)
+  place_keys(col, 4)
   translate([offset, 0, -column_rib_height])
-  rotate([-alpha*(2-4.5), 0, 0])
+  rotate([-alpha*(2-4), 0, 0])
   translate(column_offset_middle)
   translate(-column_offsets[col])
   translate([0, 0, -5])
@@ -247,13 +247,20 @@ module thumb_supports_col2() {
       }
     }
 
+    place_thumb_column_ribs(0, -.15)
+    translate([0, 0, -column_rib_height/2])
+    difference() {
+      rotate([-90, 0, 0]) translate([-rib_thickness, 0, 0]) cube([rib_thickness*2, column_rib_height, column_rib_height]);
+      rotate([0, 90, 0]) cylinder(r=column_rib_height/2, h=rib_thickness, center=true);
+    }
+
     place_thumb_keys([0], [-.5]) key_well(h=2);
     for (side=[-offset, offset]) {
       thumb_support_front_slot(0, side);
       thumb_support_back_slot(0, side);
     }
 
-    place_thumb_column_ribs(0, -.05)
+    place_thumb_column_ribs(0, -.15)
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
@@ -278,7 +285,7 @@ module thumb_supports_col3() {
       thumb_support_back_slot(1, side);
     }
 
-    place_thumb_column_ribs(1, -.05)
+    place_thumb_column_ribs(1, -.15)
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
@@ -485,13 +492,13 @@ module thumb_cross_support(row, start, end) {
 module main_front_cross_support() {
   offset = rib_spacing/2 - rib_thickness/2;
   difference() {
-    main_cross_support(4.5, 3.9, -1.33);
+    main_cross_support(4, 3.9, -1.33);
     main_supports();
 
 
-    place_keys(1, 4.5)
+    place_keys(1, 4)
     translate([-offset - 5, 0, -column_rib_height])
-    rotate([-alpha*(2-4.5), 0, 0])
+    rotate([-alpha*(2-4), 0, 0])
     translate(column_offset_middle)
     translate(-column_offsets[1])
     translate([0, 0, column_rib_height/2])
@@ -525,20 +532,20 @@ module thumb_front_cross_support() {
 }
 
 module thumb_back_cross_support() {
-  difference() { thumb_cross_support(1.4, .5, -1.6); thumb_supports(); }
+  difference() { thumb_cross_support(1.4, .35, -1.6); thumb_supports(); }
 }
 
 module thumb_inner_column_cross_support() {
   difference() {
-    thumb_place(0, -.05)
+    thumb_place(0, -.15)
     rotate([90, 0, 0])
     translate([0, thumb_column_radius, 0])
     linear_extrude(height=rib_thickness, center=true)
     fan(
       thumb_column_radius+column_rib_height/2,
       thumb_column_radius+column_rib_height,
-      -90 + beta * -1.5,
-      -90 + beta * .5
+      -90 + beta * -1.45,
+      -90 + beta * .45
     );
 
     thumb_supports();
