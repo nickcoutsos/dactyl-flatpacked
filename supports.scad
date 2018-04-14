@@ -75,6 +75,18 @@ module main_support_columns(columns=[1:4]) {
     place_column_ribs(1, 2.5)
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
+
+    place_column_ribs(2, 2)
+    translate([0, 0, -column_rib_height])
+    translate([0, 0, 1.8])
+    translate([0, 0, -5])
+    cube([rib_thickness + 1, 40, 10], center=true);
+
+    place_column_ribs(3, 2)
+    translate([0, 0, -column_rib_height])
+    translate([0, 0, 3])
+    translate([0, 0, -5])
+    cube([rib_thickness + 1, 60, 10], center=true);
   }
 }
 
