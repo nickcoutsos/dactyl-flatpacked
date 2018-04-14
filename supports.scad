@@ -361,11 +361,11 @@ module thumb_support_back(col, offset) {
 
 module thumb_support_front_slot(col, offset) {
   thumb_place(1, -1.5)
-  translate([offset, 0, 0])
   translate([0, 0, -column_rib_height])
   rotate_down(thumb_place_transformation(1, -1.5))
   translate([0, 0, thumb_column_radius])
   rotate([0, beta * (col - 1), 0])
+  translate([offset, 0, 0])
   translate([0, 0, -thumb_column_radius])
   translate([0, 0, -4])
     cube([rib_thickness+1, rib_thickness, 10], center=true);
@@ -373,11 +373,11 @@ module thumb_support_front_slot(col, offset) {
 
 module thumb_support_back_slot(col, offset) {
   thumb_place(1, 1.4)
-  translate([offset, 0, 0])
   translate([0, 0, -column_rib_height])
   rotate_down(thumb_place_transformation(1, 1.4))
   translate([0, 0, thumb_column_radius])
   rotate([0, beta * (col - 1), 0])
+  translate([offset, 0, 0])
   translate([0, 0, -thumb_column_radius])
   translate([0, 0, -4])
     cube([rib_thickness+1, rib_thickness, 10], center=true);
