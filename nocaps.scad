@@ -24,13 +24,20 @@ module main_layout() {
   place_keys([0:4], [0:3]) key();
 
   // bottom row (mostly)
-  place_keys([2:5], [4]) key();
+  place_keys([2:4], [4]) key();
 
   // this key plate intersects the thumb cluster
   place_keys([1], [4]) key();
 
   // modifier key column
   place_keys([5], [0:3]) translate([plate_width/4, 0, 0]) key(w=1.5);
+
+  // corner key
+  place_keys([5], [4]) {
+    translate([plate_width/4, 0, 0]) plate(w=1.5, w_offset=.25);
+    // translate([0, 0, 4]) keycap(1, 1);
+    // switch();
+  }
 
   // inner key column
   // this seems difficult to include with the thumb cluster.
