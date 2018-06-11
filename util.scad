@@ -1,4 +1,5 @@
 use <scad-utils/transformations.scad>
+use <scad-utils/morphology.scad>
 use <scad-utils/linalg.scad>
 use <placeholders.scad>
 
@@ -51,11 +52,18 @@ function apply_matrix (v, m) = (
   m * [ v.x, v.y, v.z, 1 ]
 );
 
-module hull_pairs() {
+module hull_pairs(close=false) {
   for (i=[0:$children-2]) {
     hull() {
       children(i);
       children(i+1);
+    }
+  }
+
+  if (close) {
+    hull() {
+      children(0);
+      children($children - 1);
     }
   }
 }
@@ -78,5 +86,6 @@ module extruded_polygon(points, thickness) {
 
   multmatrix(untransform)
   linear_extrude(thickness, center=true)
+  // shell(d=-5.5)
   polygon([ for(p=transformed) takeXY(p) ]);
 }
