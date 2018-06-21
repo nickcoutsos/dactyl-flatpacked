@@ -69,6 +69,7 @@ module thumbstick_attachment() {
 
 module front() {
   offset = [-62.5, -84.5, 0];
+  thickness = 7;
 
   difference() {
     hull_pairs() {
@@ -137,7 +138,7 @@ module front() {
       rotate([0, 0, 13])
       translate([0, 1, -1])
       intersection() {
-        cylinder(d=18, h=rib_thickness);
+        cylinder(d=18-thickness, h=rib_thickness);
         translate([0, -10, 5])
         cube(20, center=true);
       }
@@ -146,7 +147,7 @@ module front() {
       rotate([0, 0, 13])
       translate([0, 1, -1])
       intersection() {
-        cylinder(d=18, h=rib_thickness);
+        cylinder(d=18-thickness, h=rib_thickness);
         translate([0, -9, 0])
         cube(18, center=true);
       }
@@ -157,7 +158,7 @@ module front() {
       rotate([20, 0, 0])
       translate([0, 11, 2])
       difference() {
-        cylinder(d=18, h=rib_thickness);
+        cylinder(d=18-thickness, h=rib_thickness);
         translate([-10, 0, -10]) cube(20);
       }
 
@@ -165,7 +166,7 @@ module front() {
       rotate([35, 0, 0])
       translate([0, 2, 1])
       intersection() {
-        cylinder(d=HINGE_DIAMETER - 4, h=rib_thickness);
+        cylinder(d=HINGE_DIAMETER - thickness, h=rib_thickness);
         translate([0, -13, 0])
         cube(HINGE_DIAMETER - 4, center=true);
       }
@@ -174,7 +175,7 @@ module front() {
       rotate([20, 0, 0])
       translate([0, 2, 1])
       intersection() {
-        cylinder(d=HINGE_DIAMETER - 4, h=rib_thickness);
+        cylinder(d=HINGE_DIAMETER - thickness, h=rib_thickness);
         translate([0, -13, 0])
         cube(HINGE_DIAMETER - 4, center=true);
       }
@@ -182,7 +183,7 @@ module front() {
       attachment_position()
       translate([0, 2, 1])
       intersection() {
-        cylinder(d=HINGE_DIAMETER - 4, h=rib_thickness);
+        cylinder(d=HINGE_DIAMETER - thickness, h=rib_thickness);
         translate([0, -13, 0])
         cube(HINGE_DIAMETER - 4, center=true);
       }
@@ -239,9 +240,8 @@ difference() {
   // thumb_front_cross_support();
   // thumb_back_cross_support();
 
-color("skyblue")
 attachment_position()
 rotate([0, 0, 90]) {
-  thumbstick_socket();
-  // thumbstick_full();
+  color("skyblue") thumbstick_socket();
+  color("mediumpurple") thumbstick_full();
 }
