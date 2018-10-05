@@ -54,7 +54,7 @@ module main_support_inner_column() {
   }
 }
 
-module main_support_columns(columns=[1:4]) {
+module main_support_columns(columns=[1:5]) {
   offset = rib_spacing/2 - rib_thickness/2;
 
   difference() {
@@ -76,17 +76,17 @@ module main_support_columns(columns=[1:4]) {
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
 
-    place_column_ribs(2, 2)
-    translate([0, 0, -column_rib_height])
-    translate([0, 0, 1.8])
-    translate([0, 0, -5])
-    cube([rib_thickness + 1, 40, 10], center=true);
+    // #place_column_ribs(2, 2)
+    // translate([0, 0, -column_rib_height])
+    // // translate([0, 0, 1.8])
+    // translate([0, 0, -5])
+    // cube([rib_thickness + 1, 40, 10], center=true);
 
-    place_column_ribs(3, 2)
-    translate([0, 0, -column_rib_height])
-    translate([0, 0, 3])
-    translate([0, 0, -5])
-    cube([rib_thickness + 1, 60, 10], center=true);
+    // #place_column_ribs(3, 2)
+    // translate([0, 0, -column_rib_height])
+    // // translate([0, 0, 3])
+    // translate([0, 0, -5])
+    // cube([rib_thickness + 1, 60, 10], center=true);
   }
 }
 
@@ -409,7 +409,7 @@ module side_supports() {
 module main_supports() {
   main_support_inner_column();
   main_support_columns();
-  main_support_outer_column_single();
+  // main_support_outer_column_single();
 }
 
 module thumb_supports() {
@@ -504,7 +504,7 @@ module thumb_cross_support(row, start, end) {
 module main_front_cross_support() {
   offset = rib_spacing/2 - rib_thickness/2;
   difference() {
-    main_cross_support(4, 3.9, -1.33);
+    main_cross_support(4, 3.6, -1.33);
     main_supports();
 
 
@@ -519,7 +519,7 @@ module main_front_cross_support() {
 }
 
 module main_back_cross_support() {
-  difference() { main_cross_support(-0.5, 3.9, -2.5); main_supports(); }
+  difference() { main_cross_support(-0.5, 3.6, -2.5); main_supports(); }
 }
 
 module main_inner_column_cross_support() {

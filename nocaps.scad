@@ -12,11 +12,16 @@ use <scad-utils/linalg.scad>
 // $fn = 36;
 
 module key (w=1, h=1) {
-  color("grey") plate(w, h);
-  switch();
+  color("slategray") plate(w, h);
 
-  translate([0, 0, 4])
+  kailh_lowprofile_switch();
+
+  color("ivory")
+  translate([0, 0, cap_top_height - keycap_height])
   keycap(w, h);
+
+  // color("limegreen", alpha=0.25)
+  // cylinder(d=2, h=main_column_radius);
 }
 
 module main_layout() {
@@ -29,15 +34,16 @@ module main_layout() {
   // this key plate intersects the thumb cluster
   place_keys([1], [4]) key();
 
-  // modifier key column
-  place_keys([5], [0:3]) translate([plate_width/4, 0, 0]) key(w=1.5);
+  // // modifier key column
+  // place_keys([5], [0:3]) translate([plate_width/4, 0, 0]) key(w=1.5);
+  place_keys([5], [0:4]) key();
 
-  // corner key
-  place_keys([5], [4]) {
-    translate([plate_width/4, 0, 0]) plate(w=1.5, w_offset=.25);
-    // translate([0, 0, 4]) keycap(1, 1);
-    // switch();
-  }
+  // // corner key
+  // place_keys([5], [4]) {
+  //   translate([plate_width/4, 0, 0]) plate(w=1.5, w_offset=.25);
+  //   // translate([0, 0, 4]) keycap(1, 1);
+  //   // switch();
+  // }
 
   // inner key column
   // this seems difficult to include with the thumb cluster.

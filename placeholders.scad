@@ -38,13 +38,30 @@ module switch () {
   }
 }
 
+module kailh_lowprofile_switch() {
+  color("lightgray") translate([0, 0, 1.4]) cube([13.8, 13.8, 2.8], center=true);
+  color("lightgray") translate([0, 6.9, 0.4]) cube([15.0, 1.2, 0.8], center=true);
+  color("lightgray") translate([0, -6.9, 0.4]) cube([15.0, 1.2, 0.8], center=true);
+  color("dimgray") translate([0, 0, -1.1]) cube([13.8, 13.8, 2.2], center=true);
+  color("dimgray") translate([0, 0, -2.2]) rotate([180, 0, 0]) cylinder(d=3.4, h=2.65);
+  color("yellow") translate([0, 5.9, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
+  color("yellow") translate([5, 3.8, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
+  color("brown")
+  translate([0, 0, 2.5+1.5+.3])
+  difference() {
+    cube([12, 5.5, 3], center=true);
+    translate([-5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
+    translate([5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
+  }
+}
+
 module keycap(w, h) {
   x = w / 2 * keycap_length;
   y = h / 2 * keycap_length;
   z = keycap_height;
 
-  x2 = x - (keycap_length - keycap_inner_length) / 2;
-  y2 = y - (keycap_length - keycap_inner_length) / 2;
+  x2 = x - (keycap_length - keycap_inner_length) / 2.25;
+  y2 = y - (keycap_length - keycap_inner_length) / 2.25;
 
   lower = [ [-x, -y], [ x, -y], [ x,  y], [-x,  y] ];
   upper = [ [-x2, -y2], [ x2, -y2], [ x2,  y2], [-x2,  y2] ];
@@ -53,6 +70,9 @@ module keycap(w, h) {
     translate([0, 0, z])
     linear_extrude(height=.1)
       polygon(upper);
+    translate([0, 0, z/3])
+    linear_extrude(height=.1)
+      polygon(lower);
     linear_extrude(height=.1)
       polygon(lower);
   }
@@ -85,8 +105,8 @@ module key_well (w=1, h=1) {
   height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
 
-  cube([16, 15, 10.5], center=true);
-  translate([0, 0, plate_thickness]) cube([16, height - rib_thickness/2, plate_thickness * 4], center=true);
+  cube([16, 15, 7], center=true);
+  translate([0, 0, plate_thickness]) cube([width+.1, height - rib_thickness/2, plate_thickness * 4], center=true);
 }
 
 module cutout () {
