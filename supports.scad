@@ -118,23 +118,10 @@ module main_support_front(col, offset) {
 }
 
 module main_support_back(col, offset) {
-  hull_pairs() {
-    place_keys(col, - rib_extension)
-    translate([offset, 0, -1])
-    rotate([0, 90, 0])
-    cylinder(r=1, h=rib_thickness, center=true);
-
-    place_keys(col, - rib_extension)
-    translate([offset, 0, -column_rib_height])
-    rotate([0, 90, 0])
-    cylinder(r=4, h=rib_thickness, center=true);
-
-    place_keys(col, -.5)
-    translate([offset, 0, -column_rib_height])
-    rotate([-alpha*(2.5), 0, 0])
-    translate(column_offset_middle)
-    translate(-column_offsets[col])
-      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+  hull() {
+    place_column_support_slot_back(col)
+      translate([offset, 0, 0])
+      cube([rib_thickness, rib_thickness*2.5, 8], center=true);
 
     place_keys(col, 2)
     translate([offset, 0, main_row_radius+.2])
@@ -144,7 +131,7 @@ module main_support_back(col, offset) {
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
         -alpha*(-2 - rib_extension),
-        -alpha*-1
+        -alpha*-1.6
       );
   }
 }
@@ -156,11 +143,8 @@ module main_support_front_slot(col, offset) {
 }
 
 module main_support_back_slot(col, offset) {
-  place_keys(col, -.5)
-  translate([offset, 0, -column_rib_height])
-  rotate([-alpha*(2.5), 0, 0])
-  translate(column_offset_middle)
-  translate(-column_offsets[col])
+  place_column_support_slot_back(col)
+  translate([offset, 0, 0])
   translate([0, 0, -5])
     cube([rib_thickness+1, rib_thickness, 10], center=true);
 }

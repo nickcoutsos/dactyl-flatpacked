@@ -126,6 +126,16 @@ module place_column_support_slot_front(col) {
     children();
 }
 
+module place_column_support_slot_back(col) {
+  place_keys(col, .25)
+  translate([0, 0, -column_rib_height/3])
+  rotate([-alpha*(1.75), 0, 0])
+  translate(column_offset_middle)
+  translate(-column_offsets[col])
+  translate([0, 2, column_offsets[col].z])
+    children();
+}
+
 module each_key () {
   for (col=columns, row=rows) {
     if (col != 0 || row != 4) {
