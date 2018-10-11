@@ -75,18 +75,6 @@ module main_support_columns(columns=[1:5]) {
     place_column_ribs(1, 2.5)
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
-
-    // #place_column_ribs(2, 2)
-    // translate([0, 0, -column_rib_height])
-    // // translate([0, 0, 1.8])
-    // translate([0, 0, -5])
-    // cube([rib_thickness + 1, 40, 10], center=true);
-
-    // #place_column_ribs(3, 2)
-    // translate([0, 0, -column_rib_height])
-    // // translate([0, 0, 3])
-    // translate([0, 0, -5])
-    // cube([rib_thickness + 1, 60, 10], center=true);
   }
 }
 
@@ -107,41 +95,7 @@ module main_support_outer_column() {
 
 module main_support_column(col) {
   if (col == 0) main_support_inner_column();
-  else if (col > 0 && col < 5) main_support_columns([col]);
-  else main_support_outer_column_single();
-}
-
-module main_support_outer_column_single() {
-  offset = rib_spacing*1.5/2 - rib_thickness*1.5/2;
-
-  // outer column
-  translate([plate_width / 4, 0, 0])
-  difference() {
-    union() {
-      for (side=[-offset, offset]) {
-        translate([side, 0, 0]) place_keys([5], 2) column_rib(0, 4);
-        main_support_front(5, side);
-        main_support_back(5, side);
-      }
-    }
-
-    for (side=[-offset, offset]) {
-      place_keys([5], [0:4])
-      translate([side, 0, 0])
-        key_well();
-
-      main_support_front_slot(5, side);
-      main_support_back_slot(5, side);
-    }
-  }
-
-  // todo: fix this stuff
-  // corner key
-  // difference() {
-  //   place_column_ribs([5]) column_rib(0, 0);
-  //   place_keys([5], [4]) key_well();
-  //   place_keys([5], 4 + rib_extension) support_joint();
-  // }
+  else main_support_columns([col]);
 }
 
 module main_support_front(col, offset) {
@@ -409,7 +363,6 @@ module side_supports() {
 module main_supports() {
   main_support_inner_column();
   main_support_columns();
-  // main_support_outer_column_single();
 }
 
 module thumb_supports() {
