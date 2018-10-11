@@ -19,7 +19,7 @@ function key_place_transformation(column, row) = (
   let(column_offset = column_offsets[column])
 
   translation([0, 0, 13])
-  * rotation(alpha * Y)
+  * rotation(beta*3 * Y)
   * translation(column_offset)
   * translation([0, 0, main_column_radius])
   * rotation(column_angle * Y)
@@ -41,7 +41,7 @@ function un_key_place_transformation(column, row) = (
   * rotation(-column_angle * Y)
   * translation(-[0, 0, main_column_radius])
   * translation(-column_offset)
-  * rotation(-alpha * Y)
+  * rotation(-beta*3 * Y)
   * translation(-[0, 0, 13])
 );
 
