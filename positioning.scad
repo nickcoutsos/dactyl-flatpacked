@@ -116,6 +116,16 @@ module place_thumb_column_rib_right(columns, row=1, spacing=rib_spacing) {
     children();
 }
 
+module place_column_support_slot_front(col) {
+  place_keys(col, 4)
+  translate([0, 0, -column_rib_height])
+  rotate([-alpha*(2-4), 0, 0])
+  translate(column_offset_middle)
+  translate(-column_offsets[col])
+  translate([0, 0, 0 +column_offsets[col].z])
+    children();
+}
+
 module each_key () {
   for (col=columns, row=rows) {
     if (col != 0 || row != 4) {
