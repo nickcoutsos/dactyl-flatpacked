@@ -118,21 +118,19 @@ module place_thumb_column_rib_right(columns, row=1, spacing=rib_spacing) {
 
 module place_column_support_slot_front(col) {
   place_keys(col, 4)
-  translate([0, 0, -column_rib_height])
+  translate([0, 0, -(column_rib_height + slot_height*.75)])
   rotate([-alpha*(2-4), 0, 0])
   translate(column_offset_middle)
-  translate(-column_offsets[col])
-  translate([0, 0, 0 +column_offsets[col].z])
+  translate(-[0, column_offsets[col].y, 0])
     children();
 }
 
 module place_column_support_slot_back(col) {
   place_keys(col, .25)
-  translate([0, 0, -column_rib_height/3])
-  rotate([-alpha*(1.75), 0, 0])
+  translate([0, 0, -column_rib_height])
   translate(column_offset_middle)
-  translate(-column_offsets[col])
-  translate([0, 2, column_offsets[col].z])
+  rotate([-alpha*(1.75), 0, 0])
+  translate(-[0, column_offsets[col].y, 0])
     children();
 }
 

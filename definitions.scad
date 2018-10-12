@@ -4,16 +4,18 @@ Y = [0, 1, 0];
 Z = [0, 0, 1];
 
 column_offset_index = [0, 0, 0];
+column_offset_index_stretch = [0, 0, 0];
 column_offset_middle = [0, 2.82, -3.0]; // was moved -4.5
 column_offset_ring = [0, 0, 0];
 column_offset_pinky = [0, -5.8, 5.64];
+column_offset_pinky_stretch = [0.5, -5.8, 5.64];
 column_offsets = [
-  column_offset_index,
+  column_offset_index_stretch,
   column_offset_index,
   column_offset_middle,
   column_offset_ring,
   column_offset_pinky,
-  column_offset_pinky
+  column_offset_pinky_stretch
 ];
 
 keyswitch_height = 14.4; // Was 14.1, then 14.25
@@ -57,3 +59,5 @@ thumb_row_radius = (mount_height + 0.25) / 2 / sin(alpha/2) + cap_top_height;
 thumb_column_radius = (mount_width + 0.25) / 2 / sin(beta/2) + cap_top_height;
 
 column_rib_height = 7;
+
+slot_height = 2;

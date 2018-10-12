@@ -60,11 +60,11 @@ module main_support_column(col) {
 module main_support_front(col, offset) {
   hull() {
     place_column_support_slot_front(col)
-      translate([offset, 0, 4])
-      rotate([0, 90, 0]) cylinder(r=4, h=rib_thickness, center=true);
+      translate([offset, 0, slot_height/2])
+      cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
     place_keys(col, 2)
-    translate([offset, 0, main_row_radius+.2])
+    translate([offset, 0, main_row_radius])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
@@ -79,18 +79,18 @@ module main_support_front(col, offset) {
 module main_support_back(col, offset) {
   hull() {
     place_column_support_slot_back(col)
-      translate([offset, 0, 0])
-      cube([rib_thickness, rib_thickness*2.5, 8], center=true);
+      translate([offset, 0, slot_height/2])
+      cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
     place_keys(col, 2)
-    translate([offset, 0, main_row_radius+.2])
+    translate([offset, 0, main_row_radius])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
         -alpha*(-2 - rib_extension),
-        -alpha*-1.6
+        -alpha*-1.4
       );
   }
 }
@@ -98,14 +98,13 @@ module main_support_back(col, offset) {
 module main_support_front_slot(col, offset) {
   place_column_support_slot_front(col)
   translate([offset, 0, 0])
-    cube([rib_thickness+1, rib_thickness, 4], center=true);
+    cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
 }
 
 module main_support_back_slot(col, offset) {
   place_column_support_slot_back(col)
   translate([offset, 0, 0])
-  translate([0, 0, -5])
-    cube([rib_thickness+1, rib_thickness, 10], center=true);
+    cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
 }
 
 module thumb_supports_col1() {
