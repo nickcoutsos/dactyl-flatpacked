@@ -6,32 +6,6 @@ use <util.scad>
 
 use <scad-utils/transformations.scad>
 
-module main_support_curve() {
-  radius = main_column_radius / 4;
-  offset = radius + column_rib_height;
-  translate([0, 0, -offset])
-  rotate([0, 90, 0])
-    cylinder(r=radius, h=rib_spacing+1, center=true, $fn=120);
-}
-
-module support_joint() {
-  cube([rib_spacing+1, 4, 4], center=true);
-  translate([0, 0, -column_rib_height + 1]) cube([rib_spacing+1, 4, 2.5], center=true);
-}
-
-module short_support_joint() {
-  translate([0, 0, -(plate_thickness)]) cube([rib_spacing+1, 4, 4], center=true);
-  translate([0, 0, -(column_rib_height - plate_thickness + 1)]) cube([rib_spacing+1, 4, 2.5], center=true);
-}
-
-module thumb_support_curve() {
-  radius = thumb_column_radius / 8;
-  offset = radius + column_rib_height;
-  translate([0, 0, -offset])
-  rotate([0, 90, 0])
-    cylinder(r=radius, h=rib_spacing+1, center=true, $fn=120);
-}
-
 module main_support_inner_column() {
   offset = rib_spacing/2 - rib_thickness/2;
 
@@ -75,21 +49,6 @@ module main_support_columns(columns=[1:5]) {
     place_column_ribs(1, 2.5)
     translate([0, 0, -column_rib_height])
     cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
-  }
-}
-
-module main_support_outer_column() {
-  // outer column
-  translate([plate_width / 4, 0, 0])
-  difference() {
-    place_column_ribs([5]) column_rib(1, 4);
-    place_keys([5], [0:3]) key_well();
-  }
-
-  // corner key
-  difference() {
-    place_column_ribs([5]) column_rib(0, 0);
-    place_keys([5], [4]) key_well();
   }
 }
 
