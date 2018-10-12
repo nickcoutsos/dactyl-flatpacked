@@ -44,8 +44,8 @@ module kailh_lowprofile_switch() {
   color("lightgray") translate([0, -6.9, 0.4]) cube([15.0, 1.2, 0.8], center=true);
   color("dimgray") translate([0, 0, -1.1]) cube([13.8, 13.8, 2.2], center=true);
   color("dimgray") translate([0, 0, -2.2]) rotate([180, 0, 0]) cylinder(d=3.4, h=2.65);
-  color("yellow") translate([0, 5.9, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
-  color("yellow") translate([5, 3.8, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
+  color("yellow") translate([0, -5.9, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
+  color("yellow") translate([5, -3.8, -2.2]) rotate([180, 0, 0]) cylinder(d=1.2, h=2.65);
   color("brown")
   translate([0, 0, 2.5+1.5+.3])
   difference() {
@@ -105,7 +105,7 @@ module key_well (w=1, h=1) {
   height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
 
-  cube([16, 15, 7], center=true);
+  cube([width+.1, 15, 5], center=true);
   translate([0, 0, plate_thickness]) cube([width+.1, height - rib_thickness/2, plate_thickness * 4], center=true);
 }
 
