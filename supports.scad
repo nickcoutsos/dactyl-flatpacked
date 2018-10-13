@@ -28,27 +28,21 @@ module main_support_inner_column() {
   }
 }
 
-module main_support_columns(columns=[1:5]) {
-  offset = rib_spacing/2 - rib_thickness/2;
+module main_support_columns(columns=[0:5]) {
+  sides = [-1, 1] * column_rib_center_offset;
 
   difference() {
-    union() {
-      place_column_ribs(columns) column_rib(0, 4);
-      for (col=columns, side=[-offset, offset]) {
-        main_support_front(col, side);
-        main_support_back(col, side);
-      }
+    for (col=columns, side=sides) {
+      place_keys([col], 2) translate([side, 0, 0]) column_rib(col == 0 ? 1 : 0, 4);
+      main_support_front(col, side);
+      main_support_back(col, side);
     }
 
     place_keys(columns, [0:4]) key_well();
-    for (col=columns, side=[-offset, offset]) {
+    for (col=columns, side=sides) {
       main_support_front_slot(col, side);
       main_support_back_slot(col, side);
     }
-
-    place_column_ribs(1, 2.5)
-    translate([0, 0, -column_rib_height])
-    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
   }
 }
 
@@ -70,7 +64,7 @@ module main_support_front(col, offset) {
       fan(
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
-        -alpha*(2.3),
+        -alpha*(col == 0 ? 1.6 : 2.3),
         -alpha*-1
       );
   }
@@ -286,7 +280,6 @@ module side_supports() {
 }
 
 module main_supports() {
-  main_support_inner_column();
   main_support_columns();
 }
 

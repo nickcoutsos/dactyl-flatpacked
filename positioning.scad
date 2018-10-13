@@ -117,9 +117,9 @@ module place_thumb_column_rib_right(columns, row=1, spacing=rib_spacing) {
 }
 
 module place_column_support_slot_front(col) {
-  place_keys(col, 4)
-  translate([0, 0, -(column_rib_height + slot_height*.75)])
-  rotate([-alpha*(2-4), 0, 0])
+  place_keys(col, 3.6)
+  translate([0, 0, -(column_rib_height + slot_height*.25)])
+  rotate([-alpha*(2-3.6), 0, 0])
   translate(column_offset_middle)
   translate(-[0, column_offsets[col].y, 0])
     children();

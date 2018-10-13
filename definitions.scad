@@ -59,5 +59,6 @@ thumb_row_radius = (mount_height + 0.25) / 2 / sin(alpha/2) + cap_top_height;
 thumb_column_radius = (mount_width + 0.25) / 2 / sin(beta/2) + cap_top_height;
 
 column_rib_height = 7;
+column_rib_center_offset = rib_spacing/2 - rib_thickness/2;
 
 slot_height = 2;
