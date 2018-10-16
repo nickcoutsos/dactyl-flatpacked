@@ -256,29 +256,6 @@ module thumb_support_back_slot(col, offset) {
     cube([rib_thickness+1, rib_thickness, 10], center=true);
 }
 
-module side_supports() {
-  placement = key_place_transformation(0, 2);
-  difference() {
-    multmatrix(placement)
-    rotate_down(placement)
-    translate([0, 0, -30]) {
-      translate([0, -rib_spacing/2, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
-      translate([0, +rib_spacing/2, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
-    }
-
-    translate([0, 0, -100]) cube(200, center=true);
-
-    multmatrix(placement)
-    rotate_down(placement)
-    translate([0, 0, -(15 + rib_thickness*.75*.5)]) {
-      translate([-(rib_spacing - rib_thickness)/2, -rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([+(rib_spacing - rib_thickness)/2, -rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([-(rib_spacing - rib_thickness)/2, +rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([+(rib_spacing - rib_thickness)/2, +rib_spacing/2, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-    }
-  }
-}
-
 module main_supports() {
   main_support_columns();
 }
@@ -288,89 +265,6 @@ module thumb_supports() {
   thumb_supports_col2();
   thumb_supports_col3();
 }
-
-module place_thumb_side_supports() {
-  placement = thumb_place_transformation(1, 0);
-  multmatrix(placement)
-  rotate_down(placement)
-    children();
-}
-
-module thumb_side_supports() {
-  difference() {
-    translate([0, 0, -30]) {
-      cube([rib_spacing + 6, rib_thickness, 30], center=true);
-      translate([0, -rib_spacing, 0]) cube([rib_spacing + 6, rib_thickness, 30], center=true);
-    }
-
-    translate([0, 0, -(15 + rib_thickness*.75*.5)]) {
-      translate([-(rib_spacing - rib_thickness)/2, -rib_spacing, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([+(rib_spacing - rib_thickness)/2, -rib_spacing, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([-(rib_spacing - rib_thickness)/2, 0, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-      translate([+(rib_spacing - rib_thickness)/2, 0, 0]) cube([rib_thickness, rib_thickness, rib_thickness*.75+.1], center=true);
-    }
-  }
-}
-
-module cross_support(matrix, radius, start, end, corner_radius=2) {
-  steps = $fn ? $fn : 60;
-  segments = (end - start) / steps;
-  downward = rotation_down(matrix);
-
-  transform = matrix
-    * translation([0, 0, -column_rib_height])
-    * downward
-    * translation([0, 0, radius])
-    * rotation([90, 0, 0])
-    ;
-
-  points = [for (i=[0:steps]) (radius - 4) * [
-    cos(start + i * segments),
-    sin(start + i * segments),
-    0
-  ]];
-
-  transformed=[ for (p=points) apply_matrix(p, transform) ];
-  first = transformed[0];
-  last = transformed[len(transformed)-1];
-
-  extruded_polygon(concat(
-    transformed,
-    [
-      for (a=[0:steps])
-      [last.x, last.y, last.z] -
-      [cos(90-a/steps*90), 0, 1-sin(90-a/steps*90)] * corner_radius
-    ],
-    [
-      [last.x - corner_radius, last.y, 0],
-      [first.x + corner_radius, first.y, 0]
-    ],
-    [
-      for (a=[0:steps])
-      [first.x, first.y, first.z] +
-      [cos(a/steps*90), 0, sin(a/steps*90) - 1] * corner_radius
-    ]
-  ), rib_thickness);
-}
-
-module main_cross_support(row, start, end) {
-  cross_support(
-    key_place_transformation(2, row),
-    main_column_radius,
-    -90 + beta * start,
-    -90 + beta * end
-  );
-}
-
-module thumb_cross_support(row, start, end) {
-  cross_support(
-    thumb_place_transformation(1, row),
-    thumb_column_radius,
-    -90 + beta * start,
-    -90 + beta * end
-  );
-}
-
 
 module main_front_cross_support() {
   offset = rib_spacing/2 - rib_thickness/2;
