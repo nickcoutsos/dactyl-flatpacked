@@ -1,5 +1,5 @@
 include <definitions.scad>
-
+use <util.scad>
 use <scad-utils/transformations.scad>
 use <scad-utils/linalg.scad>
 
@@ -71,7 +71,7 @@ function thumb_place_transformation (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * row)
 
-  translation([-52, -45, 40])
+  translation([-52, -45, 35])
   * rotation(axis=alpha * unit([1, 1, 0]))
   * rotation([0, 0, 180 * (.25 - .1875)])
   * translation([mount_width, 0, 0])
@@ -96,7 +96,7 @@ function inverted_thumb_place_transformation (column, row) = (
   * translation(-[mount_width, 0, 0])
   * rotation([0, 0, -180 * (.25 - .1875)])
   * rotation(axis=-alpha * unit([1, 1, 0]))
-  * translation(-[-52, -45, 40])
+  * translation(-[-52, -45, 35])
 );
 
 module place_thumb_column_ribs(columns, row=1) {
@@ -131,6 +131,30 @@ module place_column_support_slot_back(col) {
   translate(column_offset_middle)
   rotate([-alpha*(1.75), 0, 0])
   translate(-[0, column_offsets[col].y, 0])
+    children();
+}
+
+module place_thumb_column_support_slot_front(col) {
+  thumb_place(1, -1.25)
+  rotate_down(thumb_place_transformation(1, -1.25))
+  translate([0, 0, -slot_height])
+  translate([0, 0, thumb_column_radius])
+  rotate([0, beta * (col - 1), 0])
+  translate([0, 0, -thumb_column_radius])
+  translate([0, 0, -column_rib_height])
+  translate([0, 0, -slot_height])
+    children();
+}
+
+module place_thumb_column_support_slot_back(col) {
+  thumb_place(1, 1.25)
+  rotate_down(thumb_place_transformation(1, 1.25))
+  translate([0, 0, -slot_height])
+  translate([0, 0, thumb_column_radius])
+  rotate([0, beta * (col - 1), 0])
+  translate([0, 0, -thumb_column_radius])
+  translate([0, 0, -column_rib_height])
+  translate([0, 0, -slot_height])
     children();
 }
 
