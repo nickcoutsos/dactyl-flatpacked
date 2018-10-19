@@ -15,6 +15,15 @@ column_offsets = [
   column_offset_pinky_stretch
 ];
 
+columns = [
+  [0, 1, 2, 3],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4]
+];
+
 alpha = 180/24;
 beta = 180/36;
 

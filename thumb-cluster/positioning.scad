@@ -1,9 +1,9 @@
-include <../definitions.scad>
 include <definitions.scad>
 
 use <../util.scad>
 use <../scad-utils/transformations.scad>
 use <../scad-utils/linalg.scad>
+
 
 module thumb_place (column, row) {
   multmatrix(thumb_place_transformation(column, row))
@@ -14,9 +14,8 @@ function thumb_place_transformation (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * row)
 
-  translation([-52, -45, 35])
-  * rotation(axis=alpha * unit([1, 1, 0]))
-  * rotation([0, 0, 180 * (.25 - .1875)])
+  translation([-55, -50, 20])
+  * rotation([15, -20, 28])
   * translation([mount_width, 0, 0])
   * translation([0, 0, thumb_column_radius])
   * rotation([0, column_angle, 0])
@@ -37,27 +36,9 @@ function inverted_thumb_place_transformation (column, row) = (
   * rotation(-[0, column_angle, 0])
   * translation(-[0, 0, thumb_column_radius])
   * translation(-[mount_width, 0, 0])
-  * rotation([0, 0, -180 * (.25 - .1875)])
-  * rotation(axis=-alpha * unit([1, 1, 0]))
-  * translation(-[-52, -45, 35])
+  * rotation(-[15, -20, 28])
+  * translation(-[-55, -50, 20])
 );
-
-module place_thumb_column_ribs(columns, row=1) {
-  place_thumb_column_rib_left(columns, row) children();
-  place_thumb_column_rib_right(columns, row) children();
-}
-
-module place_thumb_column_rib_left(columns, row=1, spacing=rib_spacing) {
-  place_thumb_keys(columns, [row])
-  translate([- (spacing/2 - rib_thickness / 2), 0, 0])
-    children();
-}
-
-module place_thumb_column_rib_right(columns, row=1, spacing=rib_spacing) {
-  place_thumb_keys(columns, [row])
-  translate([spacing/2 - rib_thickness / 2, 0, 0])
-    children();
-}
 
 module place_thumb_column_support_slot_front(col) {
   thumb_place(1, -1.25)
@@ -72,8 +53,8 @@ module place_thumb_column_support_slot_front(col) {
 }
 
 module place_thumb_column_support_slot_back(col) {
-  thumb_place(1, 1.25)
-  rotate_down(thumb_place_transformation(1, 1.25))
+  thumb_place(1, 0.5)
+  rotate_down(thumb_place_transformation(1, 0.5))
   translate([0, 0, -slot_height])
   translate([0, 0, thumb_column_radius])
   rotate([0, beta * (col - 1), 0])
