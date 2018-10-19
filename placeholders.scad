@@ -1,4 +1,4 @@
-include <definitions.scad>
+include <common/definitions.scad>
 use <util.scad>
 
 

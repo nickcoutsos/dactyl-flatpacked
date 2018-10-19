@@ -1,7 +1,6 @@
 use <scad-utils/transformations.scad>
 use <scad-utils/morphology.scad>
 use <scad-utils/linalg.scad>
-use <placeholders.scad>
 
 ORIGIN = [0, 0, 0, 1];
 X = [1, 0, 0, 1];
