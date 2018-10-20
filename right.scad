@@ -20,7 +20,7 @@ color("gainsboro") {
   thumb_layout() plate();
 
   main_support_columns();
-  thumb_supports();
+  thumb_support_columns();
 
   // difference() {
   //   union() {

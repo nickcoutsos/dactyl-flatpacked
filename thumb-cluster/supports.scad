@@ -20,23 +20,23 @@ module thumb_column_rib (start, end, height=column_rib_height) {
   }
 }
 
-module thumb_support_column(col) {
+module thumb_support_columns(selected=[0:len(columns) - 1]) {
   sides = [-1, 1] * column_rib_center_offset;
-  rows = columns[col];
-  start = rows[0];
-  end = rows[len(rows) - 1];
 
   difference() {
-    for (side=sides) {
-      thumb_place(col, 1) translate([side, 0, 0]) thumb_column_rib(start, end);
+    for (col=selected, side=sides) {
+      rows = column_range(col);
+      thumb_place(col, 1) translate([side, 0, 0]) thumb_column_rib(rows[0], rows[1]);
       thumb_support_front(col, side);
       thumb_support_back(col, side);
     }
 
-    for (row=rows) thumb_place(col, row) key_well();
-    for (side=sides) {
-      thumb_support_front_slot(col, side);
-      thumb_support_back_slot(col, side);
+    for (col=selected) {
+      for (row=columns[col]) thumb_place(col, row) key_well();
+      for (side=sides) {
+        thumb_support_front_slot(col, side);
+        thumb_support_back_slot(col, side);
+      }
     }
   }
 }
@@ -75,7 +75,7 @@ module thumb_support_back(col, offset) {
     translate([offset, 0, thumb_row_radius])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
-      #fan(
+      fan(
         (thumb_row_radius+column_rib_height-.01),
         thumb_row_radius+column_rib_height,
         alpha*-0.1,
@@ -94,10 +94,6 @@ module thumb_support_back_slot(col, offset) {
   place_thumb_column_support_slot_back(col)
   translate([offset, 0, 0])
     cube([rib_thickness+1, rib_thickness, 10], center=true);
-}
-
-module thumb_supports() {
-  for (col=[0:len(columns) - 1]) thumb_support_column(col);
 }
 
 module thumb_front_cross_support() {
