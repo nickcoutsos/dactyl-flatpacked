@@ -1,4 +1,5 @@
 include <../common/definitions.scad>
+include <../util.scad>
 
 column_offset_index = [0, 0, 0];
 column_offset_index_stretch = [0, 0, 0];
@@ -23,6 +24,8 @@ columns = [
   [0, 1, 2, 3, 4],
   [0, 1, 2, 3, 4]
 ];
+
+function column_range (col) = [columns[col][0], last(columns[col])];
 
 alpha = 180/24;
 beta = 180/36;

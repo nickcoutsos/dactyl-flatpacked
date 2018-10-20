@@ -4,65 +4,39 @@ use <../placeholders.scad>
 use <../structures.scad>
 use <../util.scad>
 
-module column_rib (start, end, height=column_rib_height, thickness=rib_thickness) {
+module column_rib (start, end, height=column_rib_height) {
   radius = main_row_radius;
   inner = radius;
   outer = inner + height;
 
-  a = alpha * (start - 2 - rib_extension);
-  b = alpha * (end - 2 + rib_extension);
-
-  translate([0, 0, radius]) {
-    rotate([0, 90, 0]) {
-      linear_extrude(thickness, center=true)
-      fan(inner, outer, a, b);
-    }
+  translate([0, 0, radius])
+  rotate([0, 90, 0]) {
+    linear_extrude(rib_thickness, center=true)
+    fan(
+      inner, outer,
+      alpha * (2 - end - rib_extension),
+      alpha * (2 - start + rib_extension)
+    );
   }
 }
 
-module main_support_inner_column() {
-  offset = rib_spacing/2 - rib_thickness/2;
-
-  difference() {
-    union() {
-      place_column_ribs([0]) column_rib(1, 4);
-      for (side=[-offset, offset]) {
-        main_support_back(0, side);
-      }
-    }
-
-    for (row=[0:3]) key_place(0, row) key_well();
-    for (side=[-offset, offset]) {
-      main_support_back_slot(0, side);
-    }
-
-    place_column_ribs(0, 2.5)
-    translate([0, 0, -column_rib_height])
-    cube([rib_thickness+1, rib_thickness, column_rib_height/2], center=true);
-  }
-}
-
-module main_support_columns(columns=[0:5]) {
+module main_support_columns(selection=[0:len(columns) - 1]) {
   sides = [-1, 1] * column_rib_center_offset;
 
   difference() {
-    for (col=columns, side=sides) {
-      key_place(col, 2) translate([side, 0, 0]) column_rib(col == 0 ? 1 : 0, 4);
+    for (col=selection, side=sides) {
+      rows = column_range(col);
+      key_place(col, 2) translate([side, 0, 0]) column_rib(rows[0], rows[1]);
       main_support_front(col, side);
       main_support_back(col, side);
     }
 
-    for (col=columns, side=sides) {
-      for (row=[0:col == 0 ? 3 : 4]) key_place(col, row) key_well();
+    for (col=selection, side=sides) {
+      for (row=columns[col]) key_place(col, row) key_well();
       main_support_front_slot(col, side);
       main_support_back_slot(col, side);
     }
   }
-}
-
-module main_support_column(col) {
-  if (col == 0) main_support_inner_column();
-  else main_support_columns([col]);
 }
 
 module main_support_front(col, offset) {
@@ -113,10 +87,6 @@ module main_support_back_slot(col, offset) {
   place_column_support_slot_back(col)
   translate([offset, 0, 0])
     cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
-}
-
-module main_supports() {
-  main_support_columns();
 }
 
 module main_front_cross_support() {
