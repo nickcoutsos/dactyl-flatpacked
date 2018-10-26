@@ -2,12 +2,12 @@ include <../common/definitions.scad>
 include <../util.scad>
 
 alpha = 180/24;
-beta = 180/12;
+beta = 180/8;
 
 columns = [
   [-1, 0],
   [-1, 0],
-  [-1]
+  [-1, 0]
 ];
 
 function column_range (col) = [columns[col][0], last(columns[col])];
