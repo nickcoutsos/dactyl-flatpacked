@@ -31,10 +31,12 @@ module main_support_columns(selection=[0:len(columns) - 1]) {
       main_support_back(col, side);
     }
 
-    for (col=selection, side=sides) {
-      for (row=columns[col]) key_place(col, row) key_well();
-      main_support_front_slot(col, side);
-      main_support_back_slot(col, side);
+    if ($detail) {
+      for (col=selection, side=sides) {
+        for (row=columns[col]) key_place(col, row) key_well();
+        main_support_front_slot(col, side);
+        main_support_back_slot(col, side);
+      }
     }
   }
 }

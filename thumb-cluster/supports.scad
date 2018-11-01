@@ -31,11 +31,13 @@ module thumb_support_columns(selected=[0:len(columns) - 1]) {
       thumb_support_back(col, side);
     }
 
-    for (col=selected) {
-      for (row=columns[col]) thumb_place(col, row) key_well();
-      for (side=sides) {
-        thumb_support_front_slot(col, side);
-        thumb_support_back_slot(col, side);
+    if ($detail) {
+      for (col=selected) {
+        for (row=columns[col]) thumb_place(col, row) key_well();
+        for (side=sides) {
+          thumb_support_front_slot(col, side);
+          thumb_support_back_slot(col, side);
+        }
       }
     }
   }

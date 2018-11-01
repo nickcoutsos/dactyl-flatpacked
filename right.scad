@@ -16,6 +16,8 @@ color("ivory") {
 }
 
 color("gainsboro") {
+  $detail = true;
+
   main_layout() plate();
   thumb_layout() plate();
 
@@ -27,7 +29,7 @@ color("gainsboro") {
   //     main_front_cross_support();
   //     main_back_cross_support();
   //   }
-  //   main_supports();
+  //   main_support_columns();
   // }
 
   // difference() {
@@ -35,6 +37,6 @@ color("gainsboro") {
   //     thumb_front_cross_support();
   //     thumb_back_cross_support();
   //   }
-  //   thumb_supports();
+  //   thumb_support_columns();
   // }
 }

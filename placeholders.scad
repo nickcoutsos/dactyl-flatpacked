@@ -50,8 +50,10 @@ module kailh_lowprofile_switch() {
   translate([0, 0, 2.5+1.5+.3])
   difference() {
     cube([12, 5.5, 3], center=true);
-    translate([-5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
-    translate([5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
+    if ($detail) {
+      translate([-5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
+      translate([5.7/2, 0, 0]) cube([1.2, 3.0, 5], center=true);
+    }
   }
 }
 
@@ -66,15 +68,31 @@ module keycap(w, h) {
   lower = [ [-x, -y], [ x, -y], [ x,  y], [-x,  y] ];
   upper = [ [-x2, -y2], [ x2, -y2], [ x2,  y2], [-x2,  y2] ];
 
-  hull() {
-    translate([0, 0, z])
-    linear_extrude(height=.1)
-      polygon(upper);
-    translate([0, 0, z/3])
-    linear_extrude(height=.1)
-      polygon(lower);
-    linear_extrude(height=.1)
-      polygon(lower);
+  difference() {
+    hull() {
+      translate([0, 0, z])
+      linear_extrude(height=.1)
+        polygon(upper);
+      translate([0, 0, z/3])
+      linear_extrude(height=.1)
+        polygon(lower);
+      linear_extrude(height=.1)
+        polygon(lower);
+    }
+
+    if ($detail) {
+      translate([0, 0, -2])
+      hull() {
+        translate([0, 0, z])
+        linear_extrude(height=.1)
+          polygon(upper);
+        translate([0, 0, z/3])
+        linear_extrude(height=.1)
+          polygon(lower);
+        linear_extrude(height=.1)
+          polygon(lower);
+      }
+    }
   }
 }
 
