@@ -54,7 +54,7 @@ module main_support_front(col, offset) {
       fan(
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
-        -alpha*(col == 0 ? 1.6 : 2.3),
+        -alpha*(last(columns[col]) - 2 + rib_extension),
         -alpha*-1
       );
   }
@@ -73,8 +73,8 @@ module main_support_back(col, offset) {
       fan(
         (main_row_radius+column_rib_height-.01),
         main_row_radius+column_rib_height,
-        -alpha*(-2 - rib_extension),
-        -alpha*-1.4
+        -alpha*-(2 - back_support_row + rib_extension),
+        -alpha*-(2 - back_support_row - 0.4)
       );
   }
 }

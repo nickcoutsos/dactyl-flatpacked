@@ -7,6 +7,7 @@ X = [1, 0, 0, 1];
 Y = [0, 1, 0, 1];
 Z = [0, 0, 1, 1];
 
+function first (vec) = vec[0];
 function last (vec) = vec[ len(vec) - 1];
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];

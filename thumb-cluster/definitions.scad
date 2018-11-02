@@ -10,6 +10,9 @@ columns = [
   [-1, 0]
 ];
 
+back_support_row = min([for(column=columns) last(column)]);
+front_support_row = max([for(column=columns) column[0]]);
+
 function column_range (col) = [columns[col][0], last(columns[col])];
 
 thumb_row_radius = (mount_height + 0.25) / 2 / sin(alpha/2) + cap_top_height;

@@ -23,7 +23,7 @@ plate_height = keyhole_length + 2 * plate_vertical_padding;
 
 rib_thickness = 1.5;
 rib_spacing = keyswitch_width + rib_thickness*2;
-rib_extension = .6;
+rib_extension = .55;
 
 mount_width = keyswitch_width + 3;
 mount_height = keyswitch_height + 3;

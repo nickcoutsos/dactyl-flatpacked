@@ -25,8 +25,8 @@ module thumb_support_columns(selected=[0:len(columns) - 1]) {
 
   difference() {
     for (col=selected, side=sides) {
-      rows = column_range(col);
-      thumb_place(col, 1) translate([side, 0, 0]) thumb_column_rib(rows[0], rows[1]);
+      rows = columns[col];
+      thumb_place(col, 1) translate([side, 0, 0]) thumb_column_rib(first(rows), last(rows));
       thumb_support_front(col, side);
       thumb_support_back(col, side);
     }
@@ -45,43 +45,39 @@ module thumb_support_columns(selected=[0:len(columns) - 1]) {
 
 module thumb_support_front(col, offset) {
   hull() {
-    thumb_place(col, -1.25)
+    thumb_place(col, front_support_row - .25)
     translate([offset, 0, -column_rib_height -slot_height/2])
       cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
-    thumb_place(col, -1)
+    thumb_place(col, front_support_row)
     translate([offset, 0, thumb_row_radius])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
         (thumb_row_radius+column_rib_height-.01),
         thumb_row_radius+column_rib_height,
-        alpha*-0.6,
-        alpha*0.1
+        alpha*(front_support_row + (1 - rib_extension)),
+        alpha*(front_support_row + 1)
       );
   }
 }
 
 module thumb_support_back(col, offset) {
-  rows = columns[col];
-  start = rows[0];
-  end = rows[len(rows) - 1];
-
   hull() {
-    thumb_place(col, end + .25)
+    thumb_place(col, back_support_row + .25)
     translate([0, 0, -(column_rib_height + slot_height)])
     translate([offset, 0, 0])
       cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
-    thumb_place(col, end)
+    thumb_place(col, back_support_row)
     translate([offset, 0, thumb_row_radius])
     rotate([0, 90, 0])
       linear_extrude(rib_thickness, center=true)
       fan(
         (thumb_row_radius+column_rib_height-.01),
         thumb_row_radius+column_rib_height,
-        alpha*-0.1,
-        alpha*.6
+        alpha*(rib_extension),
+        alpha*(-.1)
       );
   }
 }

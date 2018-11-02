@@ -60,19 +60,21 @@ module place_column_rib_right(columns, row=2, spacing=rib_spacing) {
 }
 
 module place_column_support_slot_front(col) {
-  key_place(col, 3.6)
+  row = front_support_row + .25;
+  key_place(col, row)
   translate([0, 0, -(column_rib_height + slot_height*.25)])
-  rotate([-alpha*(2-3.6), 0, 0])
+  rotate([-alpha*(2-row), 0, 0])
   translate(column_offset_middle)
   translate(-[0, column_offsets[col].y, 0])
     children();
 }
 
 module place_column_support_slot_back(col) {
-  key_place(col, .25)
+  row = back_support_row + .25;
+  key_place(col, row)
   translate([0, 0, -column_rib_height])
   translate(column_offset_middle)
-  rotate([-alpha*(1.75), 0, 0])
+  rotate([-alpha*(2 - row), 0, 0])
   translate(-[0, column_offsets[col].y, 0])
     children();
 }

@@ -41,8 +41,9 @@ function inverted_thumb_place_transformation (column, row) = (
 );
 
 module place_thumb_column_support_slot_front(col) {
-  thumb_place(1, -1.3)
-  rotate_down(thumb_place_transformation(1, -1.3))
+  row = front_support_row - .25;
+  thumb_place(1, row)
+  rotate_down(thumb_place_transformation(1, row))
   translate([0, 0, -slot_height])
   translate([0, 0, thumb_column_radius])
   rotate([0, beta * (col - 1), 0])
@@ -53,8 +54,9 @@ module place_thumb_column_support_slot_front(col) {
 }
 
 module place_thumb_column_support_slot_back(col) {
-  thumb_place(1, 0.3)
-  rotate_down(thumb_place_transformation(1, 0.3))
+  row = back_support_row + .25;
+  thumb_place(1, row)
+  rotate_down(thumb_place_transformation(1, row))
   translate([0, 0, -slot_height])
   translate([0, 0, thumb_column_radius])
   rotate([0, beta * (col - 1), 0])
