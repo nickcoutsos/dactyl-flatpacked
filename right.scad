@@ -16,26 +16,26 @@ color("ivory") {
 }
 
 color("gainsboro") {
-  $detail = true;
+  $detail = false;
 
   main_layout() plate();
   thumb_layout() plate();
 
-  main_support_columns();
-  thumb_support_columns();
+  main_support_columns($fn=12);
+  thumb_support_columns($fn=12);
 
   // difference() {
   //   union() {
-  //     main_front_cross_support();
-  //     main_back_cross_support();
+      main_front_cross_support();
+      main_back_cross_support();
   //   }
   //   main_support_columns();
   // }
 
   // difference() {
   //   union() {
-  //     thumb_front_cross_support();
-  //     thumb_back_cross_support();
+      thumb_front_cross_support();
+      thumb_back_cross_support();
   //   }
   //   thumb_support_columns();
   // }
