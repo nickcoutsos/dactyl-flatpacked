@@ -30,7 +30,7 @@ mount_height = keyswitch_height + 3;
 
 cap_top_height = 9;
 
-column_rib_height = 7;
+column_rib_height = 4;
 column_rib_center_offset = rib_spacing/2 - rib_thickness/2;
 
 slot_height = 2;
