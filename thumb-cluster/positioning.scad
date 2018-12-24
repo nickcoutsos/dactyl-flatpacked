@@ -14,8 +14,9 @@ function thumb_place_transformation (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * row)
 
-  translation([-65, -45, 16])
-  * rotation([15, -40, 35])
+  translation([-52, -45, 40])
+  * rotation(axis=alpha * unit([1, 1, 0]))
+  * rotation([0, 0, 180 * (.25 - .1875)])
   * translation([mount_width, 0, 0])
   * translation([0, 0, thumb_column_radius])
   * rotation([0, column_angle, 0])
@@ -36,8 +37,9 @@ function inverted_thumb_place_transformation (column, row) = (
   * rotation(-[0, column_angle, 0])
   * translation(-[0, 0, thumb_column_radius])
   * translation(-[mount_width, 0, 0])
-  * rotation(-[15, -40, 35])
-  * translation(-[-65, -45, 16])
+  * rotation([0, 0, -180 * (.25 - .1875)])
+  * rotation(axis=-alpha * unit([1, 1, 0]))
+  * translation(-[-52, -45, 40])
 );
 
 module place_thumb_column_support_slot_front(col) {

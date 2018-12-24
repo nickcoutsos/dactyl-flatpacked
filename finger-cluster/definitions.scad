@@ -30,9 +30,8 @@ front_support_row = min([for(column=columns) last(column)]);
 
 function column_range (col) = [columns[col][0], last(columns[col])];
 
-alpha = 180/24;
+alpha = 180/12;
 beta = 180/36;
 
-main_row_radius = (mount_height + 0.25) / 2 / sin(alpha/2) + cap_top_height;
-main_column_radius = (mount_width + 0.25) / 2 / sin(beta/2) + cap_top_height;
-
+main_row_radius = (mount_height + .5) / 2 / sin(alpha/2) + cap_top_height;
+main_column_radius = (mount_width + 2) / 2 / sin(beta/2) + cap_top_height;

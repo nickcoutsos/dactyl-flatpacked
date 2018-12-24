@@ -15,8 +15,8 @@ function key_place_transformation(column, row) = (
   let(column_angle = beta * (2 - column))
   let(column_offset = column_offsets[column])
 
-  translation([0, 0, 10])
-  * rotation(beta*3 * Y)
+  translation([0, 0, 13])
+  * rotation(alpha * Y)
   * translation(column_offset)
   * translation([0, 0, main_column_radius])
   * rotation(column_angle * Y)
@@ -38,8 +38,8 @@ function un_key_place_transformation(column, row) = (
   * rotation(-column_angle * Y)
   * translation(-[0, 0, main_column_radius])
   * translation(-column_offset)
-  * rotation(-beta*3 * Y)
-  * translation(-[0, 0, 10])
+  * rotation(-alpha * Y)
+  * translation(-[0, 0, 13])
 );
 
 module place_column_ribs(columns, row=2, spacing=rib_spacing) {
