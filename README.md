@@ -3,7 +3,7 @@
 A reimagined [dactyl](https://github.com/adereth/dactyl-keyboard) using slotted
 rib pieces to create the countoured surface instead of a solid 3D printed part.
 
-![Render](images/rendered-frame.png)
+![Keyboard](images/fully-assembled.jpg)
 ![Cutting template](images/rendered-template.png)
 
 **Note:** the current state of the master branch doesn't accurately reflect the
