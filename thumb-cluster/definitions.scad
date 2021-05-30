@@ -10,8 +10,8 @@ columns = [
   [-1, 0, 1]
 ];
 
-back_support_row = 1;
-front_support_row = -1;
+back_support_row = -0.12;
+front_support_row = -0.95;
 
 function column_range (col) = [columns[col][0], last(columns[col])];
 

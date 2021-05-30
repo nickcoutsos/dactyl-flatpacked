@@ -5,38 +5,41 @@ use <thumb-cluster/layout.scad>
 use <thumb-cluster/supports.scad>
 include <common/definitions.scad>
 
+$fn = 48;
+
 keycap_offset = [0, 0, cap_top_height - keycap_height];
 
-main_layout() kailh_lowprofile_switch();
-thumb_layout() kailh_lowprofile_switch();
+color("gray") main_layout() switch();
+color("gray") thumb_layout() switch();
 
-color("ivory") {
+*color("ivory") {
   main_layout() translate(keycap_offset) keycap(1, 1);
   thumb_layout() translate(keycap_offset) keycap(1, 1);
 }
 
-color("gainsboro") {
-  $detail = false;
 
-  main_layout() plate();
-  thumb_layout() plate();
+// color("gainsboro") 
+union(){
+  $detail = true;
 
+  *color("skyblue") main_layout() plate();
   main_support_columns($fn=12);
-  thumb_support_columns($fn=12);
-
-  // difference() {
-  //   union() {
+  *difference() {
+    union() {
       main_front_cross_support();
       main_back_cross_support();
-  //   }
-  //   main_support_columns();
-  // }
+    }
+    // if ($detail) main_support_columns();
+  }
 
-  // difference() {
-  //   union() {
+  color("skyblue") thumb_layout() plate();
+  thumb_support_columns($fn=12);
+  thumb_inner_column_cross_support();
+  difference() {
+    union() {
       thumb_front_cross_support();
       thumb_back_cross_support();
-  //   }
-  //   thumb_support_columns();
-  // }
+    }
+    if ($detail) thumb_support_columns();
+  }
 }

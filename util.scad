@@ -69,6 +69,15 @@ module mirror_quadrants() {
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];
 
+function reverse(list) = [for(i=[0:len(list)-1]) list[len(list)-1-i]];
+
+function flatten(arrays) = (
+  len(arrays) > 1
+    ? concat(arrays[0], flatten([for(i=[1:len(arrays)-1]) arrays[i]]))
+    : arrays[0]
+);
+
+
 function apply_matrix (v, m) = (
   m * [ v.x, v.y, v.z, 1 ]
 );

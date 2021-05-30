@@ -33,10 +33,7 @@ translate([-140, -90, 0]) {
     translate([20 * i - 20, 0, 0])
     rotate([0, 90, 0])
     multmatrix(inverted_thumb_place_transformation(1, 0))
-    difference() {
       thumb_support_columns(1);
-      #thumb_side_supports();
-    }
 
     project()
     translate([-20 * i, 0, 0])
@@ -80,20 +77,8 @@ translate([120, -120, 0]) rotate([90, 0, 180]) main_front_cross_support();
 project()
 translate([60, -70, 0]) rotate([90, 0, 0]) main_back_cross_support();
 
-#project()
-translate([30, -145, 0])
-rotate([90, 0, 0])
-multmatrix(un_key_place_transformation(0, 2.5))
-main_inner_column_cross_support();
-
 thumb_column_matrix = thumb_place_transformation(0, -.15);
 thumb_column_invert = inverted_thumb_place_transformation(0, -.15);
-
-project()
-translate([100, -135, 0])
-rotate([-90, 0, 0])
-multmatrix(thumb_column_invert)
-thumb_inner_column_cross_support();
 
 for (y=[1:14], x=[0,1]) {
   project()

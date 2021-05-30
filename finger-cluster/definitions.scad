@@ -26,7 +26,7 @@ columns = [
 ];
 
 back_support_row = max([for(column=columns) column[0]]);
-front_support_row = min([for(column=columns) last(column)])+0.3;
+front_support_row = min([for(column=columns) last(column)])+0.1;
 
 function column_range (col) = [columns[col][0], last(columns[col])];
 

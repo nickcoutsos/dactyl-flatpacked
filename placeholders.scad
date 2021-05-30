@@ -58,6 +58,7 @@ module kailh_lowprofile_switch() {
 }
 
 module keycap(w, h) {
+  h = is_undef($h) ? h : $h;
   x = w / 2 * keycap_length;
   y = h / 2 * keycap_length;
   z = keycap_height;
@@ -80,7 +81,7 @@ module keycap(w, h) {
         polygon(lower);
     }
 
-    if ($detail) {
+    if (!is_undef($detail) && $detail) {
       translate([0, 0, -2])
       hull() {
         translate([0, 0, z])
@@ -96,27 +97,59 @@ module keycap(w, h) {
   }
 }
 
-module plate (w=1, h=1, w_offset=0, h_offset=0) {
+
+module plate (w=1, h=1, w_offset=0, h_offset=0, render_2d=false) {
   w = is_undef($u) ? w : $u;
   h = is_undef($h) ? h : $h;
   width = plate_width * w;
   height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;
 
-  translate([0, 0, -plate_thickness/2])
-  difference () {
-    cube([width, height, plate_thickness], center=true);
-    translate([-plate_width * w_offset, 0, 0])
-    scale([1, 1, 2]) cutout();
+  outer_points = [
+    [ width/2,  height/2],
+    [ rib_offset*w + rib_thickness/2,  height/2],
+    [ rib_offset*w + rib_thickness/2,  height/2 - rib_thickness/2],
+    [ rib_offset*w - rib_thickness/2,  height/2 - rib_thickness/2],
+    [ rib_offset*w - rib_thickness/2,  height/2],
 
-    mirror_quadrants()
-      translate([rib_offset * w, height / 2, 0])
-      scale(1.15)
-      cube([
-        rib_thickness,
-        rib_thickness/2,
-        plate_thickness
-      ], center=true);
+    [ -(rib_offset*w - rib_thickness/2),  height/2],
+    [ -(rib_offset*w - rib_thickness/2),  height/2 - rib_thickness/2],
+    [ -(rib_offset*w + rib_thickness/2),  height/2 - rib_thickness/2],
+    [ -(rib_offset*w + rib_thickness/2),  height/2],
+    [-width/2,  height/2],
+
+    [-width/2, -height/2],
+    [ -(rib_offset*w + rib_thickness/2),  -height/2],
+    [ -(rib_offset*w + rib_thickness/2),  -height/2 + rib_thickness/2],
+    [ -(rib_offset*w - rib_thickness/2),  -height/2 + rib_thickness/2],
+    [ -(rib_offset*w - rib_thickness/2),  -height/2],
+
+    [ (rib_offset*w - rib_thickness/2),  -height/2],
+    [ (rib_offset*w - rib_thickness/2),  -height/2 + rib_thickness/2],
+    [ (rib_offset*w + rib_thickness/2),  -height/2 + rib_thickness/2],
+    [ (rib_offset*w + rib_thickness/2),  -height/2],
+    [ width/2, -height/2]
+  ];
+
+  inner_points = [
+    [ keyhole_length/2,  keyhole_length/2],
+    [-keyhole_length/2,  keyhole_length/2],
+    [-keyhole_length/2, -keyhole_length/2],
+    [ keyhole_length/2, -keyhole_length/2]
+  ];
+
+  points = concat(outer_points, inner_points);
+  paths = [
+    [for(i=[0:len(outer_points)-1]) i],
+    [for(i=[0:len(inner_points)-1]) len(outer_points)+i]
+  ];
+
+  if (render_2d) {
+    polygon(points, paths=paths);
+  } else {
+    translate([0, 0, -plate_thickness])
+    linear_extrude(height=plate_thickness)
+    polygon(points, paths=paths);
   }
 }
 
