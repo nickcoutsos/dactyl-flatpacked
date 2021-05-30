@@ -97,6 +97,8 @@ module keycap(w, h) {
 }
 
 module plate (w=1, h=1, w_offset=0, h_offset=0) {
+  w = is_undef($u) ? w : $u;
+  h = is_undef($h) ? h : $h;
   width = plate_width * w;
   height = plate_height * h;
   rib_offset = (rib_spacing - rib_thickness) / 2;

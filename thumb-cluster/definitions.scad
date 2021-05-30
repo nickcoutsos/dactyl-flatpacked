@@ -1,17 +1,17 @@
 include <../common/definitions.scad>
 include <../util.scad>
 
-alpha = 180/24;
-beta = 180/8;
+alpha = 180/12;
+beta = 180/36;
 
 columns = [
-  [-1, 0],
-  [-1, 0],
-  [-1, 0]
+  [-.5],
+  [-.5, 1],
+  [-1, 0, 1]
 ];
 
-back_support_row = min([for(column=columns) last(column)]);
-front_support_row = max([for(column=columns) column[0]]);
+back_support_row = 1;
+front_support_row = -1;
 
 function column_range (col) = [columns[col][0], last(columns[col])];
 

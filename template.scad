@@ -1,11 +1,14 @@
-use <supports.scad>
-use <positioning.scad>
+use <finger-cluster/supports.scad>
+use <thumb-cluster/supports.scad>
+use <finger-cluster/positioning.scad>
+use <thumb-cluster/positioning.scad>
 use <util.scad>
 use <placeholders.scad>
-include <definitions.scad>
+include <finger-cluster/definitions.scad>
+include <thumb-cluster/definitions.scad>
 
-$fn = 4;
 enable_projection = false;
+$detail=true;
 
 module project() {
   if (enable_projection) {
@@ -21,7 +24,7 @@ for (col=[0:5], i=[0,1]) {
   translate([col*55 + i * 27 - 150, 0, 0])
   rotate([0, 90, 0])
   multmatrix(un_key_place_transformation(col, 2))
-  main_support_column(col);
+  main_support_columns(col);
 }
 
 translate([-140, -90, 0]) {
@@ -31,21 +34,21 @@ translate([-140, -90, 0]) {
     rotate([0, 90, 0])
     multmatrix(inverted_thumb_place_transformation(1, 0))
     difference() {
-      thumb_supports_col3();
-      thumb_side_supports();
+      thumb_support_columns(1);
+      #thumb_side_supports();
     }
 
     project()
     translate([-20 * i, 0, 0])
     rotate([0, 90, 0])
     multmatrix(inverted_thumb_place_transformation(2, 0))
-      thumb_supports_col1();
+      thumb_support_columns(2);
 
     project()
     translate([20 * i + 20, 0, 0])
     rotate([0, 90, 0])
     multmatrix(inverted_thumb_place_transformation(0, 0))
-      thumb_supports_col2();
+      thumb_support_columns(0);
   }
 }
 
@@ -77,7 +80,7 @@ translate([120, -120, 0]) rotate([90, 0, 180]) main_front_cross_support();
 project()
 translate([60, -70, 0]) rotate([90, 0, 0]) main_back_cross_support();
 
-project()
+#project()
 translate([30, -145, 0])
 rotate([90, 0, 0])
 multmatrix(un_key_place_transformation(0, 2.5))
