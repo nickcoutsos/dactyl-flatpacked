@@ -15,7 +15,7 @@ function key_place_transformation(column, row) = (
   let(column_angle = beta * (2 - column))
   let(column_offset = column_offsets[column])
 
-  translation([0, 0, 10])
+  translation([0, 0, 13])
   * rotation(beta*3 * Y)
   * translation(column_offset)
   * translation([0, 0, main_column_radius])

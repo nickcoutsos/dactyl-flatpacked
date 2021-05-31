@@ -87,13 +87,13 @@ module main_support_columns(selection=[0:len(columns) - 1]) {
 }
 
 module main_support_front(col, offset) {
-  hull()
-  {
+  front_row = last(columns[col]);
+  hull() {
     place_column_support_slot_front(col)
       translate([offset, 0, slot_height/2])
       cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
-    key_place(col, front_support_row)
+    key_place(col, front_row)
     translate([offset, 0, -column_rib_height + plate_thickness/2])
     cube([rib_thickness, plate_height, plate_thickness], center=true);
 
@@ -111,12 +111,13 @@ module main_support_front(col, offset) {
 }
 
 module main_support_back(col, offset) {
+  back_row = first(columns[col]);
   hull() {
     place_column_support_slot_back(col)
       translate([offset, 0, slot_height/2])
       cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
 
-    key_place(col, back_support_row)
+    key_place(col, back_row)
     translate([offset, 0, -column_rib_height + plate_thickness/2])
     cube([rib_thickness, plate_height, plate_thickness], center=true);
   }

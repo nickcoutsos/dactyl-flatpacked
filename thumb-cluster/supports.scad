@@ -123,6 +123,7 @@ module thumb_support_columns(selected=[0:len(columns) - 1]) {
 }
 
 module thumb_support_front(col, offset) {
+  front_row = first(columns[col]);
   hull() {
     thumb_place(col, front_support_row - .25)
     translate([offset, 0, -column_rib_height -slot_height/2])
