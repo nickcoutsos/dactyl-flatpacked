@@ -1,4 +1,6 @@
 include <definitions.scad>
+include <../common/shape-profiles.scad>
+
 use <positioning.scad>
 use <../placeholders.scad>
 use <../structures.scad>
@@ -175,27 +177,39 @@ module thumb_support_back_slot(col, offset) {
 }
 
 module thumb_front_cross_support() {
-  offset = [column_rib_center_offset, 0, 0];
-  hull_pairs() {
-    dropdown() place_thumb_column_support_slot_front(2) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_front(2) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_front(1) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_front(1) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_front(0) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_front(0) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-  }
+  top_points = flatten([
+    for(col=list([0:len(columns)-1]))
+    let(position = place_thumb_column_support_slot_front(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  left_side_point = take3(place_thumb_column_support_slot_front(len(columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  right_side_point = take3(place_thumb_column_support_slot_front(0) * [+(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(first(top_points))),
+  ];
+
+  points = concat(top_points, [left_side_point], bottom_points);
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
 
 module thumb_back_cross_support() {
-  offset = [column_rib_center_offset, 0, 0];
-  hull_pairs() {
-    dropdown() place_thumb_column_support_slot_back(2) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_back(2) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_back(1) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_back(1) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_back(0) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_thumb_column_support_slot_back(0) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-  }
+  top_points = flatten([
+    for(col=list([0:len(columns)-1]))
+    let(position = place_thumb_column_support_slot_back(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  left_side_point = take3(place_thumb_column_support_slot_back(len(columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  right_side_point = last(top_points);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(first(top_points))),
+  ];
+
+  points = concat(top_points, [left_side_point], bottom_points);
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
 
 module thumb_inner_column_cross_support() {

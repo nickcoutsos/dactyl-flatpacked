@@ -16,20 +16,12 @@ union(){
   $detail = true;
 
   color("skyblue") main_layout() plate();
-  main_support_columns($fn=12);
-  difference() {
-    union() {
-      main_front_cross_support();
-      main_back_cross_support();
-    }
-  }
+  color("mediumseagreen") main_support_columns();
+  main_front_cross_support();
+  main_back_cross_support();
 
   color("skyblue") thumb_layout() plate();
-  thumb_support_columns($fn=12);
-  difference() {
-    union() {
-      thumb_front_cross_support();
-      thumb_back_cross_support();
-    }
-  }
+  thumb_support_columns();
+  thumb_front_cross_support();
+  thumb_back_cross_support();
 }

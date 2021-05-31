@@ -1,4 +1,6 @@
 include <definitions.scad>
+include <../common/shape-profiles.scad>
+
 use <positioning.scad>
 use <../placeholders.scad>
 use <../structures.scad>
@@ -135,40 +137,48 @@ module main_support_back_slot(col, offset) {
     cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
 }
 
+
 module main_front_cross_support() {
-  offset = [column_rib_center_offset, 0, 0];
-  hull_pairs() {
-    dropdown() place_column_support_slot_front(0) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(0) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(1) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(1) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(2) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(2) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(3) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(3) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(4) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(4) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(5) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_front(5) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-  }
+  top_points = flatten([
+    for(col=reverse(list([0:len(columns)-1])))
+    let(position = place_column_support_slot_front(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  right_side_point = take3(place_column_support_slot_front(len(columns)-1) * [+column_rib_center_offset + rib_thickness/2 + 1, 0, 0, 1]);
+  left_side_point = take3(place_column_support_slot_front(0) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+  ];
+
+  points = concat([right_side_point], top_points, [left_side_point], bottom_points);
+
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
 
 module main_back_cross_support() {
-  offset = [column_rib_center_offset, 0, 0];
-  hull_pairs() {
-    dropdown() place_column_support_slot_back(0) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(0) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(1) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(1) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(2) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(2) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(3) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(3) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(4) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(4) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(5) translate(-offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-    dropdown() place_column_support_slot_back(5) translate(+offset) translate([0, 0, slot_height]) cube([rib_thickness + 2, rib_thickness, slot_height*2], center=true);
-  }
+  top_points = flatten([
+    for(col=reverse(list([0:len(columns)-1])))
+    let(position = place_column_support_slot_back(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  right_side_point = take3(place_column_support_slot_back(len(columns)-1) * [+column_rib_center_offset + rib_thickness/2 + 1, 0, 0, 1]);
+  left_side_point = take3(place_column_support_slot_back(0) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+  ];
+
+  points = concat(
+    [right_side_point],
+    top_points,
+    [left_side_point],
+    bottom_points
+  );
+
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
 
 module main_inner_column_cross_support() {

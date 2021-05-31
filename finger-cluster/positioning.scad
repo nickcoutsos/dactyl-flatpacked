@@ -59,22 +59,24 @@ module place_column_rib_right(columns, row=2, spacing=rib_spacing) {
     children();
 }
 
-module place_column_support_slot_front(col) {
-  row = front_support_row + .25;
-  key_place(col, row)
-  translate([0, 0, -(column_rib_height + slot_height*.25)])
-  rotate([-alpha*(2-row), 0, 0])
-  translate(column_offset_middle)
-  translate(-[0, column_offsets[col].y, 0])
-    children();
-}
+function place_column_support_slot_front(col) = (
+  let(row = front_support_row + .25)
+  key_place_transformation(col, row)
+   * translation([0, 0, -(column_rib_height + slot_height*.25)])
+   * rotation([-alpha*(2-row), 0, 0])
+   * translation(column_offset_middle)
+   * translation(-[0, column_offsets[col].y, 0])
+);
 
-module place_column_support_slot_back(col) {
-  row = back_support_row + .25;
-  key_place(col, row)
-  translate([0, 0, -column_rib_height])
-  translate(column_offset_middle)
-  rotate([-alpha*(2 - row), 0, 0])
-  translate(-[0, column_offsets[col].y, 0])
-    children();
-}
+module place_column_support_slot_front(col) multmatrix(place_column_support_slot_front(col)) children();
+
+function place_column_support_slot_back(col) = (
+  let(row = back_support_row + .25)
+  key_place_transformation(col, row)
+  * translation([0, 0, -column_rib_height])
+  * translation(column_offset_middle)
+  * rotation([-alpha*(2 - row), 0, 0])
+  * translation(-[0, column_offsets[col].y, 0])
+);
+
+module place_column_support_slot_back(col) multmatrix(place_column_support_slot_back(col)) children();

@@ -42,31 +42,32 @@ function inverted_thumb_place_transformation (column, row) = (
   * translation(-[-52, -45, 40])
 );
 
-module place_thumb_column_support_slot_front(col) {
-  row = front_support_row - .25;
-  thumb_place(1, row)
-  rotate_down(thumb_place_transformation(1, row))
-  translate([0, 0, -slot_height])
-  translate([0, 0, thumb_column_radius])
-  rotate([0, beta * (col - 1), 0])
-  translate([0, 0, -thumb_column_radius])
-  translate([0, 0, -column_rib_height])
-  translate([0, 0, -slot_height])
-    children();
-}
+function place_thumb_column_support_slot_front(col) = (
+  let(row = front_support_row - .25)
+  thumb_place_transformation(1, row)
+  * rotation_down(thumb_place_transformation(1, row))
+  * translation([0, 0, -slot_height])
+  * translation([0, 0, thumb_column_radius])
+  * rotation([0, beta * (col - 1), 0])
+  * translation([0, 0, -thumb_column_radius])
+  * translation([0, 0, -column_rib_height])
+  * translation([0, 0, -slot_height])
+);
 
-module place_thumb_column_support_slot_back(col) {
-  row = back_support_row + .25;
-  thumb_place(1, row)
-  rotate_down(thumb_place_transformation(1, row))
-  translate([0, 0, -slot_height])
-  translate([0, 0, thumb_column_radius])
-  rotate([0, beta * (col - 1), 0])
-  translate([0, 0, -thumb_column_radius])
-  translate([0, 0, -column_rib_height])
-  translate([0, 0, -slot_height])
-    children();
-}
+function place_thumb_column_support_slot_back(col) = (
+  let(row = back_support_row + .25)
+  thumb_place_transformation(1, row)
+  * rotation_down(thumb_place_transformation(1, row))
+  * translation([0, 0, -slot_height])
+  * translation([0, 0, thumb_column_radius])
+  * rotation([0, beta * (col - 1), 0])
+  * translation([0, 0, -thumb_column_radius])
+  * translation([0, 0, -column_rib_height])
+  * translation([0, 0, -slot_height])
+);
+
+module place_thumb_column_support_slot_front(col) multmatrix(place_thumb_column_support_slot_front(col)) children();
+module place_thumb_column_support_slot_back(col) multmatrix(place_thumb_column_support_slot_back(col)) children();
 
 module place_thumb_keys (columns, rows) {
   for (col=columns, row=rows) {
