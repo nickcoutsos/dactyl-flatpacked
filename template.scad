@@ -24,7 +24,7 @@ for (col=[0:5], i=[0,1]) {
   translate([col*55 + i * 27 - 150, 0, 0])
   rotate([0, 90, 0])
   multmatrix(un_key_place_transformation(col, 2))
-  main_support_columns(col);
+  finger_cluster_support_columns(col);
 }
 
 translate([-140, -90, 0]) {
@@ -72,10 +72,10 @@ multmatrix(back_invert)
 thumb_back_cross_support();
 
 project()
-translate([120, -120, 0]) rotate([90, 0, 180]) main_front_cross_support();
+translate([120, -120, 0]) rotate([90, 0, 180]) finger_cluster_cross_support_front();
 
 project()
-translate([60, -70, 0]) rotate([90, 0, 0]) main_back_cross_support();
+translate([60, -70, 0]) rotate([90, 0, 0]) finger_cluster_cross_support_back();
 
 thumb_column_matrix = thumb_place_transformation(0, -.15);
 thumb_column_invert = inverted_thumb_place_transformation(0, -.15);

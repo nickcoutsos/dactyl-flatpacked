@@ -7,21 +7,16 @@ include <common/definitions.scad>
 
 keycap_offset = [0, 0, cap_top_height - keycap_height];
 
-color("gray") main_layout() switch();
-color("gray") thumb_layout() switch();
-color("ivory") main_layout() translate(keycap_offset) keycap(1, 1);
-color("ivory") thumb_layout() translate(keycap_offset) keycap(1, 1);
+*color("ivory") main_layout() keycap(1, 1);
+*color("gray") main_layout() switch();
+color("skyblue") main_layout() plate();
+finger_cluster_support_columns();
+finger_cluster_cross_support_front();
+finger_cluster_cross_support_back();
 
-union(){
-  $detail = true;
-
-  color("skyblue") main_layout() plate();
-  color("mediumseagreen") main_support_columns();
-  main_front_cross_support();
-  main_back_cross_support();
-
-  color("skyblue") thumb_layout() plate();
-  thumb_support_columns();
-  thumb_front_cross_support();
-  thumb_back_cross_support();
-}
+*color("ivory") thumb_layout() keycap(1, 1);
+*color("gray") thumb_layout() switch();
+color("skyblue") thumb_layout() plate();
+thumb_support_columns();
+thumb_front_cross_support();
+thumb_back_cross_support();

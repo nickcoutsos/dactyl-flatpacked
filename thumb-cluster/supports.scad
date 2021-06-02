@@ -3,7 +3,6 @@ include <../common/shape-profiles.scad>
 
 use <positioning.scad>
 use <../placeholders.scad>
-use <../structures.scad>
 use <../util.scad>
 
 function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];

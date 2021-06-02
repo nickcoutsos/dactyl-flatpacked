@@ -20,7 +20,7 @@ $fn = 120;
 
 //     // #render()
 //     {
-//     main_support_columns(columns=5);
+//     finger_cluster_support_columns(columns=5);
 //     }
 //     // translate([-(plate_width / 4), 0, 0])
 //     // main_support_outer_column_single();
@@ -108,15 +108,15 @@ intersection() {
 length = rib_spacing - rib_thickness*2;
 height = length * 1.5;
 
-// main_support_columns(columns=5);
+// finger_cluster_support_columns(columns=5);
 // color(alpha=0.4)
 //     translate([-(plate_width / 4), 0, 0])
 //     main_support_outer_column_single();
 // place_keys(5, 4)
 // translate([0, 0, -column_rib_height])
 // rotate([-alpha*(2-4), 0, 0])
-// translate(column_offset_middle)
-// translate(-column_offsets[5]) {
+// translate(finger_finger_column_offset_middle)
+// translate(-finger_column_offsets[5]) {
 //   translate([0, 0, -5])
 //     cube([22, rib_thickness - .3, length], center=true);
 
@@ -134,8 +134,8 @@ height = length * 1.5;
 // place_keys(5, 4)
 // translate([0, 0, -column_rib_height])
 // rotate([-alpha*(2-4), 0, 0])
-// translate(column_offset_middle)
-// translate(-column_offsets[5]) {
+// translate(finger_finger_column_offset_middle)
+// translate(-finger_column_offsets[5]) {
 //   translate([0, 0, -5])
 //     cube([22, rib_thickness - .3, length], center=true);
 

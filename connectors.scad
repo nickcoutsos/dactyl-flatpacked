@@ -115,9 +115,9 @@ difference ()
   #translate([0, 0, -1])
   linear_extrude(height=10)
   projection() {
-    // main_front_cross_support();
+    // finger_cluster_cross_support_front();
     // thumb_front_cross_support();
-    main_back_cross_support();
+    finger_cluster_cross_support_back();
     thumb_back_cross_support();
   }
 
