@@ -1,30 +1,6 @@
 include <common/definitions.scad>
 use <util.scad>
 
-
-module vector(v, r=.5) {
-  x = v[0];
-  y = v[1];
-  z = v[2];
-
-  length = norm(v);
-  theta = atan2(x, -y); // equator angle around z-up axis
-  phi = acos( min( max(z / length, -1), 1) ); // polar angle
-
-  rotate([0, 0, theta])
-  rotate([phi, 0, 0]) {
-    cylinder(r1=r, r2=r * .8, h=length * .95);
-    translate([0, 0, length * .95])
-      cylinder(r1=r * .8, r2=0, h=length * .05);
-  }
-}
-
-module axes(length=30) {
-  color("red") vector([1, 0, 0] * length);
-  color("limegreen") vector([0, 1, 0] * length);
-  color("royalblue") vector([0, 0, 1] * length);
-}
-
 module switch () {
   rotate([0, 0, 45]) cylinder(d1=19.77, d2=14.5, $fn=4, h=5.2);
   translate([0, 0, -2.2]) rotate([0, 0, 45]) cylinder(d=19.77, $fn=4, h=2.2);
@@ -151,17 +127,4 @@ module plate (w=1, h=1, w_offset=0, h_offset=0, render_2d=false) {
     linear_extrude(height=plate_thickness)
     polygon(points, paths=paths);
   }
-}
-
-module key_well (w=1, h=1) {
-  width = plate_width * w;
-  height = plate_height * h;
-  rib_offset = (rib_spacing - rib_thickness) / 2;
-
-  cube([width+.1, 15, 5], center=true);
-  translate([0, 0, plate_thickness]) cube([width+.1, height - rib_thickness/2, plate_thickness * 4], center=true);
-}
-
-module cutout () {
-  cube([keyhole_length, keyhole_length, plate_thickness], center=true);
 }

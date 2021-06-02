@@ -7,10 +7,23 @@ X = [1, 0, 0, 1];
 Y = [0, 1, 0, 1];
 Z = [0, 0, 1, 1];
 
+function list(list_) = [for(v=list_) v];
+function reverse(list) = [for(i=[0:len(list)-1]) list[len(list)-1-i]];
 function first (vec) = vec[0];
 function last (vec) = vec[ len(vec) - 1];
+function flatten(arrays) = (
+  len(arrays) > 1
+    ? concat(arrays[0], flatten([for(i=[1:len(arrays)-1]) arrays[i]]))
+    : arrays[0]
+);
+
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];
+function vec4(v) = [v.x, v.y, v.z, 1];
+
+function apply_matrix (v, m) = (
+  m * [ v.x, v.y, v.z, 1 ]
+);
 
 function angleTo (a, b) = acos(
   ( take3(unit(a)) * take3(unit(b)) ) /
@@ -51,13 +64,8 @@ function rotation_down_x(matrix, invert=false) = (
 
 // Given a known matrix transformation "from", rotate about the local X-axis
 // such that the local Y-axis becomes co-planar with the XY plane.
-module rotate_down(matrix) {
-  multmatrix(rotation_down(matrix)) children();
-}
-
-module rotate_down_x(matrix) {
-  multmatrix(rotation_down_x(matrix)) children();
-}
+module rotate_down(matrix) multmatrix(rotation_down(matrix)) children();
+module rotate_down_x(matrix) multmatrix(rotation_down_x(matrix)) children();
 
 module mirror_quadrants() {
   children();
@@ -65,24 +73,6 @@ module mirror_quadrants() {
   mirror([1, 0, 0]) mirror([0, 1, 0]) children();
   mirror([0, 1, 0]) children();
 }
-
-function takeXY (vec) = [vec.x, vec.y];
-function takeXZ (vec) = [vec.x, vec.z];
-function vec4(v) = [v.x, v.y, v.z, 1];
-
-function list(list_) = [for(v=list_) v];
-function reverse(list) = [for(i=[0:len(list)-1]) list[len(list)-1-i]];
-
-function flatten(arrays) = (
-  len(arrays) > 1
-    ? concat(arrays[0], flatten([for(i=[1:len(arrays)-1]) arrays[i]]))
-    : arrays[0]
-);
-
-
-function apply_matrix (v, m) = (
-  m * [ v.x, v.y, v.z, 1 ]
-);
 
 module hull_pairs(close=false) {
   for (i=[0:$children-2]) {
