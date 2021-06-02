@@ -71,3 +71,37 @@ beta = 180/36;
 finger_column_radius = (mount_height + 0.5) / 2 / sin(alpha/2) + cap_top_height;
 finger_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
 
+
+thumb_columns = [
+  [-.5],
+  [-.5, 1],
+  [-1, 0, 1]
+];
+
+thumb_cluster_back_support_row = 0;
+thumb_cluster_front_support_row = -0.95;
+
+thumb_row_radius = (mount_height + 0.75) / 2 / sin(alpha/2) + cap_top_height;
+thumb_column_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
+
+// Thumb overrides specify on a per-colum-index-and-row-index basis:
+// * size multiplier (u and h)
+// * rotation (in degrees)
+// Note: this is only used for thumb keys and doesn't support the ergodox-style
+// 1.25u outer pinky-column keys.
+overrides = [
+  ["thumb", 0, 0, 1, 2, 0],
+  ["thumb", 1, 0, 1, 2, 0]
+];
+
+// Look up key overrides for given source, column index, and row index
+function get_overrides (source, colIndex, rowIndex) = (
+  let(matches = [
+    for(vec=overrides)
+    if (vec[0] == source && vec[1] == colIndex && vec[2] == rowIndex)
+    echo(vec, slice(vec, 3))
+    slice(vec, 3)
+  ])
+
+  len(matches) > 0 ? matches[0] : [1, 1, 0]
+);

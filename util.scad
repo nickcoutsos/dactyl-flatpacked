@@ -17,6 +17,11 @@ function flatten(arrays) = (
     : arrays[0]
 );
 
+function slice(vec, start, end) = (
+  let(e=is_undef(end) ? len(vec) - 1 : end)
+  [ for(i=[start:e]) vec[i] ]
+);
+
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];
 function vec4(v) = [v.x, v.y, v.z, 1];

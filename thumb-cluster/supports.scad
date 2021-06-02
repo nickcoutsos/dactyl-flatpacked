@@ -1,6 +1,8 @@
-include <definitions.scad>
+include <../definitions.scad>
 include <../common/shape-profiles.scad>
 
+use <../scad-utils/linalg.scad>
+use <../scad-utils/transformations.scad>
 use <positioning.scad>
 use <../placeholders.scad>
 use <../util.scad>
@@ -19,12 +21,12 @@ function rotate_keyplace(row) = (
  * @param <Number> extension
  */
 module column_support(columnIndex, extension=0, height=column_rib_height) {
-  column = columns[columnIndex];
+  column = thumb_columns[columnIndex];
   front = first(column);
   back = last(column);
   top_points = flatten([
     for(rowIndex=[0:len(column)-1])
-    let(override = get_overrides(overrides, columnIndex, rowIndex))
+    let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
     transform(rotate_keyplace(column[rowIndex]), reverse([
@@ -39,7 +41,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
 
   function back_support_profile(rowIndex) = (
     let(row = column[rowIndex])
-    let(override = get_overrides(overrides, columnIndex, rowIndex))
+    let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
     let(t = (
@@ -71,7 +73,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
 
   function front_support_profile(rowIndex) = (
     let(row = column[rowIndex])
-    let(override = get_overrides(overrides, columnIndex, rowIndex))
+    let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
     let(t = (
@@ -94,7 +96,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
   );
 
   function bottom_profile(rowIndex) = (
-    let(override = get_overrides(overrides, columnIndex, rowIndex))
+    let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
     reverse([
@@ -106,12 +108,12 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
   bottom_points = reverse(flatten([
     for(rowIndex=[0:len(column)-1])
     let(row=column[rowIndex])
-    let(override = get_overrides(overrides, columnIndex, rowIndex))
+    let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(is_only_row = len(column) == 1)
-    let(has_back_support_slot = round(row) == round(back_support_row))
-    let(has_front_support_slot = round(row) == round(front_support_row))
-    let(is_lowest_above_back_slot = rowIndex == 0 && row + (h * .5) > back_support_row)
+    let(has_back_support_slot = round(row) == round(thumb_cluster_back_support_row))
+    let(has_front_support_slot = round(row) == round(thumb_cluster_front_support_row))
+    let(is_lowest_above_back_slot = rowIndex == 0 && row + (h * .5) > thumb_cluster_back_support_row)
 
     // TODO: simplify this logic
     is_only_row || is_lowest_above_back_slot || (has_back_support_slot && has_front_support_slot) ? (
@@ -128,11 +130,11 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
   polygon(points);
 }
 
-module thumb_support_columns(selected=[0:len(columns) - 1]) {
+module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   sides = [-1, 1] * column_rib_center_offset;
 
   for (col=selected, side=sides) {
-    rows = columns[col];
+    rows = thumb_columns[col];
 
     thumb_place(col, 0)
     translate([side, 0, 0])
@@ -145,12 +147,12 @@ module thumb_support_columns(selected=[0:len(columns) - 1]) {
 
 module thumb_front_cross_support() {
   top_points = flatten([
-    for(col=list([0:len(columns)-1]))
+    for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_front(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
   ]);
 
-  left_side_point = take3(place_thumb_column_support_slot_front(len(columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  left_side_point = take3(place_thumb_column_support_slot_front(len(thumb_columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
   right_side_point = take3(place_thumb_column_support_slot_front(0) * [+(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
   bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),
@@ -163,12 +165,12 @@ module thumb_front_cross_support() {
 
 module thumb_back_cross_support() {
   top_points = flatten([
-    for(col=list([0:len(columns)-1]))
+    for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_back(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
   ]);
 
-  left_side_point = take3(place_thumb_column_support_slot_back(len(columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  left_side_point = take3(place_thumb_column_support_slot_back(len(thumb_columns)-1) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
   right_side_point = last(top_points);
   bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),

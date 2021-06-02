@@ -1,4 +1,4 @@
-include <definitions.scad>
+include <../definitions.scad>
 
 use <../util.scad>
 use <../scad-utils/transformations.scad>
@@ -43,7 +43,7 @@ function inverted_thumb_place_transformation (column, row) = (
 );
 
 function place_thumb_column_support_slot_front(col) = (
-  let(row = front_support_row - .25)
+  let(row = thumb_cluster_front_support_row - .25)
   thumb_place_transformation(1, row)
   * rotation_down(thumb_place_transformation(1, row))
   * translation([0, 0, -slot_height])
@@ -55,7 +55,7 @@ function place_thumb_column_support_slot_front(col) = (
 );
 
 function place_thumb_column_support_slot_back(col) = (
-  let(row = back_support_row + .25)
+  let(row = thumb_cluster_back_support_row + .25)
   thumb_place_transformation(1, row)
   * rotation_down(thumb_place_transformation(1, row))
   * translation([0, 0, -slot_height])
