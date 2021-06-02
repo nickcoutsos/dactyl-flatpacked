@@ -3,7 +3,7 @@ use <finger-cluster/layout.scad>
 use <finger-cluster/supports.scad>
 use <thumb-cluster/layout.scad>
 use <thumb-cluster/supports.scad>
-include <common/definitions.scad>
+include <definitions.scad>
 
 keycap_offset = [0, 0, cap_top_height - keycap_height];
 

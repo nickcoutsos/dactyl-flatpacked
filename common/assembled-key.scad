@@ -1,4 +1,4 @@
-include <../common/definitions.scad>
+include <../definitions.scad>
 use <../placeholders.scad>
 
 module key (w=1, h=1) {

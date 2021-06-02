@@ -1,4 +1,4 @@
-include <definitions.scad>
+include <../definitions.scad>
 
 use <../util.scad>
 use <../scad-utils/transformations.scad>

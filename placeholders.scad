@@ -1,4 +1,4 @@
-include <common/definitions.scad>
+include <definitions.scad>
 use <util.scad>
 
 module switch () {

@@ -4,7 +4,7 @@ use <finger-cluster/positioning.scad>
 use <thumb-cluster/positioning.scad>
 use <util.scad>
 use <placeholders.scad>
-include <finger-cluster/definitions.scad>
+include <definitions.scad>
 include <thumb-cluster/definitions.scad>
 
 enable_projection = false;

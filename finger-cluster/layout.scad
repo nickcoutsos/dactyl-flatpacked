@@ -1,5 +1,5 @@
 use <positioning.scad>
-include <definitions.scad>
+include <../definitions.scad>
 
 module main_layout() {
   for (col=[0:len(finger_columns)]) {

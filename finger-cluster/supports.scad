@@ -1,4 +1,4 @@
-include <definitions.scad>
+include <../definitions.scad>
 include <../common/shape-profiles.scad>
 
 use <positioning.scad>

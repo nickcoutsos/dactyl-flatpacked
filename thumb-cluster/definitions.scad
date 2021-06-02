@@ -1,4 +1,4 @@
-include <../common/definitions.scad>
+include <../definitions.scad>
 include <../util.scad>
 
 alpha = 180/12;
