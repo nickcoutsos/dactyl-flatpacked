@@ -9,134 +9,109 @@ use <../util.scad>
 use <../scad-utils/linalg.scad>
 use <../scad-utils/transformations.scad>
 
+function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];
+function rotate_keyplace(row) = (
+  identity4()
+  * translation([0, main_row_radius, 0])
+  * rotation([0, 0, alpha * (2 - row)])
+  * translation(-[0, main_row_radius, 0])
+);
+
 /**
  * Create a support for a column of keys
- * @param <Integer> columnIndex
+ * @param <Integer> column
  * @param <Number> extension
  */
-module column_support(columnIndex, extension=0, height=column_rib_height) {
+module column_support(column, extension=0, height=column_rib_height) {
   h = is_undef($h) ? 1 : $h;
   depth = plate_height * h;
 
-  keywell_points = [
-    [depth/2, 0],
-    [depth/2 - rib_thickness/2, 0],
-    [depth/2 - rib_thickness/2, -plate_thickness],
+  keywell_profile = [
+    [ depth/2, 0],
+    [ depth/2 - rib_thickness/2, 0],
+    [ depth/2 - rib_thickness/2, -plate_thickness],
     [-(depth/2 - rib_thickness/2), -plate_thickness],
     [-(depth/2 - rib_thickness/2), 0],
     [-(depth/2), 0]
   ];
 
-  function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];
-  function rotate_keyplace(row) = (
-    identity4()
-    * translation([0, main_row_radius, 0])
-    * rotation([0, 0, alpha * (2 - row)])
-    * translation(-[0, main_row_radius, 0])
+  bottom_profile = [
+    [ depth/2, -height],
+    [-depth/2, -height]
+  ];
+
+  back = first(columns[column]);
+  front = last(columns[column]);
+  back_and_down = transform(rotate_keyplace(back), [[depth/2, -plate_thickness]]);
+  top_points = flatten([ for(i=[back:front]) transform(rotate_keyplace(i), keywell_profile) ]);
+
+  function back_support_profile(row) = (
+    let(t = (
+      identity4()
+      * rotation([0, 0, -90])
+      * rotation([0, -90, 0])
+      * un_key_place_transformation(column, 2)
+      * place_column_support_slot_back(column)
+    ))
+    [
+      transform(rotate_keyplace(row), [[depth/2, -height]])[0],
+      takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
+      takeXY(t * [0, rib_thickness/2, 0, 1]),
+      takeXY(t * [0, rib_thickness/2, slot_height, 1]),
+      takeXY(t * [0, -rib_thickness/2, slot_height, 1]),
+      takeXY(t * [0, -rib_thickness/2, 0, 1]),
+      takeXY(t * [0, -rib_thickness*2.5/2, 0, 1]),
+      transform(rotate_keyplace(row), [[-depth/2, -height]])[0]
+    ]
   );
 
-  top = first(columns[columnIndex]);
-  bottom = last(columns[columnIndex]);
-  top_points = flatten([
-    for(i=[top:bottom])
-    transform(rotate_keyplace(i), keywell_points)
-  ]);
+  function front_support_profile(row) = (
+    let(t = (
+      identity4()
+      * rotation([0, 0, -90])
+      * rotation([0, -90, 0])
+      * un_key_place_transformation(column, 2)
+      * place_column_support_slot_front(column)
+    ))
+    [
+      transform(rotate_keyplace(row), [[depth/2, -height]])[0],
+      takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
+      takeXY(t * [0, rib_thickness/2, 0, 1]),
+      takeXY(t * [0, rib_thickness/2, slot_height, 1]),
+      takeXY(t * [0, -rib_thickness/2, slot_height, 1]),
+      takeXY(t * [0, -rib_thickness/2, 0, 1]),
+      takeXY(t * [0, -rib_thickness*2.5/2, 0, 1]),
+      transform(rotate_keyplace(row), [[-depth/2, -height]])[0]
+    ]
+  );
 
   bottom_points = reverse(flatten([
-    for(i=[top:bottom])
-    transform(rotate_keyplace(i), [
-      [ plate_height/2, -height],
-      [ -plate_height/2, -height]
-    ])
+    for(i=[back:front])
+    i == round(back_support_row)
+      ? back_support_profile(i)
+      : (i == round(front_support_row)
+          ? front_support_profile(i)
+          : transform(rotate_keyplace(i), bottom_profile)
+      )
   ]));
 
-  points = concat(top_points, bottom_points);
+  points = concat(back_and_down, top_points, bottom_points);
   polygon(points);
-}
-
-main_supports();
-
-module main_supports() {
-  main_support_columns();
 }
 
 module main_support_columns(selection=[0:len(columns) - 1]) {
   sides = [-1, 1] * column_rib_center_offset;
+  for (col=selection, side=sides) {
+    rows = column_range(col);
 
-  difference() {
-    for (col=selection, side=sides) {
-      rows = column_range(col);
-
-      key_place(col, 2)
-      translate([side, 0, 0])
-      rotate([0, 90, 0])
-      rotate([0, 0, 90])
-      linear_extrude(height=rib_thickness, center=true)
-        column_support(col);
-
-      main_support_front(col, side);
-      main_support_back(col, side);
-    }
-
-    if (!is_undef($detail) && $detail) {
-      for (col=selection, side=sides) {
-        // for (row=columns[col]) key_place(col, row) key_well();
-        main_support_front_slot(col, side);
-        main_support_back_slot(col, side);
-      }
-    }
-  }
-}
-
-module main_support_front(col, offset) {
-  front_row = last(columns[col]);
-  hull() {
-    place_column_support_slot_front(col)
-      translate([offset, 0, slot_height/2])
-      cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
-
-    key_place(col, front_row)
-    translate([offset, 0, -column_rib_height + plate_thickness/2])
-    cube([rib_thickness, plate_height, plate_thickness], center=true);
-
-    *key_place(col, 2)
-    translate([offset, 0, main_row_radius])
+    key_place(col, 2)
+    translate([side, 0, 0])
     rotate([0, 90, 0])
-      linear_extrude(rib_thickness, center=true)
-      fan(
-        (main_row_radius+column_rib_height-.01),
-        main_row_radius+column_rib_height,
-        -alpha*(last(columns[col]) - 2 + 0*rib_extension),
-        -alpha*0.5
-      );
+    rotate([0, 0, 90])
+    linear_extrude(height=rib_thickness, center=true)
+      column_support(col);
   }
 }
-
-module main_support_back(col, offset) {
-  back_row = first(columns[col]);
-  hull() {
-    place_column_support_slot_back(col)
-      translate([offset, 0, slot_height/2])
-      cube([rib_thickness, rib_thickness*2.5, slot_height], center=true);
-
-    key_place(col, back_row)
-    translate([offset, 0, -column_rib_height + plate_thickness/2])
-    cube([rib_thickness, plate_height, plate_thickness], center=true);
-  }
-}
-
-module main_support_front_slot(col, offset) {
-  place_column_support_slot_front(col)
-  translate([offset, 0, 0])
-    cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
-}
-
-module main_support_back_slot(col, offset) {
-  place_column_support_slot_back(col)
-  translate([offset, 0, 0])
-    cube([rib_thickness+1, rib_thickness, slot_height*2], center=true);
-}
-
 
 module main_front_cross_support() {
   top_points = flatten([
@@ -181,19 +156,6 @@ module main_back_cross_support() {
   extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
 
-module main_inner_column_cross_support() {
-  difference() {
-    key_place(0, 2.5)
-    rotate([90, 0, 0])
-    translate([0, main_column_radius, 0])
-    linear_extrude(height=rib_thickness, center=true)
-    fan(
-      main_column_radius+column_rib_height/2,
-      main_column_radius+column_rib_height+2,
-      -90 + beta * 1.5,
-      -90 + beta * -.5
-    );
-
-    #main_supports();
-  }
-}
+color("lightcoral") main_support_columns();
+color("skyblue") main_front_cross_support();
+color("mediumseagreen") main_back_cross_support();

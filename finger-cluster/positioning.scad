@@ -39,25 +39,8 @@ function un_key_place_transformation(column, row) = (
   * translation(-[0, 0, main_column_radius])
   * translation(-column_offset)
   * rotation(-beta*3 * Y)
-  * translation(-[0, 0, 10])
+  * translation(-[0, 0, 13])
 );
-
-module place_column_ribs(columns, row=2, spacing=rib_spacing) {
-  place_column_rib_left(columns, row, spacing) children();
-  place_column_rib_right(columns, row, spacing) children();
-}
-
-module place_column_rib_left(columns, row=2, spacing=rib_spacing) {
-  key_place(columns, row)
-  translate([- (spacing/2 - rib_thickness / 2), 0, 0])
-    children();
-}
-
-module place_column_rib_right(columns, row=2, spacing=rib_spacing) {
-  key_place(columns, row)
-  translate([spacing/2 - rib_thickness / 2, 0, 0])
-    children();
-}
 
 function place_column_support_slot_front(col) = (
   let(row = front_support_row + .25)

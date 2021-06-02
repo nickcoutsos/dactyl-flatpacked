@@ -10,7 +10,33 @@ columns = [
   [-1, 0, 1]
 ];
 
-back_support_row = -0.12;
+// Thumb overrides specify on a per-colum-index-and-row-index basis:
+// * size multiplier (u and h)
+// * rotation (in degrees)
+// Note: this is only used for thumb keys and doesn't support the ergodox-style
+// 1.25u outer pinky-column keys.
+overrides = [
+  [0, 0, 1, 2, 0],
+  [1, 0, 1, 2, 0]
+];
+
+function slice(vec, start, end) = (
+  let(e=is_undef(end) ? len(vec) - 1 : end)
+  [ for(i=[start:e]) vec[i] ]
+);
+
+// Look up thumb overrides for given column and row index
+function get_overrides (source, colIndex, rowIndex) = (
+  let(matches = [
+    for(vec=source)
+    if (vec[0] == colIndex && vec[1] == rowIndex)
+    slice(vec, 2)
+  ])
+
+  len(matches) > 0 ? matches[0] : [1, 1, 0]
+);
+
+back_support_row = 0;
 front_support_row = -0.95;
 
 function column_range (col) = [columns[col][0], last(columns[col])];
