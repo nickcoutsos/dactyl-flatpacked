@@ -81,8 +81,8 @@ thumb_columns = [
 thumb_cluster_back_support_row = 0;
 thumb_cluster_front_support_row = -0.95;
 
-thumb_row_radius = (mount_height + 0.75) / 2 / sin(alpha/2) + cap_top_height;
-thumb_column_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
+thumb_column_radius = (mount_height + 0.75) / 2 / sin(alpha/2) + cap_top_height;
+thumb_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
 
 // Thumb overrides specify on a per-colum-index-and-row-index basis:
 // * size multiplier (u and h)

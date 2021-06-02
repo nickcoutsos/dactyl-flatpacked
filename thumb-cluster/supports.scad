@@ -10,9 +10,9 @@ use <../util.scad>
 function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];
 function rotate_keyplace(row) = (
   identity4()
-  * translation([0, thumb_row_radius, 0])
+  * translation([0, thumb_column_radius, 0])
   * rotation([0, 0, alpha * row])
-  * translation(-[0, thumb_row_radius, 0])
+  * translation(-[0, thumb_column_radius, 0])
 );
 
 /**
