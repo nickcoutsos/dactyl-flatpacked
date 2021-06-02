@@ -3,7 +3,7 @@ include <../common/shape-profiles.scad>
 
 use <../scad-utils/linalg.scad>
 use <../scad-utils/transformations.scad>
-use <positioning.scad>
+use <../positioning.scad>
 use <../placeholders.scad>
 use <../util.scad>
 

@@ -1,11 +1,9 @@
 use <finger-cluster/supports.scad>
 use <thumb-cluster/supports.scad>
-use <finger-cluster/positioning.scad>
-use <thumb-cluster/positioning.scad>
+use <positioning.scad>
 use <util.scad>
 use <placeholders.scad>
 include <definitions.scad>
-include <thumb-cluster/definitions.scad>
 
 enable_projection = false;
 $detail=true;

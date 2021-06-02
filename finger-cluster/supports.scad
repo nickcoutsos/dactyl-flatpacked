@@ -1,7 +1,7 @@
 include <../definitions.scad>
 include <../common/shape-profiles.scad>
 
-use <positioning.scad>
+use <../positioning.scad>
 use <../placeholders.scad>
 use <../util.scad>
 

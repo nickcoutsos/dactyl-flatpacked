@@ -1,5 +1,4 @@
-use <finger-cluster/positioning.scad>
-use <thumb-cluster/positioning.scad>
+use <positioning.scad>
 include <definitions.scad>
 
 module finger_cluster_layout() {

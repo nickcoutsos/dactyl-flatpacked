@@ -99,7 +99,6 @@ function get_overrides (source, colIndex, rowIndex) = (
   let(matches = [
     for(vec=overrides)
     if (vec[0] == source && vec[1] == colIndex && vec[2] == rowIndex)
-    echo(vec, slice(vec, 3))
     slice(vec, 3)
   ])
 
