@@ -39,7 +39,7 @@ $fn = 120;
 
 // intersection() {
 //   difference() {
-//     thumb_place(2, 0)
+//     place_thumb_key(2, 0)
 //     translate([0, 0, thumb_row_radius - plate_thickness/2])
 //     rotate([0, 90, 0])
 //     cylinder(r=thumb_row_radius, h=18.5, center=true);
@@ -57,21 +57,21 @@ $fn = 120;
 //     // translate([-(plate_width / 4), 0, 0])
 //     // main_support_outer_column_single();
 
-//     thumb_place(2, 2)
+//     place_thumb_key(2, 2)
 //     translate([0, 0, thumb_row_radius - plate_thickness/2])
 //     rotate([0, 90, 0])
 //     cylinder(r=thumb_row_radius-5, h=25, center=true);
 //   }
 
-//   thumb_place(2, 0) cube([50, 70, 42], center=true);
-//   // #thumb_place(5, 2) cube([50, 30, 42], center=true);
+//   place_thumb_key(2, 0) cube([50, 70, 42], center=true);
+//   // #place_thumb_key(5, 2) cube([50, 30, 42], center=true);
 // }
 
 
 
 intersection() {
   difference() {
-    thumb_place(1, 0)
+    place_thumb_key(1, 0)
     translate([0, 0, thumb_row_radius - plate_thickness/2])
     rotate([0, 90, 0])
     cylinder(r=thumb_row_radius, h=18.5, center=true);
@@ -90,18 +90,18 @@ intersection() {
     // translate([-(plate_width / 4), 0, 0])
     // main_support_outer_column_single();
 
-    thumb_place(1, 2)
+    place_thumb_key(1, 2)
     translate([0, 0, thumb_row_radius - plate_thickness/2])
     rotate([0, 90, 0])
     cylinder(r=thumb_row_radius-5, h=25, center=true);
   }
 
-  thumb_place(1, 0) cube([50, 70, 42], center=true);
-  // #thumb_place(5, 2) cube([50, 30, 42], center=true);
+  place_thumb_key(1, 0) cube([50, 70, 42], center=true);
+  // #place_thumb_key(5, 2) cube([50, 30, 42], center=true);
 }
 
 
-// thumb_place(5, [0:4])
+// place_thumb_key(5, [0:4])
 // translate([0, 0, -2])
 //   cube([keyhole_length*.96, keyhole_length*.98, 4], center=true);
 

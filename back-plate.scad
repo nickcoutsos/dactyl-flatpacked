@@ -106,8 +106,8 @@ difference() {
   usb_jack();
 }
 
-// back_matrix = thumb_place_transformation(1, -1.5);
-// back_invert = inverted_thumb_place_transformation(1, -1.5);
+// back_matrix = place_thumb_key(1, -1.5);
+// back_invert = invert_place_thumb_key(1, -1.5);
 // back_undown = rotation_down(back_matrix, invert=true);
 
 

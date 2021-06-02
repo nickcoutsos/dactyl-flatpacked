@@ -4,13 +4,11 @@ use <../util.scad>
 use <../scad-utils/transformations.scad>
 use <../scad-utils/linalg.scad>
 
+module place_thumb_key (column, row) multmatrix(place_thumb_key(column, row)) children();
+module place_thumb_column_support_slot_front(col) multmatrix(place_thumb_column_support_slot_front(col)) children();
+module place_thumb_column_support_slot_back(col) multmatrix(place_thumb_column_support_slot_back(col)) children();
 
-module thumb_place (column, row) {
-  multmatrix(thumb_place_transformation(column, row))
-    children();
-}
-
-function thumb_place_transformation (column, row) = (
+function place_thumb_key (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * row)
 
@@ -26,7 +24,7 @@ function thumb_place_transformation (column, row) = (
   * translation([0, 0, -thumb_row_radius])
 );
 
-function inverted_thumb_place_transformation (column, row) = (
+function invert_place_thumb_key (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * row)
 
@@ -44,8 +42,8 @@ function inverted_thumb_place_transformation (column, row) = (
 
 function place_thumb_column_support_slot_front(col) = (
   let(row = thumb_cluster_front_support_row - .25)
-  thumb_place_transformation(1, row)
-  * rotation_down(thumb_place_transformation(1, row))
+  place_thumb_key(1, row)
+  * rotation_down(place_thumb_key(1, row))
   * translation([0, 0, -slot_height])
   * translation([0, 0, thumb_column_radius])
   * rotation([0, beta * (col - 1), 0])
@@ -56,8 +54,8 @@ function place_thumb_column_support_slot_front(col) = (
 
 function place_thumb_column_support_slot_back(col) = (
   let(row = thumb_cluster_back_support_row + .25)
-  thumb_place_transformation(1, row)
-  * rotation_down(thumb_place_transformation(1, row))
+  place_thumb_key(1, row)
+  * rotation_down(place_thumb_key(1, row))
   * translation([0, 0, -slot_height])
   * translation([0, 0, thumb_column_radius])
   * rotation([0, beta * (col - 1), 0])
@@ -65,14 +63,3 @@ function place_thumb_column_support_slot_back(col) = (
   * translation([0, 0, -column_rib_height])
   * translation([0, 0, -slot_height])
 );
-
-module place_thumb_column_support_slot_front(col) multmatrix(place_thumb_column_support_slot_front(col)) children();
-module place_thumb_column_support_slot_back(col) multmatrix(place_thumb_column_support_slot_back(col)) children();
-
-module place_thumb_keys (columns, rows) {
-  for (col=columns, row=rows) {
-    if (col != 0 || row != 4) {
-      thumb_place(col, row) children();
-    }
-  }
-}

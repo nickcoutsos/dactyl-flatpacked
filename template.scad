@@ -32,25 +32,25 @@ translate([-140, -90, 0]) {
     project()
     translate([20 * i - 20, 0, 0])
     rotate([0, 90, 0])
-    multmatrix(inverted_thumb_place_transformation(1, 0))
+    multmatrix(invert_place_thumb_key(1, 0))
       thumb_support_columns(1);
 
     project()
     translate([-20 * i, 0, 0])
     rotate([0, 90, 0])
-    multmatrix(inverted_thumb_place_transformation(2, 0))
+    multmatrix(invert_place_thumb_key(2, 0))
       thumb_support_columns(2);
 
     project()
     translate([20 * i + 20, 0, 0])
     rotate([0, 90, 0])
-    multmatrix(inverted_thumb_place_transformation(0, 0))
+    multmatrix(invert_place_thumb_key(0, 0))
       thumb_support_columns(0);
   }
 }
 
-front_matrix = thumb_place_transformation(1, -1.5);
-front_invert = inverted_thumb_place_transformation(1, -1.5);
+front_matrix = place_thumb_key(1, -1.5);
+front_invert = invert_place_thumb_key(1, -1.5);
 front_undown = rotation_down(front_matrix, invert=true);
 
 project()
@@ -60,8 +60,8 @@ multmatrix(front_undown)
 multmatrix(front_invert)
 thumb_front_cross_support();
 
-back_matrix = thumb_place_transformation(1, -1.5);
-back_invert = inverted_thumb_place_transformation(1, -1.5);
+back_matrix = place_thumb_key(1, -1.5);
+back_invert = invert_place_thumb_key(1, -1.5);
 back_undown = rotation_down(back_matrix, invert=true);
 
 project()
@@ -77,8 +77,8 @@ translate([120, -120, 0]) rotate([90, 0, 180]) finger_cluster_cross_support_fron
 project()
 translate([60, -70, 0]) rotate([90, 0, 0]) finger_cluster_cross_support_back();
 
-thumb_column_matrix = thumb_place_transformation(0, -.15);
-thumb_column_invert = inverted_thumb_place_transformation(0, -.15);
+thumb_column_matrix = place_thumb_key(0, -.15);
+thumb_column_invert = invert_place_thumb_key(0, -.15);
 
 for (y=[1:14], x=[0,1]) {
   project()

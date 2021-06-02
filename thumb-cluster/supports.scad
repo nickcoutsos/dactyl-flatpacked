@@ -48,7 +48,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       identity4()
       * rotation([0, 0, -90])
       * rotation([0, -90, 0])
-      * inverted_thumb_place_transformation(columnIndex, 0)
+      * invert_place_thumb_key(columnIndex, 0)
       * place_thumb_column_support_slot_back(columnIndex)
     ))
     reverse([
@@ -80,7 +80,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       identity4()
       * rotation([0, 0, -90])
       * rotation([0, -90, 0])
-      * inverted_thumb_place_transformation(columnIndex, 0)
+      * invert_place_thumb_key(columnIndex, 0)
       * place_thumb_column_support_slot_front(columnIndex)
     ))
     reverse([
@@ -136,7 +136,7 @@ module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   for (col=selected, side=sides) {
     rows = thumb_columns[col];
 
-    thumb_place(col, 0)
+    place_thumb_key(col, 0)
     translate([side, 0, 0])
     rotate([0, 90, 0])
     rotate([0, 0, 90])
