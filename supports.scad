@@ -1,11 +1,11 @@
-include <../definitions.scad>
-include <../common/shape-profiles.scad>
+include <definitions.scad>
+include <common/shape-profiles.scad>
 
-use <../scad-utils/linalg.scad>
-use <../scad-utils/transformations.scad>
-use <../positioning.scad>
-use <../placeholders.scad>
-use <../util.scad>
+use <scad-utils/linalg.scad>
+use <scad-utils/transformations.scad>
+use <positioning.scad>
+use <placeholders.scad>
+use <util.scad>
 
 function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];
 function thumb_column_rotate(row) = (
@@ -140,6 +140,61 @@ module column_support(source, columnIndex, height=column_rib_height) {
   polygon(points);
 }
 
+module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {
+  sides = [-1, 1] * column_rib_center_offset;
+  for (col=selection, side=sides) {
+    place_finger_key(col, 2)
+    translate([side, 0, 0])
+    rotate([0, 90, 0])
+    rotate([0, 0, 90])
+    linear_extrude(height=rib_thickness, center=true)
+      column_support("finger", col);
+  }
+}
+
+module finger_cluster_cross_support_front() {
+  top_points = flatten([
+    for(col=reverse(list([0:len(finger_columns)-1])))
+    let(position = place_finger_column_support_slot_front(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  right_side_point = take3(place_finger_column_support_slot_front(len(finger_columns)-1) * [+column_rib_center_offset + rib_thickness/2 + 1, 0, 0, 1]);
+  left_side_point = take3(place_finger_column_support_slot_front(0) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+  ];
+
+  points = concat([right_side_point], top_points, [left_side_point], bottom_points);
+
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
+}
+
+module finger_cluster_cross_support_back() {
+  top_points = flatten([
+    for(col=reverse(list([0:len(finger_columns)-1])))
+    let(position = place_finger_column_support_slot_back(col))
+    [for(v=column_slots_profile) take3(position * vec4(v))]
+  ]);
+
+  right_side_point = take3(place_finger_column_support_slot_back(len(finger_columns)-1) * [+column_rib_center_offset + rib_thickness/2 + 1, 0, 0, 1]);
+  left_side_point = take3(place_finger_column_support_slot_back(0) * [-(column_rib_center_offset + rib_thickness/2 + 1), 0, 0, 1]);
+  bottom_points = [
+    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
+    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+  ];
+
+  points = concat(
+    [right_side_point],
+    top_points,
+    [left_side_point],
+    bottom_points
+  );
+
+  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
+}
+
 module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   sides = [-1, 1] * column_rib_center_offset;
 
@@ -190,6 +245,10 @@ module thumb_back_cross_support() {
   points = concat(top_points, [left_side_point], bottom_points);
   extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
 }
+
+color("lightcoral") finger_cluster_support_columns();
+color("skyblue") finger_cluster_cross_support_front();
+color("mediumseagreen") finger_cluster_cross_support_back();
 
 color("lightcoral") thumb_support_columns();
 color("skyblue") thumb_front_cross_support();

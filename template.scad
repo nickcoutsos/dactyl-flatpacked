@@ -1,5 +1,4 @@
-use <finger-cluster/supports.scad>
-use <thumb-cluster/supports.scad>
+use <supports.scad>
 use <positioning.scad>
 use <util.scad>
 use <placeholders.scad>
