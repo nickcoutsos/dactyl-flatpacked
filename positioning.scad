@@ -66,7 +66,7 @@ function place_finger_column_support_slot_back(col) = (
 
 function place_thumb_key (column, row) = (
   let(column_angle = beta * column)
-  let(row_angle = alpha * row)
+  let(row_angle = alpha * (1 - row))
 
   translation([-52, -45, 40])
   * rotation(axis=alpha * unit([1, 1, 0]))
@@ -82,7 +82,7 @@ function place_thumb_key (column, row) = (
 
 function invert_place_thumb_key (column, row) = (
   let(column_angle = beta * column)
-  let(row_angle = alpha * row)
+  let(row_angle = alpha * (1 - row))
 
   translation(-[0, 0, -thumb_column_radius])
   * rotation(-[row_angle, 0, 0])

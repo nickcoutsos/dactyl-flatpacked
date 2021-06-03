@@ -37,6 +37,8 @@ column_rib_center_offset = rib_spacing/2 - rib_thickness/2;
 
 slot_height = 2;
 
+alpha = 180/12;
+beta = 180/36;
 
 finger_finger_column_offset_index = [0, 0, 0];
 finger_finger_column_offset_index_stretch = [0, 0, 0];
@@ -62,24 +64,20 @@ finger_columns = [
   [1, 2, 3]
 ];
 
+thumb_columns = [
+  [1.5],
+  [0, 1.5],
+  [0, 1, 2]
+];
+
 finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]);
 finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]);
 
-alpha = 180/12;
-beta = 180/36;
+thumb_cluster_back_support_row = 0.5;
+thumb_cluster_front_support_row = 2.45;
 
 finger_column_radius = (mount_height + 0.5) / 2 / sin(alpha/2) + cap_top_height;
 finger_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
-
-
-thumb_columns = [
-  [-.5],
-  [-.5, 1],
-  [-1, 0, 1]
-];
-
-thumb_cluster_back_support_row = 0;
-thumb_cluster_front_support_row = -0.95;
 
 thumb_column_radius = (mount_height + 0.75) / 2 / sin(alpha/2) + cap_top_height;
 thumb_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
@@ -91,7 +89,7 @@ thumb_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
 // 1.25u outer pinky-column keys.
 overrides = [
   ["thumb", 0, 0, 1, 2, 0],
-  ["thumb", 1, 0, 1, 2, 0]
+  ["thumb", 1, 1, 1, 2, 0]
 ];
 
 // Look up key overrides for given source, column index, and row index

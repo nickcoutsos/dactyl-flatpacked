@@ -11,7 +11,7 @@ function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]
 function rotate_keyplace(row) = (
   identity4()
   * translation([0, thumb_column_radius, 0])
-  * rotation([0, 0, alpha * row])
+  * rotation([0, 0, alpha * (1 - row)])
   * translation(-[0, thumb_column_radius, 0])
 );
 
@@ -29,14 +29,14 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
     let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
-    transform(rotate_keyplace(column[rowIndex]), reverse([
+    transform(rotate_keyplace(column[rowIndex]), [
       [ depth/2, 0],
       [ depth/2 - rib_thickness/2, 0],
       [ depth/2 - rib_thickness/2, -plate_thickness],
       [-(depth/2 - rib_thickness/2), -plate_thickness],
       [-(depth/2 - rib_thickness/2), 0],
       [-(depth/2), 0]
-    ]))
+    ])
   ]);
 
   function back_support_profile(rowIndex) = (
@@ -48,10 +48,10 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       identity4()
       * rotation([0, 0, -90])
       * rotation([0, -90, 0])
-      * invert_place_thumb_key(columnIndex, 0)
+      * invert_place_thumb_key(columnIndex, 1)
       * place_thumb_column_support_slot_back(columnIndex)
     ))
-    reverse([
+    [
       transform(rotate_keyplace(row), [[depth/2, -height]])[0],
       takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
       takeXY(t * [0, rib_thickness/2, 0, 1]),
@@ -68,7 +68,7 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       // height) at this section? Likewise for analogous point in the
       // front_support_profile() function.
       // transform(rotate_keyplace(row), [[-depth/2, -height]])[0]
-    ])
+    ]
   );
 
   function front_support_profile(rowIndex) = (
@@ -80,10 +80,10 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       identity4()
       * rotation([0, 0, -90])
       * rotation([0, -90, 0])
-      * invert_place_thumb_key(columnIndex, 0)
+      * invert_place_thumb_key(columnIndex, 1)
       * place_thumb_column_support_slot_front(columnIndex)
     ))
-    reverse([
+    [
       // transform(rotate_keyplace(row), [[depth/2, -height]])[0],
       takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
       takeXY(t * [0, rib_thickness/2, 0, 1]),
@@ -92,17 +92,17 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
       takeXY(t * [0, -rib_thickness/2, 0, 1]),
       takeXY(t * [0, -rib_thickness*2.5/2, 0, 1]),
       transform(rotate_keyplace(row), [[-depth/2, -height]])[0]
-    ])
+    ]
   );
 
   function bottom_profile(rowIndex) = (
     let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(depth = plate_height * h)
-    reverse([
+    [
       [ depth/2, -height],
       [-depth/2, -height]
-    ])
+    ]
   );
 
   bottom_points = reverse(flatten([
@@ -111,16 +111,21 @@ module column_support(columnIndex, extension=0, height=column_rib_height) {
     let(override = get_overrides("thumb", columnIndex, rowIndex))
     let(h = override[1])
     let(is_only_row = len(column) == 1)
-    let(has_back_support_slot = round(row) == round(thumb_cluster_back_support_row))
-    let(has_front_support_slot = round(row) == round(thumb_cluster_front_support_row))
+    let(is_frontmost_row = row == max(column))
+    let(is_backmost_row = row == min(column))
+    let(row_front_bound = row + h*.5)
+    let(row_back_bound = row - h*.5)
+    let(has_back_support_slot = thumb_cluster_back_support_row >= row_back_bound && thumb_cluster_back_support_row < row_front_bound)
+    let(has_front_support_slot = thumb_cluster_front_support_row >= row_back_bound && thumb_cluster_front_support_row < row_front_bound)
     let(is_lowest_above_back_slot = rowIndex == 0 && row + (h * .5) > thumb_cluster_back_support_row)
 
     // TODO: simplify this logic
-    is_only_row || is_lowest_above_back_slot || (has_back_support_slot && has_front_support_slot) ? (
-      concat(front_support_profile(rowIndex), back_support_profile(rowIndex))
+    (has_back_support_slot && has_front_support_slot) ? (
+      concat(back_support_profile(rowIndex), front_support_profile(rowIndex))
     ) : (has_back_support_slot ? (
       back_support_profile(rowIndex)
-    ) : (has_front_support_slot ?
+    ) : (
+    has_front_support_slot ?
       front_support_profile(rowIndex)
       : transform(rotate_keyplace(row), bottom_profile(rowIndex))
     ))
@@ -136,7 +141,7 @@ module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   for (col=selected, side=sides) {
     rows = thumb_columns[col];
 
-    place_thumb_key(col, 0)
+    place_thumb_key(col, 1)
     translate([side, 0, 0])
     rotate([0, 90, 0])
     rotate([0, 0, 90])

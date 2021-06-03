@@ -8,7 +8,7 @@ Y = [0, 1, 0, 1];
 Z = [0, 0, 1, 1];
 
 function list(list_) = [for(v=list_) v];
-function reverse(list) = [for(i=[0:len(list)-1]) list[len(list)-1-i]];
+function reverse(list_or_range) = let(list_=list(list_or_range)) [for(i=[0:len(list_)-1]) list_[len(list_)-1-i]];
 function first (vec) = vec[0];
 function last (vec) = vec[ len(vec) - 1];
 function flatten(arrays) = (
