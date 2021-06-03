@@ -24,7 +24,13 @@ function slice(vec, start, end) = (
 
 function takeXY (vec) = [vec.x, vec.y];
 function takeXZ (vec) = [vec.x, vec.z];
-function vec4(v) = [v.x, v.y, v.z, 1];
+function vec4(v) = (
+  let(l=len(v))
+  let(x = l > 0 ? v.x : 0)
+  let(y = l > 1 ? v.y : 0)
+  let(z = l > 2 ? v.z : 0)
+  [x, y, z, 1]
+);
 
 function apply_matrix (v, m) = (
   m * [ v.x, v.y, v.z, 1 ]

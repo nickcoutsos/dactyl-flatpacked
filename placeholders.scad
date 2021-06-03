@@ -1,5 +1,6 @@
 include <definitions.scad>
 use <util.scad>
+use <shape-profiles.scad>
 
 module switch () {
   rotate([0, 0, 45]) cylinder(d1=19.77, d2=14.5, $fn=4, h=5.2);
@@ -73,52 +74,12 @@ module keycap(w, h) {
   }
 }
 
-
-module plate (w=1, h=1, w_offset=0, h_offset=0, render_2d=false) {
+module plate (w=1, h=1, render_2d=false) {
   w = is_undef($u) ? w : $u;
   h = is_undef($h) ? h : $h;
-  width = plate_width * w;
-  height = plate_height * h;
-  rib_offset = (rib_spacing - rib_thickness) / 2;
-
-  outer_points = [
-    [ width/2,  height/2],
-    [ rib_offset*w + rib_thickness/2,  height/2],
-    [ rib_offset*w + rib_thickness/2,  height/2 - rib_thickness/2],
-    [ rib_offset*w - rib_thickness/2,  height/2 - rib_thickness/2],
-    [ rib_offset*w - rib_thickness/2,  height/2],
-
-    [ -(rib_offset*w - rib_thickness/2),  height/2],
-    [ -(rib_offset*w - rib_thickness/2),  height/2 - rib_thickness/2],
-    [ -(rib_offset*w + rib_thickness/2),  height/2 - rib_thickness/2],
-    [ -(rib_offset*w + rib_thickness/2),  height/2],
-    [-width/2,  height/2],
-
-    [-width/2, -height/2],
-    [ -(rib_offset*w + rib_thickness/2),  -height/2],
-    [ -(rib_offset*w + rib_thickness/2),  -height/2 + rib_thickness/2],
-    [ -(rib_offset*w - rib_thickness/2),  -height/2 + rib_thickness/2],
-    [ -(rib_offset*w - rib_thickness/2),  -height/2],
-
-    [ (rib_offset*w - rib_thickness/2),  -height/2],
-    [ (rib_offset*w - rib_thickness/2),  -height/2 + rib_thickness/2],
-    [ (rib_offset*w + rib_thickness/2),  -height/2 + rib_thickness/2],
-    [ (rib_offset*w + rib_thickness/2),  -height/2],
-    [ width/2, -height/2]
-  ];
-
-  inner_points = [
-    [ keyhole_length/2,  keyhole_length/2],
-    [-keyhole_length/2,  keyhole_length/2],
-    [-keyhole_length/2, -keyhole_length/2],
-    [ keyhole_length/2, -keyhole_length/2]
-  ];
-
-  points = concat(outer_points, inner_points);
-  paths = [
-    [for(i=[0:len(outer_points)-1]) i],
-    [for(i=[0:len(inner_points)-1]) len(outer_points)+i]
-  ];
+  points_and_paths = plate(w, h);
+  points = points_and_paths[0];
+  paths = points_and_paths[1];
 
   if (render_2d) {
     polygon(points, paths=paths);

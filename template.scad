@@ -93,7 +93,7 @@ for (y=[0:4]) {
 project()
 translate([-145, -190, 0])
 rotate([0, 0, 90])
-plate(1.5, 1, w_offset=.25);
+plate(1.5, 1);
 
 for (x=[0,1]) {
   project()

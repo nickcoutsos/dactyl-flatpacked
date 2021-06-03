@@ -1,5 +1,5 @@
 include <definitions.scad>
-include <common/shape-profiles.scad>
+include <shape-profiles.scad>
 
 use <scad-utils/linalg.scad>
 use <scad-utils/transformations.scad>
@@ -7,7 +7,7 @@ use <positioning.scad>
 use <placeholders.scad>
 use <util.scad>
 
-function transform(m, vertices) = [ for (v=vertices) takeXY(m * [v.x, v.y, 0, 1]) ];
+function transform(m, vertices) = [ for (v=vertices) takeXY(m * vec4(v)) ];
 function thumb_column_rotate(row) = (
   identity4()
   * translation([0, thumb_column_radius, 0])
@@ -44,15 +44,11 @@ module column_support(source, columnIndex, height=column_rib_height) {
 
   top_points = flatten([
     for(rowIndex=[0:len(column)-1])
-    let(depth = plate_height * get_override_h(rowIndex))
-    transform(column_rotate(column[rowIndex]), [
-      [ depth/2, 0],
-      [ depth/2 - rib_thickness/2, 0],
-      [ depth/2 - rib_thickness/2, -plate_thickness],
-      [-(depth/2 - rib_thickness/2), -plate_thickness],
-      [-(depth/2 - rib_thickness/2), 0],
-      [-(depth/2), 0]
-    ])
+    let(h = get_override_h(rowIndex))
+    transform(
+      column_rotate(column[rowIndex]),
+      make_column_profile_row_plate_cavity(h)
+    )
   ]);
 
   function back_support_profile(rowIndex) = (
@@ -65,14 +61,9 @@ module column_support(source, columnIndex, height=column_rib_height) {
       * invert_place_column()
       * place_slot_back()
     ))
-    [
-      transform(column_rotate(row), [[depth/2, -height]])[0],
-      takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
-      takeXY(t * [0, rib_thickness/2, 0, 1]),
-      takeXY(t * [0, rib_thickness/2, slot_height, 1]),
-      takeXY(t * [0, -rib_thickness/2, slot_height, 1]),
-      takeXY(t * [0, -rib_thickness/2, 0, 1]),
-      takeXY(t * [0, -rib_thickness*2.5/2, 0, 1]),
+    flatten([
+      transform(column_rotate(row), [[depth/2, -height]]),
+      [for(v=transform(t, column_profile_slot)) takeXY(v)],
       /*
        * Originally this point is added to return to the normal column support
        * height, but in the event that a column support has both front and back
@@ -81,8 +72,8 @@ module column_support(source, columnIndex, height=column_rib_height) {
       // TODO: can this be done more elegantly based on the known length (plate
       // height) at this section? Likewise for analogous point in the
       // front_support_profile() function.
-      // transform(column_rotate(row), [[-depth/2, -height]])[0]
-    ]
+      // transform(column_rotate(row), [[-depth/2, -height]])
+    ])
   );
 
   function front_support_profile(rowIndex) = (
@@ -95,24 +86,16 @@ module column_support(source, columnIndex, height=column_rib_height) {
       * invert_place_column()
       * place_slot_front()
     ))
-    [
-      // transform(column_rotate(row), [[depth/2, -height]])[0],
-      takeXY(t * [0, rib_thickness*2.5/2, 0, 1]),
-      takeXY(t * [0, rib_thickness/2, 0, 1]),
-      takeXY(t * [0, rib_thickness/2, slot_height, 1]),
-      takeXY(t * [0, -rib_thickness/2, slot_height, 1]),
-      takeXY(t * [0, -rib_thickness/2, 0, 1]),
-      takeXY(t * [0, -rib_thickness*2.5/2, 0, 1]),
-      transform(column_rotate(row), [[-depth/2, -height]])[0]
-    ]
+    flatten([
+      // transform(column_rotate(row), [[depth/2, -height]]),
+      [for(v=transform(t, column_profile_slot)) takeXY(v)],
+      transform(column_rotate(row), [[-depth/2, -height]])
+    ])
   );
 
   function bottom_profile(rowIndex) = (
-    let(depth = plate_height * get_override_h(rowIndex))
-    [
-      [ depth/2, -height],
-      [-depth/2, -height]
-    ]
+    let(h = get_override_h(rowIndex))
+    make_column_profile_row_bottom(h)
   );
 
   bottom_points = reverse(flatten([
