@@ -122,13 +122,3 @@ module extruded_polygon(points, thickness) {
   // shell(d=-5.5)
   polygon([ for(p=transformed) takeXY(p) ]);
 }
-
-module dropdown() {
-  hull() {
-    children();
-
-    linear_extrude(height=0.1)
-    projection()
-      children();
-  }
-}
