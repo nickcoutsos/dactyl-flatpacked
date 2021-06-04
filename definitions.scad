@@ -23,17 +23,15 @@ plate_horizontal_padding = 1.7;
 plate_width = keyhole_length + 2 * plate_horizontal_padding;
 plate_height = keyhole_length + 2 * plate_vertical_padding;
 
-rib_thickness = plate_thickness;
-rib_spacing = keyhole_length + rib_thickness*2;
-rib_extension = .55;
-
 mount_width = keyswitch_width + 3;
 mount_height = keyswitch_height + 3;
 
 cap_top_height = 9;
 
-column_rib_height = 6;
-column_rib_center_offset = rib_spacing/2 - rib_thickness/2;
+column_support_height = 6;
+column_support_thickness = plate_thickness;
+column_support_spacing = keyhole_length + column_support_thickness*2;
+column_support_center_offset = (column_support_spacing - column_support_thickness) / 2;
 
 slot_height = 2;
 

@@ -49,7 +49,7 @@ function un_key_place_transformation(column, row) = (
 function place_finger_column_support_slot_front(col) = (
   let(row = finger_cluster_front_support_row + .25)
   place_finger_key(col, row)
-   * translation([0, 0, -(column_rib_height + slot_height*.25)])
+   * translation([0, 0, -(column_support_height + slot_height*.25)])
    * rotation([-alpha*(2-row), 0, 0])
    * translation(finger_finger_column_offset_middle)
    * translation(-[0, finger_column_offsets[col].y, 0])
@@ -58,10 +58,24 @@ function place_finger_column_support_slot_front(col) = (
 function place_finger_column_support_slot_back(col) = (
   let(row = finger_cluster_back_support_row + .25)
   place_finger_key(col, row)
-  * translation([0, 0, -column_rib_height])
+  * translation([0, 0, -column_support_height])
   * translation(finger_finger_column_offset_middle)
   * rotation([-alpha*(2 - row), 0, 0])
   * translation(-[0, finger_column_offsets[col].y, 0])
+);
+
+function place_finger_column_in_profile(col) = (
+  identity4()
+  * rotation([0, 0, -90])
+  * rotation([0, -90, 0])
+  * un_key_place_transformation(col, 2)
+);
+
+function place_thumb_column_in_profile(col) = (
+  identity4()
+  * rotation([0, 0, -90])
+  * rotation([0, -90, 0])
+  * invert_place_thumb_key(col, 1)
 );
 
 function place_thumb_key (column, row) = (
@@ -104,7 +118,7 @@ function place_thumb_column_support_slot_front(col) = (
   * translation([0, 0, thumb_row_radius])
   * rotation([0, beta * (col - 1), 0])
   * translation([0, 0, -thumb_row_radius])
-  * translation([0, 0, -column_rib_height])
+  * translation([0, 0, -column_support_height])
   * translation([0, 0, -slot_height])
 );
 
@@ -116,6 +130,6 @@ function place_thumb_column_support_slot_back(col) = (
   * translation([0, 0, thumb_row_radius])
   * rotation([0, beta * (col - 1), 0])
   * translation([0, 0, -thumb_row_radius])
-  * translation([0, 0, -column_rib_height])
+  * translation([0, 0, -column_support_height])
   * translation([0, 0, -slot_height])
 );
