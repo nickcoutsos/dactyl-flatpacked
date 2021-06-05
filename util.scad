@@ -1,11 +1,4 @@
-use <scad-utils/transformations.scad>
-use <scad-utils/morphology.scad>
-use <scad-utils/linalg.scad>
-
-ORIGIN = [0, 0, 0, 1];
-X = [1, 0, 0, 1];
-Y = [0, 1, 0, 1];
-Z = [0, 0, 1, 1];
+include <BOSL2/std.scad>
 
 function list(list_) = [for(v=list_) v];
 function reverse(list_or_range) = let(list_=list(list_or_range)) [for(i=[0:len(list_)-1]) list_[len(list_)-1-i]];
@@ -23,38 +16,30 @@ function slice(vec, start, end) = (
 );
 
 function takeXY (vec) = [vec.x, vec.y];
-function takeXZ (vec) = [vec.x, vec.z];
-function vec4(v) = (
-  let(l=len(v))
-  let(x = l > 0 ? v.x : 0)
-  let(y = l > 1 ? v.y : 0)
-  let(z = l > 2 ? v.z : 0)
-  [x, y, z, 1]
-);
-
-function apply_matrix (v, m) = (
-  m * [ v.x, v.y, v.z, 1 ]
+function vec3(v) = make_vector(v, 3);
+function make_vector(v, length, default=0) = (
+  [for(i=[0:length-1]) !is_undef(v[i]) ? v[i] : default]
 );
 
 function angleTo (a, b) = acos(
-  ( take3(unit(a)) * take3(unit(b)) ) /
-  ( norm(take3(unit(a))) * norm(take3(unit(b))) )
+  ( vec3(unit(a)) * vec3(unit(b)) ) /
+  ( norm(vec3(unit(a))) * norm(vec3(unit(b))) )
 );
 
 function rotation_down(matrix, invert=false) = (
-  let(localOrigin = matrix * ORIGIN)
-  let(localX = (matrix * X) - localOrigin)
-  let(localY = (matrix * Y) - localOrigin)
-  let(localZ = (matrix * Z) - localOrigin)
-  let(localN = unit(cross(localX, -Z)))
+  let(localOrigin = apply(matrix, [0, 0, 0]))
+  let(localX = apply(matrix, [1, 0, 0]) - localOrigin)
+  let(localY = apply(matrix, [0, 1, 0]) - localOrigin)
+  let(localZ = apply(matrix, [0, 0, 1]) - localOrigin)
+  let(localN = unit(cross(localX, -[0, 0, 1])))
 
-  let(projectedZ = localZ - (take3(localZ) * localN) * localN)
+  let(projectedZ = localZ - (localZ * localN) * localN)
   let(angle = -90 + acos(
-    ( take3(projectedZ) * take3(localY) ) /
-    ( norm(take3(projectedZ)) * norm(take3(localY)) )
+    ( projectedZ * localY ) /
+    ( norm(projectedZ) * norm(localY) )
   ))
 
-  rotation([(invert ? -1 : 1) * angle, 0, 0])
+  rot([(invert ? -1 : 1) * angle, 0, 0])
 );
 
 // Given a known matrix transformation "from", rotate about the local X-axis
@@ -85,8 +70,8 @@ module hull_pairs(close=false) {
 }
 
 module extruded_polygon(points, thickness) {
-  vectorA = take3(points[1] - points[0]);
-  vectorB = take3(points[2] - points[0]);
+  vectorA = vec3(points[1] - points[0]);
+  vectorB = vec3(points[2] - points[0]);
   normal = unit(cross(vectorA, vectorB));
   target = [0, 0, -1];
   axis = unit(cross(normal, target));
@@ -95,10 +80,10 @@ module extruded_polygon(points, thickness) {
     ( norm(normal) * norm(target) )
   );
 
-  transform = rotation(axis=axis * angle) * translation(-points[0]);
-  untransform = translation(points[0]) * rotation(axis=-(axis * angle));
+  transform = rot(angle, v=axis) * move(-points[0]);
+  untransform = move(points[0]) * rot(-angle, v=axis);
 
-  transformed = [ for (p=points) apply_matrix(p, transform) ];
+  transformed = apply(transform, points);
 
   multmatrix(untransform)
   linear_extrude(thickness, center=true)

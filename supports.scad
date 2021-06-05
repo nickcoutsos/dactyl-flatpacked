@@ -1,8 +1,8 @@
 include <definitions.scad>
 include <shape-profiles.scad>
 
-use <scad-utils/linalg.scad>
-use <scad-utils/transformations.scad>
+include <BOSL2/std.scad>
+
 use <positioning.scad>
 use <placeholders.scad>
 use <util.scad>
@@ -13,19 +13,19 @@ module finger_cluster_cross_support_back() extruded_polygon(finger_cluster_cross
 module thumb_front_cross_support() extruded_polygon(thumb_front_cross_support(), plate_thickness);
 module thumb_back_cross_support() extruded_polygon(thumb_back_cross_support(), plate_thickness);
 
-function transform(m, vertices) = [ for (v=vertices) takeXY(m * vec4(v)) ];
+function transform(m, vertices) = [ for (v=vertices) takeXY(apply(m, v)) ];
 function thumb_column_rotate(row) = (
-  identity4()
-  * translation([0, thumb_column_radius, 0])
-  * rotation([0, 0, alpha * (1 - row)])
-  * translation(-[0, thumb_column_radius, 0])
+  affine3d_identity()
+  * move([0, thumb_column_radius, 0])
+  * rot([0, 0, alpha * (1 - row)])
+  * move(-[0, thumb_column_radius, 0])
 );
 
 function finger_column_rotate(row) = (
-  identity4()
-  * translation([0, finger_column_radius, 0])
-  * rotation([0, 0, alpha * (2 - row)])
-  * translation(-[0, finger_column_radius, 0])
+  affine3d_identity()
+  * move([0, finger_column_radius, 0])
+  * rot([0, 0, alpha * (2 - row)])
+  * move(-[0, finger_column_radius, 0])
 );
 
 /**
@@ -133,14 +133,14 @@ function finger_cluster_cross_support_front() = (
   let(top_points = flatten([
     for(col=reverse(list([0:len(finger_columns)-1])))
     let(position = place_finger_column_support_slot_front(col))
-    [for(v=column_slots_profile) take3(position * vec4(v))]
+    apply(position, column_slots_profile)
   ]))
 
-  let(right_side_point = take3(place_finger_column_support_slot_front(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]))
-  let(left_side_point = take3(place_finger_column_support_slot_front(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(right_side_point = apply(place_finger_column_support_slot_front(len(finger_columns)-1), [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0]))
+  let(left_side_point = apply(place_finger_column_support_slot_front(0), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
   let(bottom_points = [
-    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
-    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+    apply(scale([1, 1, 0]), left_side_point),
+    apply(scale([1, 1, 0]), right_side_point),
   ])
 
   concat([right_side_point], top_points, [left_side_point], bottom_points)
@@ -150,14 +150,14 @@ function finger_cluster_cross_support_back() = (
   let(top_points = flatten([
     for(col=reverse(list([0:len(finger_columns)-1])))
     let(position = place_finger_column_support_slot_back(col))
-    [for(v=column_slots_profile) take3(position * vec4(v))]
+    apply(position, column_slots_profile)
   ]))
 
-  let(right_side_point = take3(place_finger_column_support_slot_back(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]))
-  let(left_side_point = take3(place_finger_column_support_slot_back(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(right_side_point = apply(place_finger_column_support_slot_back(len(finger_columns)-1), [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0]))
+  let(left_side_point = apply(place_finger_column_support_slot_back(0), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
   let(bottom_points = [
-    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
-    take3(scaling([1, 1, 0]) * vec4(right_side_point)),
+    apply(scale([1, 1, 0]), left_side_point),
+    apply(scale([1, 1, 0]), right_side_point),
   ])
 
   concat(
@@ -187,14 +187,14 @@ function thumb_front_cross_support() = (
   let(top_points = flatten([
     for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_front(col))
-    [for(v=column_slots_profile) take3(position * vec4(v))]
+    apply(position, column_slots_profile)
   ]))
 
-  let(left_side_point = take3(place_thumb_column_support_slot_front(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
-  let(right_side_point = take3(place_thumb_column_support_slot_front(0) * [+(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(left_side_point = apply(place_thumb_column_support_slot_front(len(thumb_columns)-1), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
+  let(right_side_point = apply(place_thumb_column_support_slot_front(0), [+(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
   let(bottom_points = [
-    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
-    take3(scaling([1, 1, 0]) * vec4(first(top_points))),
+    apply(scale([1, 1, 0]), left_side_point),
+    apply(scale([1, 1, 0]), first(top_points)),
   ])
 
   concat(top_points, [left_side_point], bottom_points)
@@ -204,14 +204,14 @@ function thumb_back_cross_support() = (
   let(top_points = flatten([
     for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_back(col))
-    [for(v=column_slots_profile) take3(position * vec4(v))]
+    apply(position, column_slots_profile)
   ]))
 
-  let(left_side_point = take3(place_thumb_column_support_slot_back(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(left_side_point = apply(place_thumb_column_support_slot_back(len(thumb_columns)-1), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
   let(right_side_point = last(top_points))
   let(bottom_points = [
-    take3(scaling([1, 1, 0]) * vec4(left_side_point)),
-    take3(scaling([1, 1, 0]) * vec4(first(top_points))),
+    apply(scale([1, 1, 0]), left_side_point),
+    apply(scale([1, 1, 0]), first(top_points)),
   ])
 
   concat(top_points, [left_side_point], bottom_points)

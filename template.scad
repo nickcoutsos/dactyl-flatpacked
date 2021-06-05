@@ -4,8 +4,7 @@ use <util.scad>
 use <placeholders.scad>
 include <definitions.scad>
 
-use <scad-utils/transformations.scad>
-use <scad-utils/linalg.scad>
+include <BOSL2/std.scad>
 
 translate([0, -32, 0])
 for(columnIndex=[0:len(finger_columns)-1], i=[0,1])
@@ -19,17 +18,15 @@ for(columnIndex=[0:len(thumb_columns)-1], i=[0,1])
   rotate([0, 0, 90])
   polygon(column_support("thumb", columnIndex));
 
-function apply (m, vertices) = [ for(v=vertices) let(v_=(m * vec4(v))) [v_.x, v_.y] ];
-
 function align_cross_support(vertices) = (
   let(base_points = [for(v=vertices) if (v.z < .0001) v])
   let(vec = last(base_points) - first(base_points))
   let(angle = angleTo(vec, X))
   let(matrix = (
-    identity4()
-    * rotation([-90, 0, 0])
-    * rotation([0, 0, -angle])
-    * translation(-first(base_points))
+    affine3d_identity()
+    * rot([-90, 0, 0])
+    * rot([0, 0, -angle])
+    * move(-first(base_points))
   ))
   apply(matrix, vertices)
 );
