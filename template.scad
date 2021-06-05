@@ -4,100 +4,64 @@ use <util.scad>
 use <placeholders.scad>
 include <definitions.scad>
 
-enable_projection = false;
-$detail=true;
+use <scad-utils/transformations.scad>
+use <scad-utils/linalg.scad>
 
-module project() {
-  if (enable_projection) {
-    projection() children();
-  }
-  else {
-    children();
-  }
+translate([0, -32, 0])
+for(columnIndex=[0:len(finger_columns)-1], i=[0,1])
+  translate([columnIndex*24 + i*12, 0, 0])
+  rotate([0, 0, 90])
+  polygon(column_support("finger", columnIndex));
+
+translate([0, 32, 0])
+for(columnIndex=[0:len(thumb_columns)-1], i=[0,1])
+  translate([columnIndex*24 + i*12, 0, 0])
+  rotate([0, 0, 90])
+  polygon(column_support("thumb", columnIndex));
+
+function apply (m, vertices) = [ for(v=vertices) let(v_=(m * vec4(v))) [v_.x, v_.y] ];
+
+function align_cross_support(vertices) = (
+  let(base_points = [for(v=vertices) if (v.z < .0001) v])
+  let(vec = last(base_points) - first(base_points))
+  let(angle = angleTo(vec, X))
+  let(matrix = (
+    identity4()
+    * rotation([-90, 0, 0])
+    * rotation([0, 0, -angle])
+    * translation(-first(base_points))
+  ))
+  apply(matrix, vertices)
+);
+
+translate([-65, 0, 0]) polygon(align_cross_support(thumb_front_cross_support()));
+translate([-125, 0, 0]) polygon(align_cross_support(thumb_back_cross_support()));
+translate([-125, -40, 0]) polygon(align_cross_support(finger_cluster_cross_support_front()));
+translate([-125, -80, 0]) polygon(align_cross_support(finger_cluster_cross_support_back()));
+
+translate([-115, 90, 0])
+for(x=[0,1], y=[0,1])
+translate([x*(plate_width+2), y*(plate_height*2+2), 0])
+  plate(1, 2, render_2d=true);
+
+translate([-75, 80, 0])
+for (x=[0:11], y=[0:3]) {
+  translate([x*(plate_width+2), y*(plate_height+2), 0])
+  plate(1, 1, render_2d=true);
 }
 
-for (col=[0:5], i=[0,1]) {
-  project()
-  translate([col*55 + i * 27 - 150, 0, 0])
-  rotate([0, 90, 0])
-  multmatrix(un_key_place_transformation(col, 2))
-  finger_cluster_support_columns(col);
-}
-
-translate([-140, -90, 0]) {
-  for (i=[1:2]) {
-    project()
-    translate([20 * i - 20, 0, 0])
-    rotate([0, 90, 0])
-    multmatrix(invert_place_thumb_key(1, 0))
-      thumb_support_columns(1);
-
-    project()
-    translate([-20 * i, 0, 0])
-    rotate([0, 90, 0])
-    multmatrix(invert_place_thumb_key(2, 0))
-      thumb_support_columns(2);
-
-    project()
-    translate([20 * i + 20, 0, 0])
-    rotate([0, 90, 0])
-    multmatrix(invert_place_thumb_key(0, 0))
-      thumb_support_columns(0);
-  }
-}
-
-front_matrix = place_thumb_key(1, -1.5);
-front_invert = invert_place_thumb_key(1, -1.5);
-front_undown = rotation_down(front_matrix, invert=true);
-
-project()
-translate([12, -95, 0])
-rotate([-90, 0, -103])
-multmatrix(front_undown)
-multmatrix(front_invert)
-thumb_front_cross_support();
-
-back_matrix = place_thumb_key(1, -1.5);
-back_invert = invert_place_thumb_key(1, -1.5);
-back_undown = rotation_down(back_matrix, invert=true);
-
-project()
-translate([-45, -75, 0])
-rotate([-90, 0, -12])
-multmatrix(back_undown)
-multmatrix(back_invert)
-thumb_back_cross_support();
-
-project()
-translate([120, -120, 0]) rotate([90, 0, 180]) finger_cluster_cross_support_front();
-
-project()
-translate([60, -70, 0]) rotate([90, 0, 0]) finger_cluster_cross_support_back();
-
-thumb_column_matrix = place_thumb_key(0, -.15);
-thumb_column_invert = invert_place_thumb_key(0, -.15);
-
-for (y=[1:14], x=[0,1]) {
-  project()
-  translate([x * (plate_width+1) - 230, y * (plate_height+1)-165, 0])
-  plate(1, 1);
-}
-
-for (y=[0:4]) {
-  project()
+*for (y=[0:4]) {
   translate([-265, y * (plate_width*1.5+1) - 190, 0])
   rotate([0, 0, 90])
-  plate(1.5, 1);
+  plate(1.5, 1, render_2d=true);
 }
 
-project()
-translate([-145, -190, 0])
+*translate([-145, -190, 0])
 rotate([0, 0, 90])
-plate(1.5, 1);
+plate(1.5, 1, render_2d=true);
 
-for (x=[0,1]) {
-  project()
+*for (x=[0,1]) {
   translate([x * (plate_width+1) + 40, -190, 0])
-  plate(1, 2);
+  plate(1, 2, render_2d=true);
 }
 
