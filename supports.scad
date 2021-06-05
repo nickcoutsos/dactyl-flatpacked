@@ -7,6 +7,12 @@ use <positioning.scad>
 use <placeholders.scad>
 use <util.scad>
 
+module finger_cluster_cross_support_front() extruded_polygon(finger_cluster_cross_support_front(), plate_thickness);
+module finger_cluster_cross_support_back() extruded_polygon(finger_cluster_cross_support_back(), plate_thickness);
+
+module thumb_front_cross_support() extruded_polygon(thumb_front_cross_support(), plate_thickness);
+module thumb_back_cross_support() extruded_polygon(thumb_back_cross_support(), plate_thickness);
+
 function transform(m, vertices) = [ for (v=vertices) takeXY(m * vec4(v)) ];
 function thumb_column_rotate(row) = (
   identity4()
@@ -27,32 +33,32 @@ function finger_column_rotate(row) = (
  * @param <Integer> columnIndex
  * @param <Number> extension
  */
-module column_support(source, columnIndex, height=column_support_height) {
-  assert(source == "thumb" || source == "finger");
-  place_column = function () source == "thumb" ? place_thumb_key(columnIndex, 1) : place_finger_key(columnIndex, 2);
-  invert_place_column = function () source == "thumb" ? invert_place_thumb_key(columnIndex, 1) : un_key_place_transformation(columnIndex, 2);
-  place_slot_back = function () source == "thumb" ? place_thumb_column_support_slot_back(columnIndex) : place_finger_column_support_slot_back(columnIndex);
-  place_slot_front = function () source == "thumb" ? place_thumb_column_support_slot_front(columnIndex) : place_finger_column_support_slot_front(columnIndex);
-  place_column_profile = function () source == "thumb" ? place_thumb_column_in_profile(columnIndex) : place_finger_column_in_profile(columnIndex);
-  get_override_h = function (rowIndex) get_overrides(source, columnIndex, rowIndex)[1];
+function column_support(source, columnIndex, height=column_support_height) = (
+  assert(source == "thumb" || source == "finger")
+  let(place_column = function () source == "thumb" ? place_thumb_key(columnIndex, 1) : place_finger_key(columnIndex, 2))
+  let(invert_place_column = function () source == "thumb" ? invert_place_thumb_key(columnIndex, 1) : un_key_place_transformation(columnIndex, 2))
+  let(place_slot_back = function () source == "thumb" ? place_thumb_column_support_slot_back(columnIndex) : place_finger_column_support_slot_back(columnIndex))
+  let(place_slot_front = function () source == "thumb" ? place_thumb_column_support_slot_front(columnIndex) : place_finger_column_support_slot_front(columnIndex))
+  let(place_column_profile = function () source == "thumb" ? place_thumb_column_in_profile(columnIndex) : place_finger_column_in_profile(columnIndex))
+  let(get_override_h = function (rowIndex) get_overrides(source, columnIndex, rowIndex)[1])
 
-  column_rotate = function (row) source == "thumb" ? thumb_column_rotate(row) : finger_column_rotate(row);
-  columns = source == "thumb" ? thumb_columns : finger_columns;
-  column = columns[columnIndex];
+  let(column_rotate = function (row) source == "thumb" ? thumb_column_rotate(row) : finger_column_rotate(row))
+  let(columns = source == "thumb" ? thumb_columns : finger_columns)
+  let(column = columns[columnIndex])
 
-  back_support_row = source == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row;
-  front_support_row = source == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row;
+  let(back_support_row = source == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
+  let(front_support_row = source == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
 
-  top_points = flatten([
+  let(top_points = flatten([
     for(rowIndex=[0:len(column)-1])
     let(h = get_override_h(rowIndex))
     transform(
       column_rotate(column[rowIndex]),
       make_column_profile_row_plate_cavity(h)
     )
-  ]);
+  ]))
 
-  function back_support_profile(rowIndex) = (
+  let(back_support_profile = function (rowIndex)(
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
     let(t = place_column_profile() * place_slot_back())
@@ -69,9 +75,9 @@ module column_support(source, columnIndex, height=column_support_height) {
       // front_support_profile() function.
       // transform(column_rotate(row), [[-depth/2, -height]])
     ])
-  );
+  ))
 
-  function front_support_profile(rowIndex) = (
+  let (front_support_profile = function (rowIndex) (
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
     let(t = place_column_profile() * place_slot_front())
@@ -80,14 +86,14 @@ module column_support(source, columnIndex, height=column_support_height) {
       [for(v=transform(t, column_profile_slot)) takeXY(v)],
       transform(column_rotate(row), [[-depth/2, -height]])
     ])
-  );
+  ))
 
-  function bottom_profile(rowIndex) = (
+  let(bottom_profile = function (rowIndex) (
     let(h = get_override_h(rowIndex))
     make_column_profile_row_bottom(h)
-  );
+  ))
 
-  bottom_points = reverse(flatten([
+  let(bottom_points = reverse(flatten([
     for(rowIndex=[0:len(column)-1])
     let(row=column[rowIndex])
     let(h = get_override_h(rowIndex))
@@ -106,11 +112,10 @@ module column_support(source, columnIndex, height=column_support_height) {
       front_support_profile(rowIndex)
       : transform(column_rotate(row), bottom_profile(rowIndex))
     ))
-  ]));
+  ])))
 
-  points = concat(top_points, bottom_points);
-  polygon(points);
-}
+  concat(top_points, bottom_points)
+);
 
 module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {
   sides = [-1, 1] * column_support_center_offset;
@@ -120,52 +125,48 @@ module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {
     rotate([0, 90, 0])
     rotate([0, 0, 90])
     linear_extrude(height=column_support_thickness, center=true)
-      column_support("finger", col);
+      polygon(column_support("finger", col));
   }
 }
 
-module finger_cluster_cross_support_front() {
-  top_points = flatten([
+function finger_cluster_cross_support_front() = (
+  let(top_points = flatten([
     for(col=reverse(list([0:len(finger_columns)-1])))
     let(position = place_finger_column_support_slot_front(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
-  ]);
+  ]))
 
-  right_side_point = take3(place_finger_column_support_slot_front(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]);
-  left_side_point = take3(place_finger_column_support_slot_front(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]);
-  bottom_points = [
+  let(right_side_point = take3(place_finger_column_support_slot_front(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]))
+  let(left_side_point = take3(place_finger_column_support_slot_front(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),
     take3(scaling([1, 1, 0]) * vec4(right_side_point)),
-  ];
+  ])
 
-  points = concat([right_side_point], top_points, [left_side_point], bottom_points);
+  concat([right_side_point], top_points, [left_side_point], bottom_points)
+);
 
-  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
-}
-
-module finger_cluster_cross_support_back() {
-  top_points = flatten([
+function finger_cluster_cross_support_back() = (
+  let(top_points = flatten([
     for(col=reverse(list([0:len(finger_columns)-1])))
     let(position = place_finger_column_support_slot_back(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
-  ]);
+  ]))
 
-  right_side_point = take3(place_finger_column_support_slot_back(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]);
-  left_side_point = take3(place_finger_column_support_slot_back(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]);
-  bottom_points = [
+  let(right_side_point = take3(place_finger_column_support_slot_back(len(finger_columns)-1) * [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0, 1]))
+  let(left_side_point = take3(place_finger_column_support_slot_back(0) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),
     take3(scaling([1, 1, 0]) * vec4(right_side_point)),
-  ];
+  ])
 
-  points = concat(
+  concat(
     [right_side_point],
     top_points,
     [left_side_point],
     bottom_points
-  );
-
-  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
-}
+  )
+);
 
 module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   sides = [-1, 1] * column_support_center_offset;
@@ -178,45 +179,44 @@ module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
     rotate([0, 90, 0])
     rotate([0, 0, 90])
     linear_extrude(height=column_support_thickness, center=true)
-      column_support("thumb", col);
+      polygon(column_support("thumb", col));
   }
 }
 
-module thumb_front_cross_support() {
-  top_points = flatten([
+function thumb_front_cross_support() = (
+  let(top_points = flatten([
     for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_front(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
-  ]);
+  ]))
 
-  left_side_point = take3(place_thumb_column_support_slot_front(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]);
-  right_side_point = take3(place_thumb_column_support_slot_front(0) * [+(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]);
-  bottom_points = [
+  let(left_side_point = take3(place_thumb_column_support_slot_front(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(right_side_point = take3(place_thumb_column_support_slot_front(0) * [+(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),
     take3(scaling([1, 1, 0]) * vec4(first(top_points))),
-  ];
+  ])
 
-  points = concat(top_points, [left_side_point], bottom_points);
-  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
-}
+  concat(top_points, [left_side_point], bottom_points)
+);
 
-module thumb_back_cross_support() {
-  top_points = flatten([
+function thumb_back_cross_support() = (
+  let(top_points = flatten([
     for(col=list([0:len(thumb_columns)-1]))
     let(position = place_thumb_column_support_slot_back(col))
     [for(v=column_slots_profile) take3(position * vec4(v))]
-  ]);
+  ]))
 
-  left_side_point = take3(place_thumb_column_support_slot_back(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]);
-  right_side_point = last(top_points);
-  bottom_points = [
+  let(left_side_point = take3(place_thumb_column_support_slot_back(len(thumb_columns)-1) * [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0, 1]))
+  let(right_side_point = last(top_points))
+  let(bottom_points = [
     take3(scaling([1, 1, 0]) * vec4(left_side_point)),
     take3(scaling([1, 1, 0]) * vec4(first(top_points))),
-  ];
+  ])
 
-  points = concat(top_points, [left_side_point], bottom_points);
-  extruded_polygon([for(v=points) [v.x, v.y, v.z]], plate_thickness);
-}
+  concat(top_points, [left_side_point], bottom_points)
+);
+
 
 color("lightcoral") finger_cluster_support_columns();
 color("skyblue") finger_cluster_cross_support_front();
