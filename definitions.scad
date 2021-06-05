@@ -1,20 +1,18 @@
 use <util.scad>
+include <switch-and-keycap-specs.scad>
 
 X = [1, 0, 0];
 Y = [0, 1, 0];
 Z = [0, 0, 1];
 
-keyswitch_height = 14.4; // Was 14.1, then 14.25
-keyswitch_width = 14.4;
+switch_type = "mx";
+keycap_type = "xda";
 
-keycap_length = 18.1;
-keycap_inner_length = 12.37;
-keycap_height = 9.39;
-
-keyhole_length = 14;
-keywall_thickness = 1.5;
-
-sa_profile_key_height = 12.7;
+keyhole_length = mx_keyhole_length;
+keycap_width   = xda_keycap_width;
+keycap_depth   = xda_keycap_depth;
+keycap_height  = xda_keycap_height;
+cap_top_height = xda_keycap_top_height;
 
 plate_thickness = 1.5;
 plate_vertical_padding = 1.7;
@@ -23,10 +21,9 @@ plate_horizontal_padding = 1.7;
 plate_width = keyhole_length + 2 * plate_horizontal_padding;
 plate_height = keyhole_length + 2 * plate_vertical_padding;
 
-mount_width = keyswitch_width + 3;
-mount_height = keyswitch_height + 3;
-
-cap_top_height = 9;
+// overall space allotted for each keycap
+mount_width = keycap_width + 0.5;
+mount_depth = keycap_depth - 1;
 
 column_support_height = 6;
 column_support_thickness = plate_thickness;
@@ -74,11 +71,11 @@ finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]
 thumb_cluster_back_support_row = 0.5;
 thumb_cluster_front_support_row = 2.45;
 
-finger_column_radius = (mount_height + 0.5) / 2 / sin(alpha/2) + cap_top_height;
-finger_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
+finger_column_radius = mount_depth / 2 / sin(alpha/2) + cap_top_height;
+finger_row_radius = mount_width / 2 / sin(beta/2) + cap_top_height;
 
-thumb_column_radius = (mount_height + 0.75) / 2 / sin(alpha/2) + cap_top_height;
-thumb_row_radius = (mount_width + 1.5) / 2 / sin(beta/2) + cap_top_height;
+thumb_column_radius = mount_depth / 2 / sin(alpha/2) + cap_top_height;
+thumb_row_radius = mount_width / 2 / sin(beta/2) + cap_top_height;
 
 // Thumb overrides specify on a per-colum-index-and-row-index basis:
 // * size multiplier (u and h)
