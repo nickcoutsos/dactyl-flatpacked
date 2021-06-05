@@ -57,26 +57,9 @@ function rotation_down(matrix, invert=false) = (
   rotation([(invert ? -1 : 1) * angle, 0, 0])
 );
 
-function rotation_down_x(matrix, invert=false) = (
-  let(localOrigin = matrix * ORIGIN)
-  let(localX = (matrix * X) - localOrigin)
-  let(localY = (matrix * Y) - localOrigin)
-  let(localZ = (matrix * Z) - localOrigin)
-  let(localN = unit(cross(localY, -Z)))
-
-  let(projectedZ = localZ - (take3(localZ) * localN) * localN)
-  let(angle = -90 + acos(
-    ( take3(projectedZ) * take3(localX) ) /
-    ( norm(take3(projectedZ)) * norm(take3(localX)) )
-  ))
-
-  rotation([0, (invert ? -1 : 1) * -angle, 0])
-);
-
 // Given a known matrix transformation "from", rotate about the local X-axis
 // such that the local Y-axis becomes co-planar with the XY plane.
 module rotate_down(matrix) multmatrix(rotation_down(matrix)) children();
-module rotate_down_x(matrix) multmatrix(rotation_down_x(matrix)) children();
 
 module mirror_quadrants() {
   children();
