@@ -4,6 +4,8 @@ include <definitions.scad>
 include <switch-and-keycap-specs.scad>
 
 module mx_switch () {
+  detail = !is_undef($detail) && $detail;
+
   color("saddlebrown") {
     translate([0, 0, 6]) cube([7, 5.3, 2], center=true);
     translate([0, 0, 6]) cube([4.1, 1.17, 7.2], center=true);
@@ -17,7 +19,7 @@ module mx_switch () {
       translate([0, 0, 1]) linear_extrude(height=.01) square(13.97, center=true);
     }
 
-    translate([0, -7, 5]) cube([7.8, 6, 7.5], center=true);
+    if (detail) translate([0, -7, 5]) cube([7.8, 6, 7.5], center=true);
   }
 
   color("dimgray") {
@@ -33,8 +35,10 @@ module mx_switch () {
         translate([0, 0, -5]) linear_extrude(height=0.01) square(12.72, center=true);
       }
 
-      translate([(14 - 2.11)/2, 0, -4.55/2]) cube([2.11, 3.81, 4.55], center=true);
-      translate([-(14 - 2.11)/2, 0, -4.55/2]) cube([2.11, 3.81, 4.55], center=true);
+      if (detail) {
+        translate([(14 - 2.11)/2, 0, -4.55/2]) cube([2.11, 3.81, 4.55], center=true);
+        translate([-(14 - 2.11)/2, 0, -4.55/2]) cube([2.11, 3.81, 4.55], center=true);
+      }
     }
 
     translate([0, 0, -5 -3]) cylinder(d=4, h=3);
