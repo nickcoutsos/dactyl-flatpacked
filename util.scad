@@ -27,19 +27,18 @@ function angleTo (a, b) = acos(
 );
 
 function rotation_down(matrix, invert=false) = (
+  let(globalX = [1, 0, 0])
+  let(globalZ = [0, 0, 1])
   let(localOrigin = apply(matrix, [0, 0, 0]))
-  let(localX = apply(matrix, [1, 0, 0]) - localOrigin)
-  let(localY = apply(matrix, [0, 1, 0]) - localOrigin)
-  let(localZ = apply(matrix, [0, 0, 1]) - localOrigin)
-  let(localN = unit(cross(localX, -[0, 0, 1])))
-
-  let(projectedZ = localZ - (localZ * localN) * localN)
-  let(angle = -90 + acos(
-    ( projectedZ * localY ) /
-    ( norm(projectedZ) * norm(localY) )
+  let(localX = apply(matrix, globalX) - localOrigin)
+  let(localZ = apply(matrix, globalZ) - localOrigin)
+  let(projectedZ = globalZ - (globalZ * localX) * localX)
+  let(angle = acos(
+    ( projectedZ * localZ ) /
+    ( norm(projectedZ) * norm(localZ) )
   ))
 
-  rot([(invert ? -1 : 1) * angle, 0, 0])
+  rot([angle * (invert ? -1 : 1), 0, 0])
 );
 
 // Given a known matrix transformation "from", rotate about the local X-axis

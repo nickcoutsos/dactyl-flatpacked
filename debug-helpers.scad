@@ -16,8 +16,18 @@ module vector(v, r=.5) {
   }
 }
 
-module axes(length=30) {
-  color("red") vector([1, 0, 0] * length);
-  color("limegreen") vector([0, 1, 0] * length);
-  color("royalblue") vector([0, 0, 1] * length);
+module axes(length=30, alpha=1, r=.5) {
+  color("red", alpha) vector([1, 0, 0] * length, r);
+  color("limegreen", alpha) vector([0, 1, 0] * length, r);
+  color("royalblue", alpha) vector([0, 0, 1] * length, r);
+}
+
+module square_axes(length=30, alpha=1, r=.5) {
+  color("tomato", alpha)    translate([1, 0, 0]*length/2) cube([length, r, r], center=true);
+  color("limegreen", alpha) translate([0, 1, 0]*length/2) cube([r, length, r], center=true);
+  color("steelblue", alpha) translate([0, 0, 1]*length/2) cube([r, r, length], center=true);
+
+  color("red", alpha)         translate([-1, 0, 0]*length/2) cube([length, r, r], center=true);
+  color("forestgreen", alpha) translate([0, -1, 0]*length/2) cube([r, length, r], center=true);
+  color("royalblue", alpha)   translate([0, 0, -1]*length/2) cube([r, r, length], center=true);
 }
