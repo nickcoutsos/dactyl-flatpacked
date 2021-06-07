@@ -22,8 +22,10 @@ plate_width = keyhole_length + 2 * plate_horizontal_padding;
 plate_height = keyhole_length + 2 * plate_vertical_padding;
 
 // overall space allotted for each keycap
-mount_width = keycap_width + 0.5;
-mount_depth = keycap_depth - 1;
+// Normally 0.5mm x 0.5mm is sufficient but the curvature can cause collisions
+// between keys in more than one row away from home.
+mount_width = keycap_width + 1.0;
+mount_depth = keycap_depth + 0.5;
 
 column_support_height = 6;
 column_support_thickness = plate_thickness;
@@ -71,11 +73,11 @@ finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]
 thumb_cluster_back_support_row = 0.9;
 thumb_cluster_front_support_row = 2.1;
 
-finger_column_radius = mount_depth / 2 / sin(alpha/2) + cap_top_height;
-finger_row_radius = mount_width / 2 / sin(beta/2) + cap_top_height;
+finger_column_radius = mount_depth / 2 / sin(alpha/2) + (cap_top_height - keycap_height);
+finger_row_radius = mount_width / 2 / sin(beta/2) + (cap_top_height - keycap_height);
 
-thumb_column_radius = mount_depth / 2 / sin(alpha/2) + cap_top_height;
-thumb_row_radius = mount_width / 2 / sin(beta/2) + cap_top_height;
+thumb_column_radius = mount_depth / 2 / sin(alpha/2) + (cap_top_height - keycap_height);
+thumb_row_radius = mount_width / 2 / sin(beta/2) + (cap_top_height - keycap_height);
 
 // Thumb overrides specify on a per-colum-index-and-row-index basis:
 // * size multiplier (u and h)
