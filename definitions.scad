@@ -68,8 +68,8 @@ thumb_columns = [
 finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]);
 finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]);
 
-thumb_cluster_back_support_row = 0.5;
-thumb_cluster_front_support_row = 2.45;
+thumb_cluster_back_support_row = 0.9;
+thumb_cluster_front_support_row = 2.1;
 
 finger_column_radius = mount_depth / 2 / sin(alpha/2) + cap_top_height;
 finger_row_radius = mount_width / 2 / sin(beta/2) + cap_top_height;

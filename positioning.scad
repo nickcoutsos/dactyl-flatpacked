@@ -33,7 +33,7 @@ function place_finger_key(column, row) = (
 function un_key_place_transformation(column, row) = matrix_inverse(place_finger_key(column, row));
 
 function place_finger_column_support_slot_front(col) = (
-  let(row = finger_cluster_front_support_row + .25)
+  let(row = finger_cluster_front_support_row)
   place_finger_key(col, row)
    * move([0, 0, -(column_support_height + slot_height*.25)])
    * rot([-alpha*(2-row), 0, 0])
@@ -68,7 +68,8 @@ function place_thumb_key (column, row) = (
   let(column_angle = beta * column)
   let(row_angle = alpha * (1 - row))
 
-  move([-52, -45, 40])
+  affine3d_identity()
+  * move([-52, -45, 40])
   * rot(alpha, v=unit([1, 1, 0]))
   * rot([0, 0, 180 * (.25 - .1875)])
   * move([mount_width, 0, 0])
@@ -83,25 +84,19 @@ function place_thumb_key (column, row) = (
 function invert_place_thumb_key (column, row) = matrix_inverse(place_thumb_key(column, row));
 
 function place_thumb_column_support_slot_front(col) = (
-  let(row = thumb_cluster_front_support_row - .25)
-  place_thumb_key(1, row)
-  * rotation_down(place_thumb_key(1, row))
-  * move([0, 0, -slot_height])
-  * move([0, 0, thumb_row_radius])
-  * rot([0, beta * (col - 1), 0])
-  * move([0, 0, -thumb_row_radius])
+  let(row = thumb_cluster_front_support_row)
+  let(position = place_thumb_key(col, row))
+  position
   * move([0, 0, -column_support_height])
-  * move([0, 0, -slot_height])
+  * move([0, 0, -slot_height*2])
+  * rotation_down(position)
 );
 
 function place_thumb_column_support_slot_back(col) = (
-  let(row = thumb_cluster_back_support_row + .25)
-  place_thumb_key(1, row)
-  * rotation_down(place_thumb_key(1, row))
-  * move([0, 0, -slot_height])
-  * move([0, 0, thumb_row_radius])
-  * rot([0, beta * (col - 1), 0])
-  * move([0, 0, -thumb_row_radius])
+  let(row = thumb_cluster_back_support_row)
+  let(position = place_thumb_key(col, row))
+  position
   * move([0, 0, -column_support_height])
-  * move([0, 0, -slot_height])
+  * move([0, 0, -slot_height*2])
+  * rotation_down(position, invert=true)
 );

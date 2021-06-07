@@ -28,7 +28,7 @@ function align_cross_support(vertices) = (
     * rot([0, 0, -angle])
     * move(-first(base_points))
   ))
-  apply(matrix, vertices)
+  [for (v=apply(matrix, vertices)) [v.x, v.y]]
 );
 
 translate([-65, 0, 0]) polygon(align_cross_support(thumb_front_cross_support()));
@@ -46,19 +46,3 @@ for (x=[0:11], y=[0:3]) {
   translate([x*(plate_width+2), y*(plate_height+2), 0])
   plate(1, 1, render_2d=true);
 }
-
-*for (y=[0:4]) {
-  translate([-265, y * (plate_width*1.5+1) - 190, 0])
-  rotate([0, 0, 90])
-  plate(1.5, 1, render_2d=true);
-}
-
-*translate([-145, -190, 0])
-rotate([0, 0, 90])
-plate(1.5, 1, render_2d=true);
-
-*for (x=[0,1]) {
-  translate([x * (plate_width+1) + 40, -190, 0])
-  plate(1, 2, render_2d=true);
-}
-

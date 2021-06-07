@@ -10,8 +10,8 @@ use <util.scad>
 module finger_cluster_cross_support_front() extruded_polygon(finger_cluster_cross_support_front(), plate_thickness);
 module finger_cluster_cross_support_back() extruded_polygon(finger_cluster_cross_support_back(), plate_thickness);
 
-module thumb_front_cross_support() extruded_polygon(thumb_front_cross_support(), plate_thickness);
-module thumb_back_cross_support() extruded_polygon(thumb_back_cross_support(), plate_thickness);
+module thumb_front_cross_support(selected=[0:len(thumb_columns)-1]) extruded_polygon(thumb_front_cross_support(selected), plate_thickness);
+module thumb_back_cross_support(selected=[0:len(thumb_columns)-1]) extruded_polygon(thumb_back_cross_support(selected), plate_thickness);
 
 function transform(m, vertices) = [ for (v=vertices) takeXY(apply(m, v)) ];
 function thumb_column_rotate(row) = (
@@ -129,45 +129,6 @@ module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {
   }
 }
 
-function finger_cluster_cross_support_front() = (
-  let(top_points = flatten([
-    for(col=reverse(list([0:len(finger_columns)-1])))
-    let(position = place_finger_column_support_slot_front(col))
-    apply(position, column_slots_profile)
-  ]))
-
-  let(right_side_point = apply(place_finger_column_support_slot_front(len(finger_columns)-1), [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0]))
-  let(left_side_point = apply(place_finger_column_support_slot_front(0), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
-  let(bottom_points = [
-    apply(scale([1, 1, 0]), left_side_point),
-    apply(scale([1, 1, 0]), right_side_point),
-  ])
-
-  concat([right_side_point], top_points, [left_side_point], bottom_points)
-);
-
-function finger_cluster_cross_support_back() = (
-  let(top_points = flatten([
-    for(col=reverse(list([0:len(finger_columns)-1])))
-    let(position = place_finger_column_support_slot_back(col))
-    apply(position, column_slots_profile)
-  ]))
-
-  let(right_side_point = apply(place_finger_column_support_slot_back(len(finger_columns)-1), [+column_support_center_offset + column_support_thickness/2 + 1, 0, 0]))
-  let(left_side_point = apply(place_finger_column_support_slot_back(0), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
-  let(bottom_points = [
-    apply(scale([1, 1, 0]), left_side_point),
-    apply(scale([1, 1, 0]), right_side_point),
-  ])
-
-  concat(
-    [right_side_point],
-    top_points,
-    [left_side_point],
-    bottom_points
-  )
-);
-
 module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   sides = [-1, 1] * column_support_center_offset;
 
@@ -183,39 +144,46 @@ module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   }
 }
 
-function thumb_front_cross_support() = (
+function cross_support(source, position, columns=undef) = (
+  assert(source == "finger" || source == "thumb")
+  assert(position == "back" || position == "front")
+  let(available_columns = source == "finger" ? finger_columns : thumb_columns)
+  let(columns = list(is_undef(columns) ? [0:len(available_columns)-1] : columns))
+  let(slot_placers = source == "finger" ? [
+    function (col) place_finger_column_support_slot_front(col),
+    function (col) place_finger_column_support_slot_back(col),
+  ] : [
+    function (col) place_thumb_column_support_slot_front(col),
+    function (col) place_thumb_column_support_slot_back(col),
+  ])
+  let(left_column = source == "finger" ? first(columns) : last(columns))
+  let(right_column = source == "finger" ? last(columns) : first(columns))
+  let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
   let(top_points = flatten([
-    for(col=list([0:len(thumb_columns)-1]))
-    let(position = place_thumb_column_support_slot_front(col))
-    apply(position, column_slots_profile)
+    for(col=source == "finger" ? reverse(columns) : columns)
+    apply(place_slot(col), column_slots_profile)
   ]))
-
-  let(left_side_point = apply(place_thumb_column_support_slot_front(len(thumb_columns)-1), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
-  let(right_side_point = apply(place_thumb_column_support_slot_front(0), [+(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
+  let(side_point_offset = [column_support_center_offset + column_support_thickness/2 + 1, 0, 0])
+  let(left_side_point = apply(place_slot(left_column), -side_point_offset))
+  let(right_side_point = apply(place_slot(right_column), side_point_offset))
   let(bottom_points = [
     apply(scale([1, 1, 0]), left_side_point),
-    apply(scale([1, 1, 0]), first(top_points)),
+    apply(scale([1, 1, 0]), right_side_point),
   ])
 
-  concat(top_points, [left_side_point], bottom_points)
+  concat(
+    [right_side_point],
+    top_points,
+    [left_side_point],
+    bottom_points
+  )
 );
 
-function thumb_back_cross_support() = (
-  let(top_points = flatten([
-    for(col=list([0:len(thumb_columns)-1]))
-    let(position = place_thumb_column_support_slot_back(col))
-    apply(position, column_slots_profile)
-  ]))
+function finger_cluster_cross_support_front() = cross_support("finger", "front");
+function finger_cluster_cross_support_back() = cross_support("finger", "back");
 
-  let(left_side_point = apply(place_thumb_column_support_slot_back(len(thumb_columns)-1), [-(column_support_center_offset + column_support_thickness/2 + 1), 0, 0]))
-  let(right_side_point = last(top_points))
-  let(bottom_points = [
-    apply(scale([1, 1, 0]), left_side_point),
-    apply(scale([1, 1, 0]), first(top_points)),
-  ])
-
-  concat(top_points, [left_side_point], bottom_points)
-);
+function thumb_front_cross_support(columns) = cross_support("thumb", "front", columns);
+function thumb_back_cross_support(columns) = cross_support("thumb", "back", columns);
 
 
 color("lightcoral") finger_cluster_support_columns();
@@ -223,5 +191,9 @@ color("skyblue") finger_cluster_cross_support_front();
 color("mediumseagreen") finger_cluster_cross_support_back();
 
 color("lightcoral") thumb_support_columns();
-color("skyblue") thumb_front_cross_support();
-color("mediumseagreen") thumb_back_cross_support();
+color("skyblue") thumb_front_cross_support([0]);
+color("skyblue") thumb_front_cross_support([1]);
+color("skyblue") thumb_front_cross_support([2]);
+color("mediumseagreen") thumb_back_cross_support([0]);
+color("mediumseagreen") thumb_back_cross_support([1]);
+color("mediumseagreen") thumb_back_cross_support([2]);
