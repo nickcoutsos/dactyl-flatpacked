@@ -21,31 +21,27 @@ function plate (w=1, h=1) = (
   let(height = plate_height * h)
   let(center_offset = column_support_center_offset)
 
-  let(outer_points = [
-    [ width/2,  height/2],
-    [ center_offset*w + column_support_thickness/2,  height/2],
-    [ center_offset*w + column_support_thickness/2,  height/2 - column_support_thickness/2],
-    [ center_offset*w - column_support_thickness/2,  height/2 - column_support_thickness/2],
-    [ center_offset*w - column_support_thickness/2,  height/2],
+  let(plate_top = height/2)
+  let(plate_right = width/2)
+  let(slot_right = center_offset*w + column_support_thickness/2)
+  let(slot_left = center_offset*w - column_support_thickness/2)
+  let(slot_bottom = plate_top - column_support_thickness/2)
+  let(slot_distance_from_edge = width/2 - (center_offset*w + column_support_thickness/2))
 
-    [ -(center_offset*w - column_support_thickness/2),  height/2],
-    [ -(center_offset*w - column_support_thickness/2),  height/2 - column_support_thickness/2],
-    [ -(center_offset*w + column_support_thickness/2),  height/2 - column_support_thickness/2],
-    [ -(center_offset*w + column_support_thickness/2),  height/2],
-    [-width/2,  height/2],
-
-    [-width/2, -height/2],
-    [ -(center_offset*w + column_support_thickness/2),  -height/2],
-    [ -(center_offset*w + column_support_thickness/2),  -height/2 + column_support_thickness/2],
-    [ -(center_offset*w - column_support_thickness/2),  -height/2 + column_support_thickness/2],
-    [ -(center_offset*w - column_support_thickness/2),  -height/2],
-
-    [ (center_offset*w - column_support_thickness/2),  -height/2],
-    [ (center_offset*w - column_support_thickness/2),  -height/2 + column_support_thickness/2],
-    [ (center_offset*w + column_support_thickness/2),  -height/2 + column_support_thickness/2],
-    [ (center_offset*w + column_support_thickness/2),  -height/2],
-    [ width/2, -height/2]
+  let(corner_profile = [
+    [ plate_right,  slot_distance_from_edge > 0.2 ? plate_top : slot_bottom],
+    [ slot_right,  slot_distance_from_edge > 0.2 ? plate_top : slot_bottom],
+    [ slot_right,  slot_bottom],
+    [ slot_left,  slot_bottom],
+    [ slot_left,  plate_top],
   ])
+
+  let(outer_points = flatten([
+    corner_profile,
+    reverse([for(v=corner_profile) [-v.x, v.y]]),
+    [for(v=corner_profile) [-v.x, -v.y]],
+    reverse([for(v=corner_profile) [v.x, -v.y]])
+  ]))
 
   let(inner_points = [
     [ keyhole_length/2,  keyhole_length/2],
