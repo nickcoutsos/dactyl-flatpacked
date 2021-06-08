@@ -31,8 +31,12 @@ function align_cross_support(vertices) = (
   [for (v=apply(matrix, vertices)) [v.x, v.y]]
 );
 
-translate([-65, 0, 0]) polygon(align_cross_support(thumb_front_cross_support()));
-translate([-125, 0, 0]) polygon(align_cross_support(thumb_back_cross_support()));
+translate([-65, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([2])));
+translate([-45, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([1])));
+translate([-25, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([0])));
+translate([-125, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([2])));
+translate([-105, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([1])));
+translate([-85, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([0])));
 translate([-125, -40, 0]) polygon(align_cross_support(finger_cluster_cross_support_front()));
 translate([-125, -80, 0]) polygon(align_cross_support(finger_cluster_cross_support_back()));
 
