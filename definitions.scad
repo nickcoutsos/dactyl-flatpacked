@@ -33,6 +33,8 @@ column_support_spacing = keyhole_length + column_support_thickness*2;
 column_support_center_offset = (column_support_spacing - column_support_thickness) / 2;
 
 slot_height = 2;
+slot_width = plate_thickness;
+slot_padding = 1;
 
 alpha = 180/12;
 beta = 180/36;
@@ -68,7 +70,7 @@ thumb_columns = [
 ];
 
 finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]);
-finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]);
+finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]) + .45;
 
 thumb_cluster_back_support_row = 0.9;
 thumb_cluster_front_support_row = 2.1;

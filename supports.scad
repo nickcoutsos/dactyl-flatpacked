@@ -51,10 +51,12 @@ function column_support(source, columnIndex, height=column_support_height) = (
 
   let(top_points = flatten([
     for(rowIndex=[0:len(column)-1])
+    let(is_first = rowIndex == 0)
+    let(is_last = rowIndex == len(column)-1)
     let(h = get_override_h(rowIndex))
     transform(
       column_rotate(column[rowIndex]),
-      make_column_profile_row_plate_cavity(h)
+      make_column_profile_row_plate_cavity(h, extension=is_first || is_last ? 1 : 0)
     )
   ]))
 
@@ -84,18 +86,20 @@ function column_support(source, columnIndex, height=column_support_height) = (
     flatten([
       // transform(column_rotate(row), [[depth/2, -height]]),
       [for(v=transform(t, column_profile_slot)) takeXY(v)],
-      transform(column_rotate(row), [[-depth/2, -height]])
+      // transform(column_rotate(row), [[-depth/2, -height]])
     ])
   ))
 
-  let(bottom_profile = function (rowIndex) (
+  let(bottom_profile = function (rowIndex, extension) (
     let(h = get_override_h(rowIndex))
-    make_column_profile_row_bottom(h)
+    make_column_profile_row_bottom(h, extension)
   ))
 
   let(bottom_points = reverse(flatten([
     for(rowIndex=[0:len(column)-1])
     let(row=column[rowIndex])
+    let(is_first = rowIndex == 0)
+    let(is_last = rowIndex == len(column)-1)
     let(h = get_override_h(rowIndex))
     let(row_front_bound = row + h*.5)
     let(row_back_bound = row - h*.5)
@@ -110,7 +114,7 @@ function column_support(source, columnIndex, height=column_support_height) = (
     ) : (
     has_front_support_slot ?
       front_support_profile(rowIndex)
-      : transform(column_rotate(row), bottom_profile(rowIndex))
+      : transform(column_rotate(row), bottom_profile(rowIndex, extension=is_first || is_last ? 1 : 0))
     ))
   ])))
 

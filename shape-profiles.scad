@@ -1,19 +1,19 @@
 include <definitions.scad>
 
 column_slots_profile = [
-  [+column_support_center_offset + column_support_thickness / 2 + 1, 0, slot_height*2],
-  [+column_support_center_offset + column_support_thickness / 2, 0, slot_height*2],
-  [+column_support_center_offset + column_support_thickness / 2, 0, slot_height],
-  [+column_support_center_offset - column_support_thickness / 2, 0, slot_height],
-  [+column_support_center_offset - column_support_thickness / 2, 0, slot_height*2],
-  [+column_support_center_offset - column_support_thickness / 2 - 1, 0, slot_height*2],
+  [+column_support_center_offset + slot_width/2 +slot_padding, 0, slot_height*2],
+  [+column_support_center_offset + slot_width/2, 0, slot_height*2],
+  [+column_support_center_offset + slot_width/2, 0, slot_height],
+  [+column_support_center_offset - slot_width/2, 0, slot_height],
+  [+column_support_center_offset - slot_width/2, 0, slot_height*2],
+  [+column_support_center_offset - slot_width/2 -slot_padding, 0, slot_height*2],
 
-  [-(column_support_center_offset - column_support_thickness / 2 - 1), 0, slot_height*2],
-  [-(column_support_center_offset - column_support_thickness / 2), 0, slot_height*2],
-  [-(column_support_center_offset - column_support_thickness / 2), 0, slot_height],
-  [-(column_support_center_offset + column_support_thickness / 2), 0, slot_height],
-  [-(column_support_center_offset + column_support_thickness / 2), 0, slot_height*2],
-  [-(column_support_center_offset + column_support_thickness / 2 + 1), 0, slot_height*2],
+  [-(column_support_center_offset - slot_width/2 -slot_padding), 0, slot_height*2],
+  [-(column_support_center_offset - slot_width/2), 0, slot_height*2],
+  [-(column_support_center_offset - slot_width/2), 0, slot_height],
+  [-(column_support_center_offset + slot_width/2), 0, slot_height],
+  [-(column_support_center_offset + slot_width/2), 0, slot_height*2],
+  [-(column_support_center_offset + slot_width/2 +slot_padding), 0, slot_height*2],
 ];
 
 function plate (w=1, h=1) = (
@@ -23,8 +23,8 @@ function plate (w=1, h=1) = (
 
   let(plate_top = height/2)
   let(plate_right = width/2)
-  let(slot_right = center_offset*w + column_support_thickness/2)
-  let(slot_left = center_offset*w - column_support_thickness/2)
+  let(slot_right = center_offset*w + slot_width)
+  let(slot_left = center_offset*w - slot_width)
   let(slot_bottom = plate_top - column_support_thickness/2)
   let(slot_distance_from_edge = width/2 - (center_offset*w + column_support_thickness/2))
 
@@ -59,31 +59,31 @@ function plate (w=1, h=1) = (
   [points, paths]
 );
 
-function make_column_profile_row_plate_cavity(h=1) = (
+function make_column_profile_row_plate_cavity(h=1, extension=0) = (
   let(length = plate_height * h)
   [
-    [ length/2, 0],
-    [ length/2 - column_support_thickness/2, 0],
-    [ length/2 - column_support_thickness/2, -plate_thickness],
-    [-(length/2 - column_support_thickness/2), -plate_thickness],
-    [-(length/2 - column_support_thickness/2), 0],
-    [-(length/2), 0]
+    [ length/2 + extension, 0],
+    [ length/2 - slot_width/2, 0],
+    [ length/2 - slot_width/2, -plate_thickness],
+    [-(length/2 - slot_width/2), -plate_thickness],
+    [-(length/2 - slot_width/2), 0],
+    [-(length/2 + extension), 0]
   ]
 );
 
-function make_column_profile_row_bottom(h=1) = (
+function make_column_profile_row_bottom(h=1, extension=0) = (
   let(length = plate_height * h)
   [
-    [ length/2, -column_support_height],
-    [-length/2, -column_support_height]
+    [ length/2 + extension, -column_support_height],
+    [-(length/2 + extension), -column_support_height]
   ]
 );
 
 column_profile_slot = [
-  [0, column_support_thickness*2.5/2, 0],
-  [0, column_support_thickness/2, 0],
-  [0, column_support_thickness/2, slot_height],
-  [0, -column_support_thickness/2, slot_height],
-  [0, -column_support_thickness/2, 0],
-  [0, -column_support_thickness*2.5/2, 0],
+  [0,  slot_width/2 + slot_padding, 0],
+  [0,  slot_width/2, 0],
+  [0,  slot_width/2, slot_height],
+  [0, -slot_width/2, slot_height],
+  [0, -slot_width/2, 0],
+  [0, -slot_width/2 - slot_padding, 0],
 ];
