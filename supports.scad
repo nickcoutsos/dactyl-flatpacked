@@ -56,43 +56,45 @@ function column_support(source, columnIndex, height=column_support_height) = (
     let(h = get_override_h(rowIndex))
     transform(
       column_rotate(column[rowIndex]),
-      make_column_profile_row_plate_cavity(h, extension=is_first || is_last ? 1 : 0)
+      make_column_profile_row_plate_cavity(h)
     )
   ]))
+
+  let(back_points = (
+    let(rowIndex = 0)
+    let(h = get_override_h(rowIndex))
+    transform(column_rotate(column[rowIndex]), [
+      [plate_height/2*h, -column_support_height]
+    ])
+  ))
+
+  let(front_points = (
+    let(rowIndex = len(column)-1)
+    let(h = get_override_h(rowIndex))
+    transform(column_rotate(column[rowIndex]), [
+      [-plate_height/2 * h, -column_support_height]
+    ])
+  ))
 
   let(back_support_profile = function (rowIndex)(
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
     let(t = place_column_profile() * place_slot_back())
-    flatten([
-      transform(column_rotate(row), [[depth/2, -height]]),
-      [for(v=transform(t, column_profile_slot)) takeXY(v)],
-      /*
-       * Originally this point is added to return to the normal column support
-       * height, but in the event that a column support has both front and back
-       * support slots under the same row section this would cause interference.
-       */
-      // TODO: can this be done more elegantly based on the known length (plate
-      // height) at this section? Likewise for analogous point in the
-      // front_support_profile() function.
-      // transform(column_rotate(row), [[-depth/2, -height]])
-    ])
+    [for(v=transform(t, column_profile_slot)) takeXY(v)]
   ))
 
   let (front_support_profile = function (rowIndex) (
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
     let(t = place_column_profile() * place_slot_front())
-    flatten([
-      // transform(column_rotate(row), [[depth/2, -height]]),
-      [for(v=transform(t, column_profile_slot)) takeXY(v)],
-      // transform(column_rotate(row), [[-depth/2, -height]])
-    ])
+    [for(v=transform(t, column_profile_slot)) takeXY(v)]
   ))
 
-  let(bottom_profile = function (rowIndex, extension) (
-    let(h = get_override_h(rowIndex))
-    make_column_profile_row_bottom(h, extension)
+  let(bottom_profile = function (rowIndex) (
+    let(row = column[rowIndex])
+    transform(column_rotate(row), [
+      [0, -column_support_height]
+    ])
   ))
 
   let(bottom_points = reverse(flatten([
@@ -105,20 +107,18 @@ function column_support(source, columnIndex, height=column_support_height) = (
     let(row_back_bound = row - h*.5)
     let(has_back_support_slot = back_support_row >= row_back_bound && back_support_row < row_front_bound)
     let(has_front_support_slot = front_support_row >= row_back_bound && front_support_row < row_front_bound)
+    let(has_both_slots = has_back_support_slot && has_front_support_slot)
 
-    // TODO: simplify this logic
-    (has_back_support_slot && has_front_support_slot) ? (
-      concat(back_support_profile(rowIndex), front_support_profile(rowIndex))
-    ) : (has_back_support_slot ? (
-      back_support_profile(rowIndex)
-    ) : (
-    has_front_support_slot ?
-      front_support_profile(rowIndex)
-      : transform(column_rotate(row), bottom_profile(rowIndex, extension=is_first || is_last ? 1 : 0))
-    ))
+    has_both_slots
+      ? concat(back_support_profile(rowIndex), front_support_profile(rowIndex))
+      : has_back_support_slot
+        ? back_support_profile(rowIndex)
+        : has_front_support_slot
+          ? front_support_profile(rowIndex)
+          : bottom_profile(rowIndex)
   ])))
 
-  concat(top_points, bottom_points)
+  concat(back_points, top_points, front_points, [for(v=bottom_points) [v.x, v.y]])
 );
 
 module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {

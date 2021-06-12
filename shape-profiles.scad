@@ -59,23 +59,15 @@ function plate (w=1, h=1) = (
   [points, paths]
 );
 
-function make_column_profile_row_plate_cavity(h=1, extension=0) = (
+function make_column_profile_row_plate_cavity(h=1) = (
   let(length = plate_height * h)
   [
-    [ length/2 + extension, 0],
+    [ length/2, 0],
     [ length/2 - slot_width/2, 0],
     [ length/2 - slot_width/2, -plate_thickness],
     [-(length/2 - slot_width/2), -plate_thickness],
     [-(length/2 - slot_width/2), 0],
-    [-(length/2 + extension), 0]
-  ]
-);
-
-function make_column_profile_row_bottom(h=1, extension=0) = (
-  let(length = plate_height * h)
-  [
-    [ length/2 + extension, -column_support_height],
-    [-(length/2 + extension), -column_support_height]
+    [-(length/2), 0]
   ]
 );
 
