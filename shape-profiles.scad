@@ -23,8 +23,8 @@ function plate (w=1, h=1) = (
 
   let(plate_top = height/2)
   let(plate_right = width/2)
-  let(slot_right = center_offset*w + slot_width)
-  let(slot_left = center_offset*w - slot_width)
+  let(slot_right = center_offset*w + slot_width/2)
+  let(slot_left = center_offset*w - slot_width/2)
   let(slot_bottom = plate_top - column_support_thickness/2)
   let(slot_distance_from_edge = width/2 - (center_offset*w + column_support_thickness/2))
 
