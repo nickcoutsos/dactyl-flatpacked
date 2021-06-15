@@ -250,10 +250,10 @@ module xda_keycap(steps=4) {
   }
 }
 
-module plate (w=1, h=1, render_2d=false) {
+module plate (w=1, h=1, render_2d=false, align=0) {
   w = is_undef($u) ? w : $u;
   h = is_undef($h) ? h : $h;
-  points_and_paths = plate(w, h);
+  points_and_paths = plate(w, h, align);
   points = points_and_paths[0];
   paths = points_and_paths[1];
 

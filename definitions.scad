@@ -44,7 +44,7 @@ finger_finger_column_offset_index_stretch = [0, 0, 0];
 finger_finger_column_offset_middle = [0, 2.82, -3.0]; // was moved -4.5
 finger_column_offset_ring = [0, 0, 0];
 finger_column_offset_pinky = [0, -5.8, 5.64];
-finger_column_offset_pinky_stretch = [0.5, -5.8, 5.64];
+finger_column_offset_pinky_stretch = [plate_width*1.5/6, -5.8, 5.64];
 finger_column_offsets = [
   finger_finger_column_offset_index_stretch,
   finger_finger_column_offset_index,
@@ -55,12 +55,12 @@ finger_column_offsets = [
 ];
 
 finger_columns = [
-  [1, 2, 3],
-  [1, 2, 3, 4],
-  [1, 2, 3, 4],
-  [1, 2, 3, 4],
-  [1, 2, 3],
-  [1, 2, 3]
+  [0, 1, 2, 3],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4],
+  [0, 1, 2, 3, 4]
 ];
 
 thumb_columns = [
@@ -70,9 +70,9 @@ thumb_columns = [
 ];
 
 finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]);
-finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]) + .45;
+finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]) + .4;
 
-thumb_cluster_back_support_row = 0.9;
+thumb_cluster_back_support_row = 0.85;
 thumb_cluster_front_support_row = 2.1;
 
 finger_column_radius = mount_depth / 2 / sin(alpha/2) + (cap_top_height - keycap_height);
@@ -81,23 +81,67 @@ finger_row_radius = mount_width / 2 / sin(beta/2) + (cap_top_height - keycap_hei
 thumb_column_radius = mount_depth / 2 / sin(alpha/2) + (cap_top_height - keycap_height);
 thumb_row_radius = mount_width / 2 / sin(beta/2) + (cap_top_height - keycap_height);
 
-// Thumb overrides specify on a per-colum-index-and-row-index basis:
+// Overrides specify on a per- cluster/column-/row-index basis:
 // * size multiplier (u and h)
 // * rotation (in degrees)
-// Note: this is only used for thumb keys and doesn't support the ergodox-style
-// 1.25u outer pinky-column keys.
 overrides = [
-  ["thumb", 0, 0, 1, 2, 0],
-  ["thumb", 1, 1, 1, 2, 0]
+  ["thumb", 0, 0, 1, 2],
+  ["thumb", 1, 1, 1, 2],
+  ["finger", 5, 0, 1.5, 1],
+  ["finger", 5, 1, 1.5, 1],
+  ["finger", 5, 2, 1.5, 1],
+  ["finger", 5, 3, 1.5, 1],
 ];
+
+alignment_overrides = [
+  ["finger", 5, 4, -1]
+];
+
+/**
+ * Return overrides for matching array of criteria in a given collection.
+ *
+ * Given an array of arrays (collection), an array of values (criteria), this
+ * function will search each array in collection to find those where the first N
+ * values match the criteria array.
+ *
+ * If a match is found, the remainder of the array is returned. That means the
+ * first N elements (where N is the length of criteria) are excluded.
+ * If none match the value of default is returned
+ *
+ */
+function lookup_overrides(collection, criteria, default) = (
+  let(num_criteria = len(criteria))
+  let(matches = [
+    for(candidate=collection)
+    if (len([
+      for(i=[0:len(criteria)-1])
+      if (!is_undef(candidate[i]) && candidate[i] == criteria[i])
+      true
+    ]) == num_criteria)
+    slice(candidate, num_criteria)
+  ])
+
+  len(matches) > 0 ? matches[0] : default
+);
 
 // Look up key overrides for given source, column index, and row index
 function get_overrides (source, colIndex, rowIndex) = (
-  let(matches = [
-    for(vec=overrides)
-    if (vec[0] == source && vec[1] == colIndex && vec[2] == rowIndex)
-    slice(vec, 3)
-  ])
+  lookup_overrides(overrides, [source, colIndex, rowIndex], [1, 1])
+);
 
-  len(matches) > 0 ? matches[0] : [1, 1, 0]
+/**
+ * Get the largest key width ($u value) of a column in the given key cluster.
+ */
+function get_column_width (cluster, colIndex) = (
+  assert(cluster == "finger" || cluster == "thumb", "'cluster' must be one of (finger|thumb)")
+  let(column = cluster == "finger" ? finger_columns[colIndex] : thumb_columns[colIndex])
+  let(column_widths = [
+    for(rowIndex=[0:len(column)-1])
+    get_overrides(cluster, colIndex, rowIndex)[0]
+  ])
+  max(column_widths)
+);
+
+function get_alignment_override (cluster, colIndex, rowIndex) = (
+  lookup_overrides(alignment_overrides, [cluster, colIndex, rowIndex], [0])[0]
 );

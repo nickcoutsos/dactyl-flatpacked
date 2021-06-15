@@ -21,13 +21,14 @@ function place_finger_key(column, row) = (
   affine3d_identity()
   * move([0, 0, 13])
   * rot(beta*3 * Y)
-  * move(column_offset)
+  * move([0, column_offset.y, column_offset.z])
   * move([0, 0, finger_row_radius])
   * rot(column_angle * Y)
   * move([0, 0, -finger_row_radius])
   * move([0, 0, finger_column_radius])
   * rot(row_angle * X)
   * move([0, 0, -finger_column_radius])
+  * move([column_offset.x, 0, 0])
 );
 
 function un_key_place_transformation(column, row) = matrix_inverse(place_finger_key(column, row));

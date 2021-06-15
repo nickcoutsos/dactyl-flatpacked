@@ -123,13 +123,16 @@ function column_support(source, columnIndex, height=column_support_height) = (
 
 module finger_cluster_support_columns(selection=[0:len(finger_columns) - 1]) {
   sides = [-1, 1] * column_support_center_offset;
-  for (col=selection, side=sides) {
-    place_finger_key(col, 2)
-    translate([side, 0, 0])
-    rotate([0, 90, 0])
-    rotate([0, 0, 90])
-    linear_extrude(height=column_support_thickness, center=true)
-      polygon(column_support("finger", col));
+  for (col=selection) {
+    width = get_column_width("finger", col);
+    for(side=sides) {
+      place_finger_key(col, 2)
+      translate([side * width, 0, 0])
+      rotate([0, 90, 0])
+      rotate([0, 0, 90])
+      linear_extrude(height=column_support_thickness, center=true)
+        polygon(column_support("finger", col));
+    }
   }
 }
 
@@ -161,15 +164,26 @@ function cross_support(source, position, columns=undef) = (
     function (col) place_thumb_column_support_slot_back(col),
   ])
   let(left_column = source == "finger" ? first(columns) : last(columns))
+  let(left_column_u = get_column_width(source, left_column))
   let(right_column = source == "finger" ? last(columns) : first(columns))
+  let(right_column_u = get_column_width(source, right_column))
   let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
   let(top_points = flatten([
     for(col=source == "finger" ? reverse(columns) : columns)
-    apply(place_slot(col), column_slots_profile)
+    let(column_u = get_column_width(source, col))
+    apply(place_slot(col), make_column_slots_profile(u=column_u))
   ]))
-  let(side_point_offset = [column_support_center_offset + column_support_thickness/2 + 1, 0, 0])
-  let(left_side_point = apply(place_slot(left_column), -side_point_offset))
-  let(right_side_point = apply(place_slot(right_column), side_point_offset))
+
+  let(left_side_point = apply(
+    place_slot(left_column),
+    last(make_column_slots_profile(u=left_column_u)) - [0, 0, slot_height*2]
+  ))
+
+  let(right_side_point = apply(
+    place_slot(right_column),
+    first(make_column_slots_profile(u=right_column_u)) - [0, 0, slot_height*2]
+  ))
+
   let(bottom_points = [
     apply(scale([1, 1, 0]), left_side_point),
     apply(scale([1, 1, 0]), right_side_point),

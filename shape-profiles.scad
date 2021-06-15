@@ -1,22 +1,23 @@
 include <definitions.scad>
 
-column_slots_profile = [
-  [+column_support_center_offset + slot_width/2 +slot_padding, 0, slot_height*2],
-  [+column_support_center_offset + slot_width/2, 0, slot_height*2],
-  [+column_support_center_offset + slot_width/2, 0, slot_height],
-  [+column_support_center_offset - slot_width/2, 0, slot_height],
-  [+column_support_center_offset - slot_width/2, 0, slot_height*2],
-  [+column_support_center_offset - slot_width/2 -slot_padding, 0, slot_height*2],
+function make_column_slots_profile(u=1) = (
+  let(slot_offset = column_support_center_offset * u)
+  let(right_slot = [
+    [slot_offset + slot_width/2 +slot_padding, 0, slot_height*2],
+    [slot_offset + slot_width/2, 0, slot_height*2],
+    [slot_offset + slot_width/2, 0, slot_height],
+    [slot_offset - slot_width/2, 0, slot_height],
+    [slot_offset - slot_width/2, 0, slot_height*2],
+    [slot_offset - slot_width/2 -slot_padding, 0, slot_height*2],
+  ])
+  let(left_slot = reverse([
+    for (v=right_slot)
+    [-v.x, v.y, v.z]
+  ]))
+  concat(right_slot, left_slot)
+);
 
-  [-(column_support_center_offset - slot_width/2 -slot_padding), 0, slot_height*2],
-  [-(column_support_center_offset - slot_width/2), 0, slot_height*2],
-  [-(column_support_center_offset - slot_width/2), 0, slot_height],
-  [-(column_support_center_offset + slot_width/2), 0, slot_height],
-  [-(column_support_center_offset + slot_width/2), 0, slot_height*2],
-  [-(column_support_center_offset + slot_width/2 +slot_padding), 0, slot_height*2],
-];
-
-function plate (w=1, h=1) = (
+function plate (w=1, h=1, align=0) = (
   let(width = plate_width * w)
   let(height = plate_height * h)
   let(center_offset = column_support_center_offset)
@@ -43,11 +44,12 @@ function plate (w=1, h=1) = (
     reverse([for(v=corner_profile) [v.x, -v.y]])
   ]))
 
+  let(alignment = align * (w - 1) * plate_width/2)
   let(inner_points = [
-    [ keyhole_length/2,  keyhole_length/2],
-    [-keyhole_length/2,  keyhole_length/2],
-    [-keyhole_length/2, -keyhole_length/2],
-    [ keyhole_length/2, -keyhole_length/2]
+    [ keyhole_length/2 + alignment,  keyhole_length/2],
+    [-keyhole_length/2 + alignment,  keyhole_length/2],
+    [-keyhole_length/2 + alignment, -keyhole_length/2],
+    [ keyhole_length/2 + alignment, -keyhole_length/2]
   ])
 
   let(points = concat(outer_points, inner_points))
