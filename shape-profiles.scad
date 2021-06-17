@@ -58,7 +58,7 @@ function plate (w=1, h=1, align=0) = (
     [for(i=[0:len(inner_points)-1]) len(outer_points)+i]
   ])
 
-  [points, paths]
+  [outer_points, inner_points]
 );
 
 function make_column_profile_row_plate_cavity(h=1) = (

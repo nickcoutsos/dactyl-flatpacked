@@ -253,15 +253,13 @@ module xda_keycap(steps=4) {
 module plate (w=1, h=1, render_2d=false, align=0) {
   w = is_undef($u) ? w : $u;
   h = is_undef($h) ? h : $h;
-  points_and_paths = plate(w, h, align);
-  points = points_and_paths[0];
-  paths = points_and_paths[1];
+  paths = plate(w, h, align);
 
   if (render_2d) {
-    polygon(points, paths=paths);
+    region(paths);
   } else {
     translate([0, 0, -plate_thickness])
     linear_extrude(height=plate_thickness)
-    polygon(points, paths=paths);
+    region(paths);
   }
 }
