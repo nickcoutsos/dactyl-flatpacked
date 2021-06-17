@@ -1,10 +1,9 @@
-use <supports.scad>
-use <positioning.scad>
-use <util.scad>
-use <placeholders.scad>
 use <arrange.scad>
-include <definitions.scad>
+use <placeholders.scad>
+use <supports.scad>
+use <util.scad>
 
+include <definitions.scad>
 include <BOSL2/std.scad>
 
 function orient_cross_support(vertices) = (
@@ -30,7 +29,7 @@ function arrange_key_plates(cluster, spacing=2, reverse_columns=false, align_ite
       let (overrides = get_overrides(cluster, colIndex, rowIndex))
       let (u = overrides[0])
       let (h = overrides[1])
-      [plate(u, h)]
+      plate(u, h)
     ], direction="column-reverse", spacing=spacing)
   ], direction=reverse_columns ? "row-reverse" : "row", spacing=spacing, align_items=align_items)
 );
@@ -38,23 +37,14 @@ function arrange_key_plates(cluster, spacing=2, reverse_columns=false, align_ite
 function arrange_column_supports(cluster, spacing=0, align_items="center") = (
   assert(cluster == "finger" || cluster == "thumb")
   let(columns = cluster == "finger" ? finger_columns : thumb_columns)
-  [arrange(flatten([
+  arrange(flatten([
     for(columnIndex=[0:len(columns)-1], i=[0,1])
     [[rot([0, 0, 90], p=column_support(cluster, columnIndex))]]
-  ]), spacing=spacing, align_items=align_items)]
+  ]), spacing=spacing, align_items=align_items)
 );
 
-finger_cluster_front = [rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_front()))];
-finger_cluster_back = [rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_back()))];
-
-thumb_cross_supports = [
-  [[orient_cross_support(thumb_front_cross_support([2]))]],
-  [[orient_cross_support(thumb_front_cross_support([1]))]],
-  [[orient_cross_support(thumb_front_cross_support([0]))]],
-  [[orient_cross_support(thumb_back_cross_support([2]))]],
-  [[orient_cross_support(thumb_back_cross_support([1]))]],
-  [[orient_cross_support(thumb_back_cross_support([0]))]],
-];
+finger_cluster_front = rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_front()));
+finger_cluster_back = rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_back()));
 
 arrange([
   arrange([
@@ -66,6 +56,13 @@ arrange([
   arrange([
     arrange_key_plates("thumb", reverse_columns=true, align_items="start"),
     arrange_column_supports("thumb", align_items="start", spacing=-2),
-    arrange(thumb_cross_supports, spacing=2, align_items="start")
+    arrange([
+      [orient_cross_support(thumb_front_cross_support([2]))],
+      [orient_cross_support(thumb_front_cross_support([1]))],
+      [orient_cross_support(thumb_front_cross_support([0]))],
+      [orient_cross_support(thumb_back_cross_support([2]))],
+      [orient_cross_support(thumb_back_cross_support([1]))],
+      [orient_cross_support(thumb_back_cross_support([0]))],
+    ], spacing=2, align_items="start")
   ], spacing=2, align_items="start"),
 ], direction="column", align_items="start", spacing=-20, anchor=[-1, -1]);

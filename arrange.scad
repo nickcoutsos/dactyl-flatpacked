@@ -15,10 +15,10 @@ function bbox (points_or_region) = (
 
 function project(a, b) = a*b*b;
 
-function arrange(groups, direction="row", spacing=0, align_items="center") = (
+function arrange(regions, direction="row", spacing=0, align_items="center") = (
   assert(direction == "row" || direction == "row-reverse" || direction == "column" || direction == "column-reverse")
   assert(align_items == "center" || align_items == "start" || align_items == "end")
-  let(bounding_boxes = [ for(g=groups) bbox(g) ])
+  let(bounding_boxes = [ for(r=regions) bbox(r) ])
 
   let(is_reversed = direction == "row-reverse" || direction == "column-reverse")
   let(is_row = direction == "row" || direction == "row-reverse")
@@ -26,7 +26,7 @@ function arrange(groups, direction="row", spacing=0, align_items="center") = (
   let(main_length = sum([
     for(box=bounding_boxes)
     norm(project(box[2], main_axis))
-  ]) + spacing * (len(groups)-1))
+  ]) + spacing * (len(regions)-1))
 
   let(cross_axis = is_row ? [0, 1] : [1, 0])
   let(cross_length = max([
@@ -37,8 +37,8 @@ function arrange(groups, direction="row", spacing=0, align_items="center") = (
   let(total_bounding_box = main_axis * main_length + cross_axis * cross_length)
 
   flatten([
-    for(i=[0:len(groups)-1])
-    let(regions = groups[i])
+    for(i=[0:len(regions)-1])
+    let(paths = regions[i])
     let(size = bounding_boxes[i][2])
     let(center = bounding_boxes[i][3])
     let(prev_group_sizes = i == 0 ? [0, 0] : sum([
@@ -61,49 +61,48 @@ function arrange(groups, direction="row", spacing=0, align_items="center") = (
       + (is_reversed ? project(total_bounding_box, main_axis) - main_offset : main_offset)
       - cross_offset
     ))
-    [for(paths=regions) [ for(path=paths) move(offset_, path) ]]
+    [ for(path=paths) move(offset_, path) ]
   ])
 );
 
 /**
- * Arrange groups of regions using a CSS flexbox-like rules.
+ * Arrange regions using a CSS flexbox-like rules.
  *
  * Some terminology first:
  *  - a path is an array of vertices ([ [x, y], ... ])
  *  - a region is an array of paths ([[ [x, y], ... ]])
- *  - a group is an array of regions ([[[ [x, y], ... ]]])
  *
- * This module will arrange and render groups of regions along an axis with the
- * specified alignment and spacing.
+ * This module will arrange and render regions along an axis with the specified
+ * alignment and spacing.
  *
- * Given a direction of "row" these groups will be laid out end-to-end (plus the
+ * Given a direction of "row" these regions will be laid out end-to-end (plus
  * "spacing" between eeach) on a "main-axis" going from left to right (x-axis),
  * and vertically aligned on the "cross-axis" (y-axis). Specifying "column" will
- * swap the main and cross axes. Including "-reverse" will lay the groups out in
- * reverse order on the main-axis.
+ * swap the main and cross axes. Including "-reverse" will lay the regions out
+ * in reverse order on the main-axis.
  *
- * By default, groups will be centered on the cross-axis, but can be aligned to
+ * By default, regions will be centered on the cross-axis, but can be aligned to
  * the low or high end of the overall bounding box by settign align_items to
  * "start" or "end" respectively.
  *
- * Lastly "anchor" can be used to shift the origin relative to the groups'
+ * Lastly "anchor" can be used to shift the origin relative to the regions'
  * overall bounding box.
  *
  * These arrangements may also be nested by supplying an array of arrange()'d
  * values.
  *
- * @param <array> groups
+ * @param <array> regions
  * @param <string> [direction="row"] - one of (row|row-reverse|column|column-reverse)
  * @param <number> [spacing=0] - spacing between bounding boxes of regions
  * @param <string> [align_items="center"] alignment on cross-axis
  * @param <vector[x,y]> anchor
  */
-module arrange(groups, direction="row", spacing=0, align_items="center", anchor=[0, 0]) {
+module arrange(regions, direction="row", spacing=0, align_items="center", anchor=[0, 0]) {
   assert(direction == "row" || direction == "row-reverse" || direction == "column" || direction == "column-reverse");
   assert(align_items == "center" || align_items == "start" || align_items == "end");
 
   arranged = arrange(
-    groups,
+    regions,
     direction=direction,
     spacing=spacing,
     align_items=align_items
@@ -113,7 +112,11 @@ module arrange(groups, direction="row", spacing=0, align_items="center", anchor=
   size = box[2];
   center = box[3];
 
-  translate(-center + [-anchor.x * size.x/2, -anchor.y * size.y/2])
-  for (paths=arranged)
-    region(paths);
+  offset_ = [
+    -anchor.x * size.x/2,
+    -anchor.y * size.y/2
+  ];
+
+  translate(-center + offset_)
+    region(arranged);
 }
