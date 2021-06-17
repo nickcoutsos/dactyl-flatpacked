@@ -2,23 +2,12 @@ use <supports.scad>
 use <positioning.scad>
 use <util.scad>
 use <placeholders.scad>
+use <arrange.scad>
 include <definitions.scad>
 
 include <BOSL2/std.scad>
 
-translate([0, -32, 0])
-for(columnIndex=[0:len(finger_columns)-1], i=[0,1])
-  translate([columnIndex*24 + i*12, 0, 0])
-  rotate([0, 0, 90])
-  polygon(column_support("finger", columnIndex));
-
-translate([0, 32, 0])
-for(columnIndex=[0:len(thumb_columns)-1], i=[0,1])
-  translate([columnIndex*24 + i*12, 0, 0])
-  rotate([0, 0, 90])
-  polygon(column_support("thumb", columnIndex));
-
-function align_cross_support(vertices) = (
+function orient_cross_support(vertices) = (
   let(base_points = [for(v=vertices) if (v.z < .0001) v])
   let(vec = last(base_points) - first(base_points))
   let(angle = angleTo(vec, X))
@@ -31,22 +20,52 @@ function align_cross_support(vertices) = (
   [for (v=apply(matrix, vertices)) [v.x, v.y]]
 );
 
-translate([-65, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([2])));
-translate([-45, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([1])));
-translate([-25, 0, 0]) polygon(align_cross_support(thumb_front_cross_support([0])));
-translate([-125, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([2])));
-translate([-105, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([1])));
-translate([-85, 0, 0]) polygon(align_cross_support(thumb_back_cross_support([0])));
-translate([-125, -40, 0]) polygon(align_cross_support(finger_cluster_cross_support_front()));
-translate([-125, -80, 0]) polygon(align_cross_support(finger_cluster_cross_support_back()));
+function arrange_key_plates(cluster, spacing=2, reverse_columns=false, align_items="end") = (
+  assert(cluster == "finger" || cluster == "thumb")
+  let(columns = cluster == "finger" ? finger_columns : thumb_columns)
+  arrange([
+    for (colIndex=[0:len(columns)-1])
+    arrange([
+      for (rowIndex=[0:len(columns[colIndex])-1])
+      let (overrides = get_overrides(cluster, colIndex, rowIndex))
+      let (u = overrides[0])
+      let (h = overrides[1])
+      [plate(u, h)]
+    ], direction="column-reverse", spacing=spacing)
+  ], direction=reverse_columns ? "row-reverse" : "row", spacing=spacing, align_items=align_items)
+);
 
-translate([-115, 90, 0])
-for(x=[0,1], y=[0,1])
-translate([x*(plate_width+2), y*(plate_height*2+2), 0])
-  plate(1, 2, render_2d=true);
+function arrange_column_supports(cluster, spacing=0, align_items="center") = (
+  assert(cluster == "finger" || cluster == "thumb")
+  let(columns = cluster == "finger" ? finger_columns : thumb_columns)
+  [arrange(flatten([
+    for(columnIndex=[0:len(columns)-1], i=[0,1])
+    [[rot([0, 0, 90], p=column_support(cluster, columnIndex))]]
+  ]), spacing=spacing, align_items=align_items)]
+);
 
-translate([-75, 80, 0])
-for (x=[0:11], y=[0:3]) {
-  translate([x*(plate_width+2), y*(plate_height+2), 0])
-  plate(1, 1, render_2d=true);
-}
+finger_cluster_front = [rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_front()))];
+finger_cluster_back = [rot([0, 0, 90], p=orient_cross_support(finger_cluster_cross_support_back()))];
+
+thumb_cross_supports = [
+  [[orient_cross_support(thumb_front_cross_support([2]))]],
+  [[orient_cross_support(thumb_front_cross_support([1]))]],
+  [[orient_cross_support(thumb_front_cross_support([0]))]],
+  [[orient_cross_support(thumb_back_cross_support([2]))]],
+  [[orient_cross_support(thumb_back_cross_support([1]))]],
+  [[orient_cross_support(thumb_back_cross_support([0]))]],
+];
+
+arrange([
+  arrange([
+    arrange_key_plates("finger"),
+    arrange_column_supports("finger", spacing=-6, align_items="end"),
+    [finger_cluster_front],
+    [finger_cluster_back]
+  ], spacing=2, align_items="start"),
+  arrange([
+    arrange_key_plates("thumb", reverse_columns=true, align_items="start"),
+    arrange_column_supports("thumb", align_items="start", spacing=-2),
+    arrange(thumb_cross_supports, spacing=2, align_items="start")
+  ], spacing=2, align_items="start"),
+], direction="column", align_items="start", spacing=-20, anchor=[-1, -1]);
