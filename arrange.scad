@@ -65,6 +65,39 @@ function arrange(groups, direction="row", spacing=0, align_items="center") = (
   ])
 );
 
+/**
+ * Arrange groups of regions using a CSS flexbox-like rules.
+ *
+ * Some terminology first:
+ *  - a path is an array of vertices ([ [x, y], ... ])
+ *  - a region is an array of paths ([[ [x, y], ... ]])
+ *  - a group is an array of regions ([[[ [x, y], ... ]]])
+ *
+ * This module will arrange and render groups of regions along an axis with the
+ * specified alignment and spacing.
+ *
+ * Given a direction of "row" these groups will be laid out end-to-end (plus the
+ * "spacing" between eeach) on a "main-axis" going from left to right (x-axis),
+ * and vertically aligned on the "cross-axis" (y-axis). Specifying "column" will
+ * swap the main and cross axes. Including "-reverse" will lay the groups out in
+ * reverse order on the main-axis.
+ *
+ * By default, groups will be centered on the cross-axis, but can be aligned to
+ * the low or high end of the overall bounding box by settign align_items to
+ * "start" or "end" respectively.
+ *
+ * Lastly "anchor" can be used to shift the origin relative to the groups'
+ * overall bounding box.
+ *
+ * These arrangements may also be nested by supplying an array of arrange()'d
+ * values.
+ *
+ * @param <array> groups
+ * @param <string> [direction="row"] - one of (row|row-reverse|column|column-reverse)
+ * @param <number> [spacing=0] - spacing between bounding boxes of regions
+ * @param <string> [align_items="center"] alignment on cross-axis
+ * @param <vector[x,y]> anchor
+ */
 module arrange(groups, direction="row", spacing=0, align_items="center", anchor=[0, 0]) {
   assert(direction == "row" || direction == "row-reverse" || direction == "column" || direction == "column-reverse");
   assert(align_items == "center" || align_items == "start" || align_items == "end");
