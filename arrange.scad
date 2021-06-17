@@ -65,71 +65,22 @@ function arrange(groups, direction="row", spacing=0, align_items="center") = (
   ])
 );
 
-module arrange(groups, direction="row", spacing=0, align_items="center", anchor=[0, 0, 0]) {
+module arrange(groups, direction="row", spacing=0, align_items="center", anchor=[0, 0]) {
   assert(direction == "row" || direction == "row-reverse" || direction == "column" || direction == "column-reverse");
   assert(align_items == "center" || align_items == "start" || align_items == "end");
-  bounding_boxes = [ for(g=groups) bbox(g) ];
 
-  is_reversed = direction == "row-reverse" || direction == "column-reverse";
-  is_row = direction == "row" || direction == "row-reverse";
-  main_axis = (is_row ? [1, 0] : [0, 1]);
-  main_length = sum([
-    for(box=bounding_boxes)
-    norm(project(box[2], main_axis))
-  ]) + spacing * (len(groups)-1);
-  
-  cross_axis = is_row ? [0, 1] : [1, 0];
-  cross_length = max([
-    for(box=bounding_boxes)
-    norm(project(box[2], cross_axis))
-  ]);
+  arranged = arrange(
+    groups,
+    direction=direction,
+    spacing=spacing,
+    align_items=align_items
+  );
 
-  total_bounding_box = main_axis * main_length + cross_axis * cross_length;
-  trace_path(square(total_bounding_box, center=true), closed=true);
+  box = bbox(arranged);
+  size = box[2];
+  center = box[3];
 
-  echo("arrange(){} has", len(groups), "groups");
-  for (i=[0:len(groups)-1]) {
-    regions = groups[i];
-    size = bounding_boxes[i][2];
-    center = bounding_boxes[i][3];
-
-    prev_group_sizes = i == 0 ? [0, 0] : sum([
-      for(j=[0:max(0, i-1)])
-      project(bounding_boxes[j][2], main_axis) + spacing * main_axis
-    ]);
-
-    main_offset = (
-      project(size/2, main_axis)
-      - project(total_bounding_box/2, main_axis)
-      + prev_group_sizes
-    );
-
-    cross_offset = align_items == "center" ? [0, 0] : (
-      (align_items == "start" ? 1 : -1) * (
-      project(size/2, cross_axis)
-      -project(total_bounding_box/2, cross_axis)
-    ));
-
-    {
-      translate(
-        - center
-        + main_offset
-        + cross_offset
-      ) {
-
-        // center
-        color("red") translate(center) sphere(r=4);
-
-        // local bbox
-        color("skyblue") translate(center-size/2) trace_path(square(size), closed=true);
-
-        // region
-        echo("arrange(){} group", i, "has", len(regions), "regions");
-        for (j=[0:len(regions)-1]) {
-          echo("arrange(){} region", j, "has", len(regions[j]), "paths");
-          region(regions[j]);
-        }
-      }
-    }
-  }
+  translate(-center + [-anchor.x * size.x/2, -anchor.y * size.y/2])
+  for (paths=arranged)
+    region(paths);
 }
