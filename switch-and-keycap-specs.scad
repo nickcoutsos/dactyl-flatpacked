@@ -19,6 +19,17 @@ choc_keycap_depth = 16.6;
 choc_keycap_height = 3.4;
 choc_keycap_top_height = 9;
 
+sa_keycap_width = 18.42;
+sa_keycap_depth = 18.42;
+sa_top_width = 12.7;
+sa_top_depth = 12.7;
+sa_keycap_height = 12.42;
+sa_keycap_top_height = sa_keycap_height + 6;
+
+sa_top_corner_radius = 1.16;
+sa_bottom_corner_radius = 0.57;
+
+
 switch_specs = [
   [["mx", "keyhole_length"], mx_keyhole_length],
   [["choc", "keyhole_length"], choc_keyhole_length],
@@ -36,6 +47,11 @@ keycap_specs = [
   [["choc", "base_depth"], choc_keycap_depth],
   [["choc", "height"], choc_keycap_height],
   [["choc", "switch_combined_height"], choc_keycap_top_height],
+
+  [["sa", "base_width"], sa_keycap_width],
+  [["sa", "base_depth"], sa_keycap_depth],
+  [["sa", "height"], sa_keycap_height],
+  [["sa", "switch_combined_height"], sa_keycap_top_height],
 ];
 
 function get_switch_property(type, property) = (
