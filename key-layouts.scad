@@ -28,8 +28,8 @@ module layout(cluster) {
       multmatrix(transform(col, row)) {
         if ($render_plates) plate($u=column_u, align=align);
         translate([$u < column_u ? -plate_width * $u/4 : 0, 0, 0]) {
-          if ($render_keycaps) xda_keycap();
-          if ($render_switches) mx_switch();
+          if ($render_keycaps) keycap();
+          if ($render_switches) switch();
         }
       }
     }

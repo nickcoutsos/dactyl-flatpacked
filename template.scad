@@ -49,7 +49,7 @@ finger_cluster_back = rot([0, 0, 90], p=orient_cross_support(finger_cluster_cros
 arrange([
   arrange([
     arrange_key_plates("finger"),
-    arrange_column_supports("finger", spacing=-6, align_items="end"),
+    arrange_column_supports("finger", spacing=0, align_items="end"),
     [finger_cluster_front],
     [finger_cluster_back]
   ], spacing=2, align_items="start"),

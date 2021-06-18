@@ -8,11 +8,11 @@ Z = [0, 0, 1];
 switch_type = "mx";
 keycap_type = "xda";
 
-keyhole_length = mx_keyhole_length;
-keycap_width   = xda_keycap_width;
-keycap_depth   = xda_keycap_depth;
-keycap_height  = xda_keycap_height;
-cap_top_height = xda_keycap_top_height;
+keyhole_length = get_switch_property(switch_type, "keyhole_length");
+keycap_width   = get_keycap_property(keycap_type, "base_width");
+keycap_depth   = get_keycap_property(keycap_type, "base_depth");
+keycap_height  = get_keycap_property(keycap_type, "height");
+cap_top_height = get_keycap_property(keycap_type, "switch_combined_height");
 
 plate_thickness = 1.5;
 plate_vertical_padding = 1.7;
