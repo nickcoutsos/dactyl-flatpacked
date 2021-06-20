@@ -156,6 +156,7 @@ function cross_support(source, position, columns=undef) = (
   assert(position == "back" || position == "front")
   let(available_columns = source == "finger" ? finger_columns : thumb_columns)
   let(columns = list(is_undef(columns) ? [0:len(available_columns)-1] : columns))
+  let(key_placer = source == "finger" ? function(col, row) place_finger_key(col, row) : function(col, row) place_thumb_key(col, row))
   let(slot_placers = source == "finger" ? [
     function (col) place_finger_column_support_slot_front(col),
     function (col) place_finger_column_support_slot_back(col),
@@ -168,10 +169,28 @@ function cross_support(source, position, columns=undef) = (
   let(right_column = source == "finger" ? last(columns) : first(columns))
   let(right_column_u = get_column_width(source, right_column))
   let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
+  let(slot_center_point = [0, 0, slot_height*2])
   let(top_points = flatten([
     for(col=source == "finger" ? reverse(columns) : columns)
     let(column_u = get_column_width(source, col))
-    apply(place_slot(col), make_column_slots_profile(u=column_u))
+    let(needs_switch_cutout = any([
+      for(row=available_columns[col])
+      let(switch_position = matrix_inverse(place_slot(col)) * key_placer(col, row))
+      let(switch_housing_bottom = apply(switch_position, cube([keyhole_length + plate_thickness/2, keyhole_length + plate_thickness/2, 5], anchor=TOP)))
+      vnf_contains_point(switch_housing_bottom, slot_center_point)
+    ]))
+    let(needs_switch_nub_cutout = any([
+      for(row=available_columns[col])
+      let(switch_position = matrix_inverse(place_slot(col)) * key_placer(col, row))
+      let(switch_nub_bottom = apply(switch_position, cube([4, 4, 8], anchor=TOP)))
+      vnf_contains_point(switch_nub_bottom, slot_center_point)
+    ]))
+
+    apply(place_slot(col), make_column_slots_profile(
+      u=column_u,
+      include_switch_cutout=needs_switch_cutout,
+      include_switch_nub=needs_switch_nub_cutout
+    ))
   ]))
 
   let(left_side_point = apply(

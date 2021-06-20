@@ -10,6 +10,21 @@ function flatten(arrays) = (
     : arrays[0]
 );
 
+function any(list) = len([for(v=list) if (!!v) v]) > 0;
+function every(list) = len([for(v=list) if (!!v) v]) == len(list);
+
+function vnf_contains_point(vnf, point) = (
+  let(v = vnf_vertices(vnf))
+  let(planes = [
+    for(f=vnf_faces(vnf))
+    plane_from_points([ v[f[0]], v[f[1]], v[f[2]] ], fast=true)
+  ])
+  every([
+    for(plane=planes)
+    !in_front_of_plane(plane, point)
+  ])
+);
+
 function slice(vec, start, end) = (
   let(e=is_undef(end) ? len(vec) - 1 : end)
   [ for(i=[start:e]) vec[i] ]

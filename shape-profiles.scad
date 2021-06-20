@@ -1,6 +1,6 @@
 include <definitions.scad>
 
-function make_column_slots_profile(u=1) = (
+function make_column_slots_profile(u=1, include_switch_cutout=false, include_switch_nub=false) = (
   let(slot_offset = column_support_center_offset * u)
   let(right_slot = [
     [slot_offset + slot_width/2 +slot_padding, 0, slot_height*2],
@@ -10,11 +10,34 @@ function make_column_slots_profile(u=1) = (
     [slot_offset - slot_width/2, 0, slot_height*2],
     [slot_offset - slot_width/2 -slot_padding, 0, slot_height*2],
   ])
+  let(switch_base = -3)
+  let(switch_nub = -6)
+  let(switch_nub_cutout = [
+    [3, 0, slot_height*2 + switch_base],
+    [3, 0, slot_height*2 + switch_nub],
+    [-3, 0, slot_height*2 + switch_nub],
+    [-3, 0, slot_height*2 + switch_base],
+  ])
+  let(switch_base_cutout = concat([
+    [keyhole_length/2, 0, slot_height*2],
+    [keyhole_length/2, 0, slot_height*2 + switch_base],
+  ], include_switch_nub ? switch_nub_cutout : [], [
+    [-keyhole_length/2, 0, slot_height*2 + switch_base],
+    [-keyhole_length/2, 0, slot_height*2],
+  ]))
   let(left_slot = reverse([
     for (v=right_slot)
     [-v.x, v.y, v.z]
   ]))
-  concat(right_slot, left_slot)
+  concat(
+    right_slot,
+    include_switch_cutout
+      ? switch_base_cutout
+      : include_switch_nub
+        ? switch_nub_cutout
+        : [],
+    left_slot
+  )
 );
 
 function plate (w=1, h=1, align=0) = (
