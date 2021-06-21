@@ -170,26 +170,34 @@ function cross_support(source, position, columns=undef) = (
   let(right_column_u = get_column_width(source, right_column))
   let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
   let(slot_center_point = [0, 0, slot_height*2])
+  let(switch_base_poly = [for(v=square([14, 14 + plate_thickness], center=true)) [v.x, v.y, -5]])
+  let(switch_nub_poly = [for(v=square([4, 4 + plate_thickness], center=true)) [v.x, v.y, -8]])
   let(top_points = flatten([
     for(col=source == "finger" ? reverse(columns) : columns)
     let(column_u = get_column_width(source, col))
-    let(needs_switch_cutout = any([
+    let(switch_base_intersection_height = min(concat([slot_height*2], [
+      // TODO: pre-determine which rows will have a slot to avoid unnecesary
+      // collision checks
       for(row=available_columns[col])
-      let(switch_position = matrix_inverse(place_slot(col)) * key_placer(col, row))
-      let(switch_housing_bottom = apply(switch_position, cube([keyhole_length + plate_thickness/2, keyhole_length + plate_thickness/2, 5], anchor=TOP)))
-      vnf_contains_point(switch_housing_bottom, slot_center_point)
-    ]))
-    let(needs_switch_nub_cutout = any([
+      let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
+      let(line_test = [[-5, 0, -slot_height], [-5, 0, slot_height*2]])
+      let(poly_test = apply(transform, switch_base_poly))
+      let(intersection = polygon_line_intersection(poly_test, line_test, bounded=true))
+      if (intersection) intersection.z - 1
+    ])))
+    let(switch_nub_intersection_height = min(concat([switch_base_intersection_height], [
       for(row=available_columns[col])
-      let(switch_position = matrix_inverse(place_slot(col)) * key_placer(col, row))
-      let(switch_nub_bottom = apply(switch_position, cube([4, 4, 8], anchor=TOP)))
-      vnf_contains_point(switch_nub_bottom, slot_center_point)
-    ]))
+      let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
+      let(line_test = [[0, 0, -slot_height], [0, 0, slot_height*2]])
+      let(poly_test = apply(transform, switch_nub_poly))
+      let(intersection = polygon_line_intersection(poly_test, line_test, bounded=true))
+      if (intersection) intersection.z - 1
+    ])))
 
     apply(place_slot(col), make_column_slots_profile(
       u=column_u,
-      include_switch_cutout=needs_switch_cutout,
-      include_switch_nub=needs_switch_nub_cutout
+      switch_base_intersection_height=switch_base_intersection_height,
+      switch_nub_intersection_height=switch_nub_intersection_height
     ))
   ]))
 
