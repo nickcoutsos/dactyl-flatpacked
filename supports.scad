@@ -29,16 +29,16 @@ function finger_column_rotate(row) = (
   * move(-[0, finger_column_radius, 0])
 );
 
-function get_row_index_containing_back_slot (source, columnIndex) = (
-  let(back_support_row = source == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
-  let(columns = source == "finger" ? finger_columns : thumb_columns)
+function get_row_index_containing_back_slot (cluster, columnIndex) = (
+  let(back_support_row = cluster == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
+  let(columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(column = columns[columnIndex])
 
   find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
     let(row=column[rowIndex])
     let(is_first = rowIndex == 0)
     let(is_last = rowIndex == len(column)-1)
-    let(h = get_overrides(source, columnIndex, rowIndex)[1])
+    let(h = get_overrides(cluster, columnIndex, rowIndex)[1])
     let(row_front_bound = row + h*.5)
     let(row_back_bound = row - h*.5)
 
@@ -46,16 +46,16 @@ function get_row_index_containing_back_slot (source, columnIndex) = (
   ))
 );
 
-function get_row_index_containing_front_slot (source, columnIndex) = (
-  let(front_support_row = source == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
-  let(columns = source == "finger" ? finger_columns : thumb_columns)
+function get_row_index_containing_front_slot (cluster, columnIndex) = (
+  let(front_support_row = cluster == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
+  let(columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(column = columns[columnIndex])
 
   find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
     let(row=column[rowIndex])
     let(is_first = rowIndex == 0)
     let(is_last = rowIndex == len(column)-1)
-    let(h = get_overrides(source, columnIndex, rowIndex)[1])
+    let(h = get_overrides(cluster, columnIndex, rowIndex)[1])
     let(row_front_bound = row + h*.5)
     let(row_back_bound = row - h*.5)
 
@@ -68,21 +68,21 @@ function get_row_index_containing_front_slot (source, columnIndex) = (
  * @param <Integer> columnIndex
  * @param <Number> extension
  */
-function column_support(source, columnIndex, height=column_support_height) = (
-  assert(source == "thumb" || source == "finger")
-  let(place_column = function () source == "thumb" ? place_thumb_key(columnIndex, 1) : place_finger_key(columnIndex, 2))
-  let(invert_place_column = function () source == "thumb" ? invert_place_thumb_key(columnIndex, 1) : un_key_place_transformation(columnIndex, 2))
-  let(place_slot_back = function () source == "thumb" ? place_thumb_column_support_slot_back(columnIndex) : place_finger_column_support_slot_back(columnIndex))
-  let(place_slot_front = function () source == "thumb" ? place_thumb_column_support_slot_front(columnIndex) : place_finger_column_support_slot_front(columnIndex))
-  let(place_column_profile = function () source == "thumb" ? place_thumb_column_in_profile(columnIndex) : place_finger_column_in_profile(columnIndex))
-  let(get_override_h = function (rowIndex) get_overrides(source, columnIndex, rowIndex)[1])
+function column_support(cluster, columnIndex, height=column_support_height) = (
+  assert(cluster == "thumb" || cluster == "finger")
+  let(place_column = function () cluster == "thumb" ? place_thumb_key(columnIndex, 1) : place_finger_key(columnIndex, 2))
+  let(invert_place_column = function () cluster == "thumb" ? invert_place_thumb_key(columnIndex, 1) : un_key_place_transformation(columnIndex, 2))
+  let(place_slot_back = function () cluster == "thumb" ? place_thumb_column_support_slot_back(columnIndex) : place_finger_column_support_slot_back(columnIndex))
+  let(place_slot_front = function () cluster == "thumb" ? place_thumb_column_support_slot_front(columnIndex) : place_finger_column_support_slot_front(columnIndex))
+  let(place_column_profile = function () cluster == "thumb" ? place_thumb_column_in_profile(columnIndex) : place_finger_column_in_profile(columnIndex))
+  let(get_override_h = function (rowIndex) get_overrides(cluster, columnIndex, rowIndex)[1])
 
-  let(column_rotate = function (row) source == "thumb" ? thumb_column_rotate(row) : finger_column_rotate(row))
-  let(columns = source == "thumb" ? thumb_columns : finger_columns)
+  let(column_rotate = function (row) cluster == "thumb" ? thumb_column_rotate(row) : finger_column_rotate(row))
+  let(columns = cluster == "thumb" ? thumb_columns : finger_columns)
   let(column = columns[columnIndex])
 
-  let(back_support_row = source == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
-  let(front_support_row = source == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
+  let(back_support_row = cluster == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
+  let(front_support_row = cluster == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
 
   let(top_points = flatten([
     for(rowIndex=[0:len(column)-1])
@@ -132,8 +132,8 @@ function column_support(source, columnIndex, height=column_support_height) = (
     ])
   ))
 
-  let(row_containing_back_slot = get_row_index_containing_back_slot(source, columnIndex))
-  let(row_containing_front_slot = get_row_index_containing_front_slot(source, columnIndex))
+  let(row_containing_back_slot = get_row_index_containing_back_slot(cluster, columnIndex))
+  let(row_containing_front_slot = get_row_index_containing_front_slot(cluster, columnIndex))
 
   let(bottom_points = reverse(flatten([
     for(rowIndex=[0:len(column)-1])
@@ -183,23 +183,23 @@ module thumb_support_columns(selected=[0:len(thumb_columns) - 1]) {
   }
 }
 
-function cross_support(source, position, columns=undef) = (
-  assert(source == "finger" || source == "thumb")
+function cross_support(cluster, position, columns=undef) = (
+  assert(cluster == "finger" || cluster == "thumb")
   assert(position == "back" || position == "front")
-  let(available_columns = source == "finger" ? finger_columns : thumb_columns)
+  let(available_columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(columns = list(is_undef(columns) ? [0:len(available_columns)-1] : columns))
-  let(key_placer = source == "finger" ? function(col, row) place_finger_key(col, row) : function(col, row) place_thumb_key(col, row))
-  let(slot_placers = source == "finger" ? [
+  let(key_placer = cluster == "finger" ? function(col, row) place_finger_key(col, row) : function(col, row) place_thumb_key(col, row))
+  let(slot_placers = cluster == "finger" ? [
     function (col) place_finger_column_support_slot_front(col),
     function (col) place_finger_column_support_slot_back(col),
   ] : [
     function (col) place_thumb_column_support_slot_front(col),
     function (col) place_thumb_column_support_slot_back(col),
   ])
-  let(left_column = source == "finger" ? first(columns) : last(columns))
-  let(left_column_u = get_column_width(source, left_column))
-  let(right_column = source == "finger" ? last(columns) : first(columns))
-  let(right_column_u = get_column_width(source, right_column))
+  let(left_column = cluster == "finger" ? first(columns) : last(columns))
+  let(left_column_u = get_column_width(cluster, left_column))
+  let(right_column = cluster == "finger" ? last(columns) : first(columns))
+  let(right_column_u = get_column_width(cluster, right_column))
   let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
 
   // TODO: use switch specs instead of hardcoding switch and nub size
@@ -208,13 +208,13 @@ function cross_support(source, position, columns=undef) = (
   let(switch_base_poly = [for(v=square([14, 14 + plate_thickness], center=true)) [v.x, v.y, -5]])
   let(switch_nub_poly = [for(v=square([4, 4 + plate_thickness], center=true)) [v.x, v.y, -8]])
   let(top_points = flatten([
-    for(col=source == "finger" ? reverse(columns) : columns)
+    for(col=cluster == "finger" ? reverse(columns) : columns)
     let(row_index = position == "front"
-      ? get_row_index_containing_front_slot(source, col)
-      : get_row_index_containing_back_slot(source, col)
+      ? get_row_index_containing_front_slot(cluster, col)
+      : get_row_index_containing_back_slot(cluster, col)
     )
     let(row = available_columns[col][row_index])
-    let(column_u = get_column_width(source, col))
+    let(column_u = get_column_width(cluster, col))
     let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
     let(switch_base_line_test = [[-5, 0, -slot_height], [-5, 0, slot_height*2]])
     let(switch_base_poly_test = apply(transform, switch_base_poly))

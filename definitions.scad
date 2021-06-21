@@ -14,7 +14,7 @@ keycap_depth   = get_keycap_property(keycap_type, "base_depth");
 keycap_height  = get_keycap_property(keycap_type, "height");
 cap_top_height = get_keycap_property(keycap_type, "switch_combined_height");
 
-plate_thickness = 1.5;
+plate_thickness = 2;
 plate_vertical_padding = 1.7;
 plate_horizontal_padding = 1.7;
 
@@ -124,9 +124,9 @@ function lookup_overrides(collection, criteria, default) = (
   len(matches) > 0 ? matches[0] : default
 );
 
-// Look up key overrides for given source, column index, and row index
-function get_overrides (source, colIndex, rowIndex) = (
-  lookup_overrides(overrides, [source, colIndex, rowIndex], [1, 1])
+// Look up key overrides for given cluster, column index, and row index
+function get_overrides (cluster, colIndex, rowIndex) = (
+  lookup_overrides(overrides, [cluster, colIndex, rowIndex], [1, 1])
 );
 
 /**
