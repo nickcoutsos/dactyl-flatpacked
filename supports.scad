@@ -2,6 +2,7 @@ include <definitions.scad>
 include <shape-profiles.scad>
 
 include <BOSL2/std.scad>
+include <BOSL2/fnliterals.scad>
 
 use <positioning.scad>
 use <placeholders.scad>
@@ -26,6 +27,40 @@ function finger_column_rotate(row) = (
   * move([0, finger_column_radius, 0])
   * rot([0, 0, alpha * (2 - row)])
   * move(-[0, finger_column_radius, 0])
+);
+
+function get_row_index_containing_back_slot (source, columnIndex) = (
+  let(back_support_row = source == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
+  let(columns = source == "finger" ? finger_columns : thumb_columns)
+  let(column = columns[columnIndex])
+
+  find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
+    let(row=column[rowIndex])
+    let(is_first = rowIndex == 0)
+    let(is_last = rowIndex == len(column)-1)
+    let(h = get_overrides(source, columnIndex, rowIndex)[1])
+    let(row_front_bound = row + h*.5)
+    let(row_back_bound = row - h*.5)
+
+    back_support_row >= row_back_bound && back_support_row < row_front_bound
+  ))
+);
+
+function get_row_index_containing_front_slot (source, columnIndex) = (
+  let(front_support_row = source == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
+  let(columns = source == "finger" ? finger_columns : thumb_columns)
+  let(column = columns[columnIndex])
+
+  find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
+    let(row=column[rowIndex])
+    let(is_first = rowIndex == 0)
+    let(is_last = rowIndex == len(column)-1)
+    let(h = get_overrides(source, columnIndex, rowIndex)[1])
+    let(row_front_bound = row + h*.5)
+    let(row_back_bound = row - h*.5)
+
+    front_support_row >= row_back_bound && front_support_row < row_front_bound
+  ))
 );
 
 /**
@@ -97,16 +132,13 @@ function column_support(source, columnIndex, height=column_support_height) = (
     ])
   ))
 
+  let(row_containing_back_slot = get_row_index_containing_back_slot(source, columnIndex))
+  let(row_containing_front_slot = get_row_index_containing_front_slot(source, columnIndex))
+
   let(bottom_points = reverse(flatten([
     for(rowIndex=[0:len(column)-1])
-    let(row=column[rowIndex])
-    let(is_first = rowIndex == 0)
-    let(is_last = rowIndex == len(column)-1)
-    let(h = get_override_h(rowIndex))
-    let(row_front_bound = row + h*.5)
-    let(row_back_bound = row - h*.5)
-    let(has_back_support_slot = back_support_row >= row_back_bound && back_support_row < row_front_bound)
-    let(has_front_support_slot = front_support_row >= row_back_bound && front_support_row < row_front_bound)
+    let(has_back_support_slot = row_containing_back_slot == rowIndex)
+    let(has_front_support_slot = row_containing_front_slot == rowIndex)
     let(has_both_slots = has_back_support_slot && has_front_support_slot)
 
     has_both_slots
@@ -169,30 +201,29 @@ function cross_support(source, position, columns=undef) = (
   let(right_column = source == "finger" ? last(columns) : first(columns))
   let(right_column_u = get_column_width(source, right_column))
   let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
-  let(slot_center_point = [0, 0, slot_height*2])
+
+  // TODO: use switch specs instead of hardcoding switch and nub size
+  // TODO: also, explain that "nub" refers to the protrusion on the switch base
+  // where the spring extends.
   let(switch_base_poly = [for(v=square([14, 14 + plate_thickness], center=true)) [v.x, v.y, -5]])
   let(switch_nub_poly = [for(v=square([4, 4 + plate_thickness], center=true)) [v.x, v.y, -8]])
   let(top_points = flatten([
     for(col=source == "finger" ? reverse(columns) : columns)
+    let(row_index = position == "front"
+      ? get_row_index_containing_front_slot(source, col)
+      : get_row_index_containing_back_slot(source, col)
+    )
+    let(row = available_columns[col][row_index])
     let(column_u = get_column_width(source, col))
-    let(switch_base_intersection_height = min(concat([slot_height*2], [
-      // TODO: pre-determine which rows will have a slot to avoid unnecesary
-      // collision checks
-      for(row=available_columns[col])
-      let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
-      let(line_test = [[-5, 0, -slot_height], [-5, 0, slot_height*2]])
-      let(poly_test = apply(transform, switch_base_poly))
-      let(intersection = polygon_line_intersection(poly_test, line_test, bounded=true))
-      if (intersection) intersection.z - 1
-    ])))
-    let(switch_nub_intersection_height = min(concat([switch_base_intersection_height], [
-      for(row=available_columns[col])
-      let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
-      let(line_test = [[0, 0, -slot_height], [0, 0, slot_height*2]])
-      let(poly_test = apply(transform, switch_nub_poly))
-      let(intersection = polygon_line_intersection(poly_test, line_test, bounded=true))
-      if (intersection) intersection.z - 1
-    ])))
+    let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
+    let(switch_base_line_test = [[-5, 0, -slot_height], [-5, 0, slot_height*2]])
+    let(switch_base_poly_test = apply(transform, switch_base_poly))
+    let(switch_base_intersection = polygon_line_intersection(switch_base_poly_test, switch_base_line_test, bounded=true))
+    let(switch_nub_line_test = [[0, 0, -slot_height], [0, 0, slot_height*2]])
+    let(switch_nub_poly_test = apply(transform, switch_nub_poly))
+    let(switch_nub_intersection = polygon_line_intersection(switch_nub_poly_test, switch_nub_line_test, bounded=true))
+    let(switch_base_intersection_height = min([slot_height*2, switch_base_intersection ? switch_base_intersection.z - 1 : undef]))
+    let(switch_nub_intersection_height = min([switch_base_intersection_height, switch_nub_intersection ? switch_nub_intersection.z - 1 : undef]))
 
     apply(place_slot(col), make_column_slots_profile(
       u=column_u,
