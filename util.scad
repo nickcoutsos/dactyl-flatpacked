@@ -36,24 +36,25 @@ function make_vector(v, length, default=0) = (
   [for(i=[0:length-1]) !is_undef(v[i]) ? v[i] : default]
 );
 
-function angleTo (a, b) = acos(
-  ( vec3(unit(a)) * vec3(unit(b)) ) /
-  ( norm(vec3(unit(a))) * norm(vec3(unit(b))) )
+function angleTo (a, b) = (
+  let(a = vec3(unit(a)))
+  let(b = vec3(unit(b)))
+  let(divisor = norm(a) * norm(b))
+
+  divisor == 0 ? 90 : acos(max(-1, min(1, a*b / divisor)))
 );
 
-function rotation_down(matrix, invert=false) = (
+function rotation_down(matrix) = (
   let(globalX = [1, 0, 0])
   let(globalZ = [0, 0, 1])
   let(localOrigin = apply(matrix, [0, 0, 0]))
   let(localX = apply(matrix, globalX) - localOrigin)
   let(localZ = apply(matrix, globalZ) - localOrigin)
   let(projectedZ = globalZ - (globalZ * localX) * localX)
-  let(angle = acos(
-    ( projectedZ * localZ ) /
-    ( norm(projectedZ) * norm(localZ) )
-  ))
+  let(angle = angleTo(projectedZ, localZ))
+  let(reverse = sign(angleTo(localX, cross(projectedZ, localZ)) - 90))
 
-  rot([angle * (invert ? -1 : 1), 0, 0])
+  rot([angle * reverse, 0, 0])
 );
 
 // Given a known matrix transformation "from", rotate about the local X-axis

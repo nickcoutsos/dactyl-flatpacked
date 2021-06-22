@@ -72,17 +72,12 @@ function column_support(cluster, columnIndex, height=column_support_height) = (
   assert(cluster == "thumb" || cluster == "finger")
   let(place_column = function () cluster == "thumb" ? place_thumb_key(columnIndex, 1) : place_finger_key(columnIndex, 2))
   let(invert_place_column = function () cluster == "thumb" ? invert_place_thumb_key(columnIndex, 1) : un_key_place_transformation(columnIndex, 2))
-  let(place_slot_back = function () cluster == "thumb" ? place_thumb_column_support_slot_back(columnIndex) : place_finger_column_support_slot_back(columnIndex))
-  let(place_slot_front = function () cluster == "thumb" ? place_thumb_column_support_slot_front(columnIndex) : place_finger_column_support_slot_front(columnIndex))
   let(place_column_profile = function () cluster == "thumb" ? place_thumb_column_in_profile(columnIndex) : place_finger_column_in_profile(columnIndex))
   let(get_override_h = function (rowIndex) get_overrides(cluster, columnIndex, rowIndex)[1])
 
   let(column_rotate = function (row) cluster == "thumb" ? thumb_column_rotate(row) : finger_column_rotate(row))
   let(columns = cluster == "thumb" ? thumb_columns : finger_columns)
   let(column = columns[columnIndex])
-
-  let(back_support_row = cluster == "thumb" ? thumb_cluster_back_support_row : finger_cluster_back_support_row)
-  let(front_support_row = cluster == "thumb" ? thumb_cluster_front_support_row : finger_cluster_front_support_row)
 
   let(top_points = flatten([
     for(rowIndex=[0:len(column)-1])
@@ -114,14 +109,14 @@ function column_support(cluster, columnIndex, height=column_support_height) = (
   let(back_support_profile = function (rowIndex)(
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
-    let(t = place_column_profile() * place_slot_back())
+    let(t = place_column_profile() * place_support_slot(cluster, "back", columnIndex))
     [for(v=transform(t, column_profile_slot)) takeXY(v)]
   ))
 
   let (front_support_profile = function (rowIndex) (
     let(row = column[rowIndex])
     let(depth = plate_height * get_override_h(rowIndex))
-    let(t = place_column_profile() * place_slot_front())
+    let(t = place_column_profile() * place_support_slot(cluster, "front", columnIndex))
     [for(v=transform(t, column_profile_slot)) takeXY(v)]
   ))
 
@@ -189,18 +184,10 @@ function cross_support(cluster, position, columns=undef) = (
   let(available_columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(columns = list(is_undef(columns) ? [0:len(available_columns)-1] : columns))
   let(key_placer = cluster == "finger" ? function(col, row) place_finger_key(col, row) : function(col, row) place_thumb_key(col, row))
-  let(slot_placers = cluster == "finger" ? [
-    function (col) place_finger_column_support_slot_front(col),
-    function (col) place_finger_column_support_slot_back(col),
-  ] : [
-    function (col) place_thumb_column_support_slot_front(col),
-    function (col) place_thumb_column_support_slot_back(col),
-  ])
   let(left_column = cluster == "finger" ? first(columns) : last(columns))
   let(left_column_u = get_column_width(cluster, left_column))
   let(right_column = cluster == "finger" ? last(columns) : first(columns))
   let(right_column_u = get_column_width(cluster, right_column))
-  let(place_slot = position == "front" ? slot_placers[0] : slot_placers[1])
 
   // TODO: use switch specs instead of hardcoding switch and nub size
   // TODO: also, explain that "nub" refers to the protrusion on the switch base
@@ -215,7 +202,7 @@ function cross_support(cluster, position, columns=undef) = (
     )
     let(row = available_columns[col][row_index])
     let(column_u = get_column_width(cluster, col))
-    let(transform = matrix_inverse(place_slot(col)) * key_placer(col, row))
+    let(transform = matrix_inverse(place_support_slot(cluster, position, col)) * key_placer(col, row))
     let(switch_base_line_test = [[-5, 0, -slot_height], [-5, 0, slot_height*2]])
     let(switch_base_poly_test = apply(transform, switch_base_poly))
     let(switch_base_intersection = polygon_line_intersection(switch_base_poly_test, switch_base_line_test, bounded=true))
@@ -225,7 +212,7 @@ function cross_support(cluster, position, columns=undef) = (
     let(switch_base_intersection_height = min([slot_height*2, switch_base_intersection ? switch_base_intersection.z - 1 : undef]))
     let(switch_nub_intersection_height = min([switch_base_intersection_height, switch_nub_intersection ? switch_nub_intersection.z - 1 : undef]))
 
-    apply(place_slot(col), make_column_slots_profile(
+    apply(place_support_slot(cluster, position, col), make_column_slots_profile(
       u=column_u,
       switch_base_intersection_height=switch_base_intersection_height,
       switch_nub_intersection_height=switch_nub_intersection_height
@@ -233,12 +220,12 @@ function cross_support(cluster, position, columns=undef) = (
   ]))
 
   let(left_side_point = apply(
-    place_slot(left_column),
+    place_support_slot(cluster, position, left_column),
     last(make_column_slots_profile(u=left_column_u)) - [0, 0, slot_height*2]
   ))
 
   let(right_side_point = apply(
-    place_slot(right_column),
+    place_support_slot(cluster, position, right_column),
     first(make_column_slots_profile(u=right_column_u)) - [0, 0, slot_height*2]
   ))
 

@@ -6,12 +6,14 @@ include <definitions.scad>
 
 
 module place_finger_key(column, row) multmatrix(place_finger_key(column, row)) children();
-module place_finger_column_support_slot_front(col) multmatrix(place_finger_column_support_slot_front(col)) children();
-module place_finger_column_support_slot_back(col) multmatrix(place_finger_column_support_slot_back(col)) children();
-
 module place_thumb_key (column, row) multmatrix(place_thumb_key(column, row)) children();
-module place_thumb_column_support_slot_front(col) multmatrix(place_thumb_column_support_slot_front(col)) children();
-module place_thumb_column_support_slot_back(col) multmatrix(place_thumb_column_support_slot_back(col)) children();
+
+function place_key(cluster, column, row) = (
+  assert(cluster == "finger" || cluster == "thumb")
+  cluster == "finger"
+    ? place_finger_key(column, row)
+    : place_thumb_key(column, row)
+);
 
 function place_finger_key(column, row) = (
   let(row_angle = alpha * (2 - row))
@@ -32,24 +34,6 @@ function place_finger_key(column, row) = (
 );
 
 function un_key_place_transformation(column, row) = matrix_inverse(place_finger_key(column, row));
-
-function place_finger_column_support_slot_front(col) = (
-  let(row = finger_cluster_front_support_row)
-  place_finger_key(col, row)
-   * move([0, 0, -(column_support_height + slot_height*.25)])
-   * rot([-alpha*(2-row), 0, 0])
-   * move(finger_finger_column_offset_middle)
-   * move(-[0, finger_column_offsets[col].y, 0])
-);
-
-function place_finger_column_support_slot_back(col) = (
-  let(row = finger_cluster_back_support_row + .25)
-  place_finger_key(col, row)
-  * move([0, 0, -column_support_height])
-  * move(finger_finger_column_offset_middle)
-  * rot([-alpha*(2 - row), 0, 0])
-  * move(-[0, finger_column_offsets[col].y, 0])
-);
 
 function place_finger_column_in_profile(col) = (
   affine3d_identity()
@@ -84,20 +68,21 @@ function place_thumb_key (column, row) = (
 
 function invert_place_thumb_key (column, row) = matrix_inverse(place_thumb_key(column, row));
 
-function place_thumb_column_support_slot_front(col) = (
-  let(row = thumb_cluster_front_support_row)
-  let(position = place_thumb_key(col, row))
-  position
-  * move([0, 0, -column_support_height])
-  * move([0, 0, -slot_height*2])
-  * rotation_down(position)
-);
+function place_support_slot(cluster, position, column) = (
+  let(column_offset = lookup_overrides(column_offsets, [cluster, column], [0, 0, 0])[0])
+  let(row = cluster == "finger"
+    ? (position == "front"
+      ? finger_cluster_front_support_row
+      : finger_cluster_back_support_row)
+    : (position == "front"
+      ? thumb_cluster_front_support_row
+      : thumb_cluster_back_support_row)
+  )
+  let(transform = place_key(cluster, column, row))
 
-function place_thumb_column_support_slot_back(col) = (
-  let(row = thumb_cluster_back_support_row)
-  let(position = place_thumb_key(col, row))
-  position
+  transform
   * move([0, 0, -column_support_height])
   * move([0, 0, -slot_height*2])
-  * rotation_down(position, invert=true)
+  * rotation_down(transform)
+  * move(-[0, column_offset.y, 0])
 );

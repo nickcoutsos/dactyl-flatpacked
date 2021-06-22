@@ -39,16 +39,16 @@ slot_padding = 1;
 alpha = 180/12;
 beta = 180/36;
 
-finger_finger_column_offset_index = [0, 0, 0];
-finger_finger_column_offset_index_stretch = [0, 0, 0];
-finger_finger_column_offset_middle = [0, 2.82, -3.0]; // was moved -4.5
+finger_column_offset_index = [0, 0, 0];
+finger_column_offset_index_stretch = [0, 0, 0];
+finger_column_offset_middle = [0, 2.82, -3.0]; // was moved -4.5
 finger_column_offset_ring = [0, 0, 0];
 finger_column_offset_pinky = [0, -5.8, 5.64];
 finger_column_offset_pinky_stretch = [plate_width*1.5/6, -5.8, 5.64];
 finger_column_offsets = [
-  finger_finger_column_offset_index_stretch,
-  finger_finger_column_offset_index,
-  finger_finger_column_offset_middle,
+  finger_column_offset_index_stretch,
+  finger_column_offset_index,
+  finger_column_offset_middle,
   finger_column_offset_ring,
   finger_column_offset_pinky,
   finger_column_offset_pinky_stretch
@@ -69,11 +69,11 @@ thumb_columns = [
   [0, 1, 2]
 ];
 
-finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]);
-finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]) + .4;
+finger_cluster_back_support_row = max([for(column=finger_columns) column[0]]) + 0.15;
+finger_cluster_front_support_row = min([for(column=finger_columns) last(column)]) + 0.2;
 
 thumb_cluster_back_support_row = 0.85;
-thumb_cluster_front_support_row = 2.1;
+thumb_cluster_front_support_row = 2.2;
 
 finger_column_radius = mount_depth / 2 / sin(alpha/2) + (cap_top_height - keycap_height);
 finger_row_radius = mount_width / 2 / sin(beta/2) + (cap_top_height - keycap_height);
@@ -95,6 +95,15 @@ overrides = [
 
 alignment_overrides = [
   ["finger", 5, 4, -1]
+];
+
+column_offsets = [
+  ["finger", 0, finger_column_offset_index_stretch],
+  ["finger", 1, finger_column_offset_index],
+  ["finger", 2, finger_column_offset_middle],
+  ["finger", 3, finger_column_offset_ring],
+  ["finger", 4, finger_column_offset_pinky],
+  ["finger", 5, finger_column_offset_pinky_stretch],
 ];
 
 /**
