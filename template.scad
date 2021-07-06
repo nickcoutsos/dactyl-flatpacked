@@ -24,12 +24,14 @@ function arrange_key_plates(cluster, spacing=2, reverse_columns=false, align_ite
   let(columns = cluster == "finger" ? finger_columns : thumb_columns)
   arrange([
     for (colIndex=[0:len(columns)-1])
+    let(column_u = get_column_width(cluster, colIndex))
     arrange([
       for (rowIndex=[0:len(columns[colIndex])-1])
       let (overrides = get_overrides(cluster, colIndex, rowIndex))
+      let (alignment = get_alignment_override(cluster, colIndex, rowIndex))
       let (u = overrides[0])
       let (h = overrides[1])
-      plate(u, h)
+      plate(column_u, h, align=alignment)
     ], direction="column-reverse", spacing=spacing)
   ], direction=reverse_columns ? "row-reverse" : "row", spacing=spacing, align_items=align_items)
 );
@@ -65,4 +67,4 @@ arrange([
       [orient_cross_support(thumb_back_cross_support([0]))],
     ], spacing=2, align_items="start")
   ], spacing=2, align_items="start"),
-], direction="column", align_items="start", spacing=-20, anchor=[-1, -1]);
+], direction="column", align_items="start", spacing=-10);
