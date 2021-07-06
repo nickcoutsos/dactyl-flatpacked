@@ -15,7 +15,7 @@ keycap_height  = get_keycap_property(keycap_type, "height");
 cap_top_height = get_keycap_property(keycap_type, "switch_combined_height");
 
 plate_thickness = 2;
-plate_vertical_padding = 1.7;
+plate_vertical_padding = 3;
 plate_horizontal_padding = 1.7;
 
 plate_width = keyhole_length + 2 * plate_horizontal_padding;
