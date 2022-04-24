@@ -46,3 +46,47 @@ differences:
 
 To simplify the code I've started migrating things over to using the amazing
 [BOSL2](https://github.com/revarbat/BOSL2) library.
+
+
+## See Also
+
+Over time I have seen more designs pop up using similar ideas to build up the
+structure of a 3D contoured keyboard using 2D laser cut components. You may be
+interested in looking at:
+
+* [Habilis](https://github.com/thblt/habilis) by Thibault Polge
+    * Designed in Autodesk Inventor, I think
+    * This is the first implementation I saw after my own
+    * It seems to have the most in common with the dactyl-flatpacked
+    * Pictures available on his reddit posts:
+        * [/r/MechanicalKeyboards/comments/cbehge/very_early_preview_my_first_build_a/](https://www.reddit.com/r/MechanicalKeyboards/comments/cbehge/very_early_preview_my_first_build_a/)
+        * [/r/MechanicalKeyboards/comments/cm97ey/my_first_build_the_habilis_design_preview_while/](https://www.reddit.com/r/MechanicalKeyboards/comments/cm97ey/my_first_build_the_habilis_design_preview_while/)
+        * [/r/MechanicalKeyboards/comments/covxon/first_real_prototype_for_my_split_concave_build/](https://www.reddit.com/r/MechanicalKeyboards/comments/covxon/first_real_prototype_for_my_split_concave_build/)
+* [Acrylic 3D KB](https://github.com/kobababa/Acrylic_3D_KB) by Kobakos
+    * Designed in Fusion 360
+    * I was really impressed by the elegance of this design.
+    * It does sacrifice curvature around the Y axis and per-column stagger, but
+        I think grouping pairs of columns is a clever compromise and results in
+        a much smaller part count.
+    * Having fewer and larger pieces would help with assembly and probably makes
+        for a less fragile end result.
+* [Lasercut modular ergo keyboard with wells](https://www.reddit.com/r/ErgoMechKeyboards/comments/njuay2/second_prototype_of_a_lasercut_modular_ergo/) by [/u/Macone4](https://www.reddit.com/user/Macone4)
+    * Designed in Fusion 360
+    * Also [the first prototype post](https://www.reddit.com/r/ErgoMechKeyboards/comments/nbbqdz/first_proof_of_concept_of_a_lasercut_modular/)
+    * Tighter curvature than the Dactyl, I think
+    * First time seeing one of these using wood!
+    * Looks to be a similar strategy to the dactyl-flatpacked and Habilis
+    * A single support down the center of each column is interesting
+        * May allow columns to squeeze in more tightly without interference
+        * Looks like this would add to the minimum height due to the extra
+            clearance needed underneath the switch
+* [Laser cut dactyl](https://www.reddit.com/r/ErgoMechKeyboards/comments/txumq3/laser_cut_dactyl/) by [Rannathrtv](https://www.reddit.com/user/Rannathrtv)
+    * Designed in Fusion 360
+    * Another wooden design, the end result looks lovely with the burnt edges!
+    * Row-based instead of column based, so curvature is around X axis and is
+        otherwise ortholinear
+    * Far fewer pieces to deal with
+    * May have been designed with hotswap sockets in mind
+    * Based on images it looks like there is a slight tenting so the row pieces
+        don't technically slot in at 90˚. This may not be an issue if everything
+        is glued or otherwise held firmly in place.
