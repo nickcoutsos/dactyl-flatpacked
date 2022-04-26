@@ -44,7 +44,7 @@ function plate (w=1, h=1, align=0) = (
   let(plate_right = width/2)
   let(slot_right = center_offset*w + slot_width/2)
   let(slot_left = center_offset*w - slot_width/2)
-  let(slot_bottom = plate_top - column_support_thickness/2)
+  let(slot_bottom = plate_top - slot_depth)
   let(slot_distance_from_edge = width/2 - (center_offset*w + column_support_thickness/2))
 
   let(corner_profile = [
@@ -83,10 +83,10 @@ function make_column_profile_row_plate_cavity(h=1) = (
   let(length = plate_height * h)
   [
     [ length/2, 0],
-    [ length/2 - slot_width/2, 0],
-    [ length/2 - slot_width/2, -plate_thickness],
-    [-(length/2 - slot_width/2), -plate_thickness],
-    [-(length/2 - slot_width/2), 0],
+    [ length/2 - slot_depth, 0],
+    [ length/2 - slot_depth, -plate_thickness],
+    [-(length/2 - slot_depth), -plate_thickness],
+    [-(length/2 - slot_depth), 0],
     [-(length/2), 0]
   ]
 );

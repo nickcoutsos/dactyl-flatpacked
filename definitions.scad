@@ -35,6 +35,7 @@ column_support_center_offset = (column_support_spacing - column_support_thicknes
 slot_height = 2;
 slot_width = plate_thickness;
 slot_padding = 1;
+slot_depth = 0.8;
 
 alpha = 180/12;
 beta = 180/36;

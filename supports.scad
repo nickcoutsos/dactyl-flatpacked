@@ -145,6 +145,10 @@ function column_support(cluster, columnIndex, height=column_support_height) = (
           : bottom_profile(rowIndex)
   ])))
 
+  // TODO: the small `slot_depth` can result in very thin protrusions at the
+  // ends of the support columns that may snap off. Should these just be removed
+  // to avoid more serious damage, or shortened so that there's less leverage to
+  // cause them to break off?
   concat(back_points, top_points, front_points, [for(v=bottom_points) [v.x, v.y]])
 );
 
