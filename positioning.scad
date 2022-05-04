@@ -69,7 +69,7 @@ function place_thumb_key (column, row) = (
 function invert_place_thumb_key (column, row) = matrix_inverse(place_thumb_key(column, row));
 
 function place_support_slot(cluster, position, column) = (
-  let(column_offset = lookup_overrides(column_offsets, [cluster, column], [0, 0, 0])[0])
+  let(column_offset = lookup_overrides(column_offsets, [cluster, column], [[0, 0, 0]])[0])
   let(row = cluster == "finger"
     ? (position == "front"
       ? finger_cluster_front_support_row

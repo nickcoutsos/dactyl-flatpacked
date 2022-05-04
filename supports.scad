@@ -34,7 +34,7 @@ function get_row_index_containing_back_slot (cluster, columnIndex) = (
   let(columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(column = columns[columnIndex])
 
-  find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
+  find_first(function (rowIndex) (
     let(row=column[rowIndex])
     let(is_first = rowIndex == 0)
     let(is_last = rowIndex == len(column)-1)
@@ -43,7 +43,7 @@ function get_row_index_containing_back_slot (cluster, columnIndex) = (
     let(row_back_bound = row - h*.5)
 
     back_support_row >= row_back_bound && back_support_row < row_front_bound
-  ))
+  ), list([0:len(column)-1]))
 );
 
 function get_row_index_containing_front_slot (cluster, columnIndex) = (
@@ -51,7 +51,7 @@ function get_row_index_containing_front_slot (cluster, columnIndex) = (
   let(columns = cluster == "finger" ? finger_columns : thumb_columns)
   let(column = columns[columnIndex])
 
-  find_first(undef, list([0:len(column)-1]), func=function (_, rowIndex) (
+  find_first(function (rowIndex) (
     let(row=column[rowIndex])
     let(is_first = rowIndex == 0)
     let(is_last = rowIndex == len(column)-1)
@@ -60,7 +60,7 @@ function get_row_index_containing_front_slot (cluster, columnIndex) = (
     let(row_back_bound = row - h*.5)
 
     front_support_row >= row_back_bound && front_support_row < row_front_bound
-  ))
+  ), list([0:len(column)-1]))
 );
 
 /**
