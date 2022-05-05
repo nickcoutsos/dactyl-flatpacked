@@ -233,10 +233,7 @@ function cross_support(cluster, position, columns=undef) = (
     first(make_column_slots_profile(u=right_column_u)) - [0, 0, slot_height*2]
   ))
 
-  let(bottom_points = [
-    apply(scale([1, 1, 0]), left_side_point),
-    apply(scale([1, 1, 0]), right_side_point),
-  ])
+  let(bottom_points = cross_support_bottom_points(cluster, position, columns))
 
   concat(
     [right_side_point],
@@ -244,6 +241,47 @@ function cross_support(cluster, position, columns=undef) = (
     [left_side_point],
     bottom_points
   )
+);
+
+function cross_support_bottom_points(cluster, position, columns=undef) = (
+  assert(cluster == "finger" || cluster == "thumb")
+  assert(position == "back" || position == "front")
+
+  let(available_columns = cluster == "finger" ? finger_columns : thumb_columns)
+  let(columns = list(is_undef(columns) ? [0:len(available_columns)-1] : columns))
+
+  let(left_column = cluster == "finger" ? first(columns) : last(columns))
+  let(left_column_u = get_column_width(cluster, left_column))
+  let(right_column = cluster == "finger" ? last(columns) : first(columns))
+  let(right_column_u = get_column_width(cluster, right_column))
+
+  let(left_side_point = apply(
+    place_support_slot(cluster, position, left_column),
+    last(make_column_slots_profile(u=left_column_u)) - [0, 0, slot_height*2]
+  ))
+
+  let(right_side_point = apply(
+    place_support_slot(cluster, position, right_column),
+    first(make_column_slots_profile(u=right_column_u)) - [0, 0, slot_height*2]
+  ))
+
+  let(transformation = place_support_slot(cluster, position, columns[0]))
+  let(local_origin = apply(transformation, [0, 0, 0]))
+  let(local_x = apply(transformation, [1, 0, 0]))
+  let(global_x = local_x - local_origin)
+  let(projected_x = unit(project_plane(
+    plane_from_normal([0, 0, 1], [0, 0, 0]),
+    global_x
+  )))
+
+  [
+    apply(scale([1, 1, 0]), left_side_point) + [0, 0, 1] * plate_thickness,
+    apply(scale([1, 1, 0]), left_side_point) + [projected_x.x, projected_x.y, 1] * plate_thickness,
+    apply(scale([1, 1, 0]), left_side_point) + [projected_x.x, projected_x.y, 0] * plate_thickness,
+    apply(scale([1, 1, 0]), right_side_point) + [-projected_x.x, -projected_x.y, 0] * plate_thickness,
+    apply(scale([1, 1, 0]), right_side_point) + [-projected_x.x, -projected_x.y, 1] * plate_thickness,
+    apply(scale([1, 1, 0]), right_side_point) + [0, 0, 1] * plate_thickness,
+  ]
 );
 
 function finger_cluster_cross_support_front() = cross_support("finger", "front");
