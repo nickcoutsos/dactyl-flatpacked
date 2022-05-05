@@ -1,6 +1,7 @@
 use <placeholders.scad>
 use <key-layouts.scad>
 use <supports.scad>
+use <base.scad>
 include <definitions.scad>
 
 layout("finger", $render_plates=true, $render_switches=true, $render_keycaps=true);
@@ -16,3 +17,5 @@ color("lightgreen") thumb_front_cross_support([2]);
 color("lightgreen") thumb_back_cross_support([0]);
 color("lightgreen") thumb_back_cross_support([1]);
 color("lightgreen") thumb_back_cross_support([2]);
+
+color("palegreen") base();

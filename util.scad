@@ -57,6 +57,32 @@ function rotation_down(matrix) = (
   rot([angle * reverse, 0, 0])
 );
 
+/**
+ * Create a polygon from a line segment, giving it width
+ */
+function thicken_line (points, width) = (
+  assert(len(points) > 1)
+  let(vector = unit(points[1] - points[0]))
+  let(normal = [-vector.y, vector.x])
+
+  [
+    points[0] + normal * width/2,
+    points[0] - normal * width/2,
+    points[1] - normal * width/2,
+    points[1] + normal * width/2,
+  ]
+);
+
+/**
+ * Return a polygon hullfor the given points
+ * This is just BOSL2's hull_points but as a function.
+ */
+function hull_points (points) = (
+  let(hull_indices = hull(points))
+  [ for(i=hull_indices) points[i] ]
+);
+
+
 // Given a known matrix transformation "from", rotate about the local X-axis
 // such that the local Y-axis becomes co-planar with the XY plane.
 module rotate_down(matrix) multmatrix(rotation_down(matrix)) children();
